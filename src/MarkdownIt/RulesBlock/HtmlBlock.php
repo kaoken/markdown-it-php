@@ -1,0 +1,87 @@
+<?php
+
+namespace Kaoken\MarkdownIt\RulesBlock;
+
+use Kaoken\MarkdownIt\Common\Utils;
+use Kaoken\MarkdownIt\Common\HtmlRegexs;
+use Kaoken\MarkdownIt\Common\HtmlBlocks;
+
+class HtmlBlock
+{
+
+    // An array of opening and corresponding closing sequences for html tags,
+    // last argument defines whether it can terminate a paragraph or not
+    //
+    protected $HTML_SEQUENCES = [];
+
+
+    public function __construct()
+    {
+        $this->HTML_SEQUENCES = [
+            [ "/^<(script|pre|style)(?=(\s|>|$))/i", "/<\/(script|pre|style)>/i", true ],
+            [ "/^<!--/",          "/-->/",   true ],
+            [ "/^<\?/",            "/\?>/",   true ],
+            [ "/^<![A-Z]/",         "/>/",   true ],
+            [ "/^<!\[CDATA\[/", "/\]\]>/",   true ],
+            [ "/^<\/?(" . join('|', HtmlBlocks::BLOCKS) . ")(?=(\s|\/?>|$))/i", "/^$/", true ],
+            [ "/" . HtmlRegexs::HTML_OPEN_CLOSE_TAG . "\s*$/",  "/^$/", false ]
+        ];
+    }
+
+    /**
+     * @param StateBlock $state
+     * @param integer $startLine
+     * @param integer $endLine
+     * @param boolean $silent
+     * @return bool
+     */
+    public function set(&$state, $startLine, $endLine, $silent=false)
+    {
+        $pos = $state->bMarks[$startLine] + $state->tShift[$startLine];
+        $max = $state->eMarks[$startLine];
+
+        if (!$state->md->options->html) { return false; }
+
+        if ($state->src[$pos] !== '<') { return false; }
+
+        $lineText = substr($state->src,$pos, $max-$pos);
+
+        for ($i = 0, $l = count($this->HTML_SEQUENCES); $i < $l; $i++) {
+            if (preg_match($this->HTML_SEQUENCES[$i][0], $lineText)) { break; }
+        }
+
+        if ($i === $l ) { return false; }
+
+        if ($silent) {
+            // true if this sequence can be a terminator, false otherwise
+            return $this->HTML_SEQUENCES[$i][2];
+        }
+
+        $nextLine = $startLine + 1;
+
+        // If we are here - we detected HTML block.
+        // Let's roll down till block end.
+        if (!preg_match($this->HTML_SEQUENCES[$i][1], $lineText)) {
+            for (; $nextLine < $endLine; $nextLine++) {
+                if ($state->sCount[$nextLine] < $state->blkIndent) { break; }
+
+                $pos = $state->bMarks[$nextLine] + $state->tShift[$nextLine];
+                $max = $state->eMarks[$nextLine];
+                $lineText = substr($state->src, $pos, $max-$pos);
+
+                if (preg_match($this->HTML_SEQUENCES[$i][1],$lineText)) {
+                    if (strlen($lineText) !== 0) { $nextLine++; }
+                    break;
+                }
+            }
+        }
+
+        $state->line = $nextLine;
+
+        $token         = $state->push('html_block', '', 0);
+        $token->map     = [ $startLine, $nextLine ];
+        $token->content = $state->getLines($startLine, $nextLine, $state->blkIndent, true);
+
+        return true;
+    }
+}
