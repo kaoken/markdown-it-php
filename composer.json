@@ -1,0 +1,33 @@
+{
+    "name": "kaoken/markdown-it-php",
+    "description": "PHP version makdown-it",
+    "keywords": [
+        "markdown-it","markdown"
+    ],
+    "type": "library",
+    "license": "MIT",
+    "require": {
+        "php": ">=5.6.4"
+    },
+    "authors": [
+        {
+            "name": "kaoken",
+            "homepage": "https://github.com/kaoken/markdown-it-php"
+        }
+    ],
+    "require-dev": {
+        "symfony/yaml":"3.1.*"
+    },
+    "replace": {
+    },
+    "autoload": {
+        "psr-4": {
+            "Kaoken\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Kaoken\\Test\\": "tests/"
+        }
+    }
+}
