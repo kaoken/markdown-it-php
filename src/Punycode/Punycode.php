@@ -14,7 +14,7 @@
  *
  *
  * use javascript version 2.0.1
- * @see https://github.com/bestiejs/punycode.js/tree/v2.0.1
+ * @see https://github.com/bestiejs/punycode.js/tree/v2.1.0
  */
 namespace Kaoken\Punycode;
 
@@ -25,7 +25,7 @@ class Punycode
      * A string representing the current Punycode.js version number.
      * @type String
      */
-    const Version = '2.0.1';
+    const Version = '2.1.0';
 
     /** Highest positive signed 32-bit float value */
     const MAX_INT = 2147483647; // aka. 0x7FFFFFFF or 2^31-1
@@ -42,7 +42,7 @@ class Punycode
 
     /** Regular expressions */
     const PUNYCODE_RE = "/^xn--/";
-    const NON_ASCII_RE = "/[^\x20-\x7E]/"; // unprintable ASCII chars + non-ASCII chars
+    const NON_ASCII_RE = "/[^\x{00}-\x{7E}]/"; // unprintable ASCII chars + non-ASCII chars
     const SEPARATORS_RE = "/[\.。．｡]/u"; // RFC 3490 separators '\x2E\u3002\uFF0E\uFF61'
 
     /** Error messages */

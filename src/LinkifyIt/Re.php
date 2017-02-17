@@ -22,10 +22,13 @@ class Re extends \stdClass
         $this->src_ZPCc = "\p{Z}|\p{P}|\p{Cc}";
         // \p{\Z\Cc} (white spaces + control)
         $this->src_ZCc = "\p{Z}|\p{Cc}";
+        // Experimental. List of chars, completely prohibited in links
+        // because can separate it from other part of text
+        $this->text_separators = "[><\u{ff5c}]";
         // All possible word characters (everything without punctuation, spaces & controls)
         // Defined via punctuation & spaces to save space
         // Should be something like \p{\L\N\S\M} (\w but without `_`)
-        $this->src_pseudo_letter = "(?:(?!>|<|\p{Z}|\p{P}|\p{Cc})".$this->src_Any.")";
+        $this->src_pseudo_letter = "(?:(?!".$this->text_separators."|\p{Z}|\p{P}|\p{Cc})".$this->src_Any.")";
         // The same as abothe but without [0-9]
         // var src_pseudo_letter_non_d = "(?:(?![0-9]|" + src_ZPCc + ")" + src_Any + ")";
         ////////////////////////////////////////////////////////////////////////////////
@@ -36,13 +39,13 @@ class Re extends \stdClass
         // Prohibit any of "@/[]()" in user/pass to avoid wrong domain fetch.
 
         $this->src_auth    = "(?:(?:(?!" . $this->src_ZCc . "|[@\/\[\]()]).)+@)?";
-        $this->src_host_terminator =  "(?=$|>|<|" . $this->src_ZPCc . ")(?!-|_|:\d|\.-|\.(?!$|" . $this->src_ZPCc . "))";
+        $this->src_host_terminator =  "(?=$|" . $this->text_separators . "|" . $this->src_ZPCc . ")(?!-|_|:\d|\.-|\.(?!$|" . $this->src_ZPCc . "))";
 
         $this->src_path =
             "(?:" .
             "[\/?#]" .
             "(?:" .
-            "(?!" . $this->src_ZCc . "|[()[\]{}.,\"'?!\-<>]).|" .
+            "(?!" . $this->src_ZCc . "|" . $this->text_separators . "|[()[\]{}.,\"'?!\-]).|" .
             "\[(?:(?!" . $this->src_ZCc . "|\]).)*\]|" .
             "\((?:(?!" . $this->src_ZCc . "|[)]).)*\)|" .
             "\{(?:(?!" . $this->src_ZCc . "|[}]).)*\}|" .
@@ -147,18 +150,18 @@ class Re extends \stdClass
 
         $this->tpl_email_fuzzy =
 
-            "(^|<|>|\\(|" . $this->src_ZCc . ")(" . $this->src_email_name . "@" . $this->tpl_host_fuzzy_strict . ")";
+            "(^|".$this->text_separators."|\\(|" . $this->src_ZCc . ")(" . $this->src_email_name . "@" . $this->tpl_host_fuzzy_strict . ")";
 
         $this->tpl_link_fuzzy =
             // Fuzzy link can"t be prepended with .:/\- and non punctuation.
             // but can start with > (markdown blockquote)
-            "(^|(?![.:\/\-_@])(?:[$+<=>^`|]|" . $this->src_ZPCc . "))" .
-            "((?![$+<=>^`|])" . $this->tpl_host_port_fuzzy_strict . $this->src_path . ")";
+            "(^|(?![.:\/\-_@])(?:[$+<=>^`|\u{ff5c}]|" . $this->src_ZPCc . "))" .
+            "((?![$+<=>^`|\u{ff5c}])" . $this->tpl_host_port_fuzzy_strict . $this->src_path . ")";
 
         $this->tpl_link_no_ip_fuzzy =
             // Fuzzy link can"t be prepended with .:/\- and non punctuation.
             // but can start with > (markdown blockquote)
-            "(^|(?![.:\/\-_@])(?:[$+<=>^`|]|" . $this->src_ZPCc . "))" .
-            "((?![$+<=>^`|])" . $this->tpl_host_port_no_ip_fuzzy_strict . $this->src_path . ")";
+            "(^|(?![.:\/\-_@])(?:[$+<=>^`|\u{ff5c}]|" . $this->src_ZPCc . "))" .
+            "((?![$+<=>^`|\u{ff5c}])" . $this->tpl_host_port_no_ip_fuzzy_strict . $this->src_path . ")";
     }
 }

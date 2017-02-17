@@ -207,7 +207,21 @@ class BlockQuote
                     break;
                 }
             }
-            if ($terminate) { break; }
+
+            if ($terminate) {
+                if ($oldIndent !== 0) {
+                    // state.blkIndent was non-zero, we now set it to zero,
+                    // so we need to re-calculate all offsets to appear as
+                    // if indent wasn't changed
+                    $oldBMarks[] = $state->bMarks[$nextLine];
+                    $oldBSCount[] = $state->bsCount[$nextLine];
+                    $oldTShift[] = $state->tShift[$nextLine];
+                    $oldSCount[] = $state->sCount[$nextLine];
+                    $state->sCount[$nextLine] -= $oldIndent;
+                }
+
+                break;
+            }
 
             $oldBMarks[] = $state->bMarks[$nextLine];
             $oldBSCount[] = $state->bsCount[$nextLine];

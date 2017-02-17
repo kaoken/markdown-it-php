@@ -579,6 +579,10 @@ class MarkdownIt
      */
     public function &parse($src, $env=null)
     {
+        if ( !is_string($src)) {
+            throw new \Exception('Input data should be a String');
+        }
+
         $state = $this->core->createState($src, $this, $env);
 
         $this->core->process($state);

@@ -2,9 +2,17 @@
 // Proceess '\n'
 namespace Kaoken\MarkdownIt\RulesInline;
 
+use Kaoken\MarkdownIt\Common\Utils;
 
 class NewLine
 {
+    public $utils = null;
+
+    public function __construct()
+    {
+        $this->utils = Utils::getInstance();
+    }
+
     /**
      * @param StateInline $state
      * @param bool        $silent
@@ -40,7 +48,7 @@ class NewLine
         $pos++;
 
         // skip heading spaces for next line
-        while ($pos < $max && $state->src[$pos] === ' ') { $pos++; }
+        while ($pos < $max && $this->utils->isSpace($state->src[$pos])) { $pos++; }
 
         $state->pos = $pos;
         return true;

@@ -158,6 +158,13 @@ trait MiscTrait
             $md->enable("emphasis");
             $gg->strictEqual($md->renderInline("_foo_"), "<em>foo</em>");
         });
+        //-------------------------------------------------------------------
+        $g->group("input type check", function ($gg) {
+            $md = new MarkdownIt();
+            $gg->throws(function () use(&$md) {
+                $md->render(null);
+            },'Input data should be a String');
+        });
     }
     private function miscMisc($g)
     {

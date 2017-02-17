@@ -17,7 +17,7 @@
  *
  *
  * use javascript version 2.0.2
- * @see https://github.com/markdown-it/linkify-it/tree/2.0.2
+ * @see https://github.com/markdown-it/linkify-it/tree/2.0.3
  */
 
 namespace Kaoken\LinkifyIt;
@@ -585,8 +585,8 @@ class LinkifyIt
 //            .join('|');
 
         // (?!_) cause 1.5x slowdown
-        $this->re->schema_test   = '/(^|(?!_)(?:[><]|' . $this->re->src_ZPCc . '))(' . $slist . ')/ui';
-        $this->re->schema_search = '/(^|(?!_)(?:[><]|' . $this->re->src_ZPCc . '))(' . $slist . ')/ui';
+        $this->re->schema_test   = "/(^|(?!_)(?:[><\u{ff5c}]|" . $this->re->src_ZPCc . '))(' . $slist . ')/ui';
+        $this->re->schema_search = "/(^|(?!_)(?:[><\u{ff5c}]|" . $this->re->src_ZPCc . '))(' . $slist . ')/ui';
 
         $this->re->pretest       =
             '/((^|(?!_)(?:[><]|' . $this->re->src_ZPCc . '))(' . $slist . '))|' .

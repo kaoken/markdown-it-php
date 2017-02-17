@@ -208,6 +208,11 @@ class CTest extends EasyTest
                 'encoded' => 'xn--ls8h.la'
             ],
             [
+                'description' => 'Non-printable ASCII',
+                'decoded' => "\x0\x01\x02foo.bar",
+                'encoded' => "\x0\x01\x02foo.bar",
+            ],
+            [
                 "description" => "Email address",
                 'decoded' => 'джумла@джpумлатест.bрфa',
                 'encoded' => 'джумла@xn--p-8sbkgc5ag7bhce.xn--ba-lmcq'

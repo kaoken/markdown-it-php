@@ -63,7 +63,7 @@ class CTest extends EasyTest
     }
     private function notLink()
     {
-        $this->group('Links', function ($g) {
+        $this->group('not Links', function ($g) {
             $l = new LinkifyItTest();
             $lines = $this->getLinesFromFile($this->path('not_links'));
 

@@ -67,7 +67,6 @@ class Table
                 $pos = $lastBackTick + 1;
             }
 
-            if( $pos >= $max) break;
             $ch = $str[$pos];
         }
 
@@ -86,12 +85,15 @@ class Table
      */
     public function set(&$state, $startLine, $endLine, $silent=false)
     {
-        // should have at least three lines
+        // should have at least two lines
         if ($startLine + 2 > $endLine) { return false; }
 
         $nextLine = $startLine + 1;
 
         if ($state->sCount[$nextLine] < $state->blkIndent) { return false; }
+
+        // if it's indented more than 3 spaces, it should be a code block
+        if ($state->sCount[$nextLine] - $state->blkIndent >= 4) { return false; }
 
         // first character of the second $line should be '|', '-', ':',
         // and no other characters are allowed but spaces;
@@ -139,6 +141,7 @@ class Table
 
         $lineText = trim(self::getLine($state, $startLine));
         if ( strpos($lineText, '|') === false) { return false; }
+        if ( $state->sCount[$startLine] - $state->blkIndent >= 4) { return false; }
         $columns = self::escapedSplit(preg_replace("/^\||\|$/", '', $lineText));   // /g
 
         // header row will define an amount of $columns in the entire table,
@@ -181,12 +184,10 @@ class Table
         for ($nextLine = $startLine + 2; $nextLine < $endLine; $nextLine++) {
             if ($state->sCount[$nextLine] < $state->blkIndent) { break; }
 
-            $lineText = self::getLine($state, $nextLine);
+            $lineText = trim(self::getLine($state, $nextLine));
             if ( strpos($lineText, '|') === false) { break; }
-
-            // keep spaces at beginning of $line to indicate an empty first cell, but
-            // strip trailing whitespace
-            $columns = self::escapedSplit(preg_replace("/^\||\|\s*$/", '', $lineText)); // /g
+            if ( $state->sCount[$nextLine] - $state->blkIndent >= 4) { break; }
+            $columns = self::escapedSplit(preg_replace("/^\||\|$/", '', $lineText));
 
             $token = $state->push('tr_open', 'tr', 1);
             for ($i = 0; $i < $columnCount; $i++) {
