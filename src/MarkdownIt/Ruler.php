@@ -158,10 +158,10 @@ class Ruler
      *   //...
      * });
      * ```
-     * @param string        $beforeName new rule will be added before this one.
-     * @param string        $ruleName   name of added rule.
-     * @param callable|array  $entity    new rule function or instance.
-     * @param object        $options    rule options (not mandatory).
+     * @param string          $beforeName new rule will be added before this one.
+     * @param string          $ruleName   name of added rule.
+     * @param callable|array  $entity     new rule function or instance.
+     * @param object          $options    rule options (not mandatory).
      * @throws \Exception
      */
     public function before($beforeName, $ruleName, $entity, $options=null)

@@ -69,7 +69,6 @@ trait EncodeTrait
             $g->group('surrogates', function($gg) {
                 if( PHP_VERSION_ID >= 70000){
                     $gg->group('bad surrogates (high)', function($ggg) {
-
                         $ggg->strictEqual($this->mdurl->encode("\u{D800}foo"), '%ED%A0%80foo');
                         $ggg->strictEqual($this->mdurl->encode("foo\u{D800}"), 'foo%ED%A0%80');
                     });

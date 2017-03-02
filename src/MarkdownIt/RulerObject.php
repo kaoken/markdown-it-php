@@ -40,10 +40,10 @@ class RulerObject
 
     /**
      * RulerObject constructor.
-     * @param string        $name      rule name.
-     * @param bool          $enabled   rule Enable or Disable
+     * @param string          $name      rule name.
+     * @param bool            $enabled   rule Enable or Disable
      * @param callable|array  $entity    new rule function or instance.
-     * @param array         $alt       rule options (not mandatory).
+     * @param array           $alt       rule options (not mandatory).
      */
     public function __construct($name, $enabled, $entity, $alt)
     {

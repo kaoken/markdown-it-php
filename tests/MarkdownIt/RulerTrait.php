@@ -120,10 +120,10 @@ trait RulerTrait
                     $ruler->at('invalid name', function /*bar*/() {});
                 });
                 $gg->throws(function () use($ruler) {
-                    $ruler->before('invalid name', function /*bar*/() {});
+                    $ruler->before('invalid name', function /*bar*/() {}, null);
                 });
                 $gg->throws(function () use($ruler) {
-                    $ruler->after('invalid name', function /*bar*/() {});
+                    $ruler->after('invalid name', function /*bar*/() {}, null);
                 });
                 $gg->throws(function () use($ruler) {
                     $ruler->enable('invalid name');

@@ -6,7 +6,11 @@ class Re extends \stdClass
 {
     public function __construct($opts)
     {
-        // Use direct extract instead of `regenerate` to reduse browserified size
+        $ff5c = "\x{ff5c}";
+        if( PHP_VERSION_ID >= 70000){
+            $ff5c = "\u{ff5c}";
+        }
+            // Use direct extract instead of `regenerate` to reduse browserified size
         // (0xD800 <=  x <= 0xDFFF)
         // [\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF]
 //        $this->src_Any = "[\x{0000}-\x{D7FF}\x{E000}-\x{FFFF}]|[\x{DC00}-\x{DFFF}][\x{DC00}-\x{DFFF}]|[\x{D800}-\x{DBFF}](?![\x{DC00}-\x{DFFF}])|(?:[^\x{D800}-\x{DBFF}]|^)[\x{DC00}-\x{DFFF}]";
@@ -24,7 +28,8 @@ class Re extends \stdClass
         $this->src_ZCc = "\p{Z}|\p{Cc}";
         // Experimental. List of chars, completely prohibited in links
         // because can separate it from other part of text
-        $this->text_separators = "[><\u{ff5c}]";
+        $this->text_separators = "[><{$ff5c}]";
+
         // All possible word characters (everything without punctuation, spaces & controls)
         // Defined via punctuation & spaces to save space
         // Should be something like \p{\L\N\S\M} (\w but without `_`)
@@ -151,17 +156,16 @@ class Re extends \stdClass
         $this->tpl_email_fuzzy =
 
             "(^|".$this->text_separators."|\\(|" . $this->src_ZCc . ")(" . $this->src_email_name . "@" . $this->tpl_host_fuzzy_strict . ")";
-
         $this->tpl_link_fuzzy =
             // Fuzzy link can"t be prepended with .:/\- and non punctuation.
             // but can start with > (markdown blockquote)
-            "(^|(?![.:\/\-_@])(?:[$+<=>^`|\u{ff5c}]|" . $this->src_ZPCc . "))" .
-            "((?![$+<=>^`|\u{ff5c}])" . $this->tpl_host_port_fuzzy_strict . $this->src_path . ")";
+            "(^|(?![.:\/\-_@])(?:[$+<=>^`|$ff5c}]|" . $this->src_ZPCc . "))" .
+            "((?![$+<=>^`|$ff5c}])" . $this->tpl_host_port_fuzzy_strict . $this->src_path . ")";
 
         $this->tpl_link_no_ip_fuzzy =
             // Fuzzy link can"t be prepended with .:/\- and non punctuation.
             // but can start with > (markdown blockquote)
-            "(^|(?![.:\/\-_@])(?:[$+<=>^`|\u{ff5c}]|" . $this->src_ZPCc . "))" .
-            "((?![$+<=>^`|\u{ff5c}])" . $this->tpl_host_port_no_ip_fuzzy_strict . $this->src_path . ")";
+            "(^|(?![.:\/\-_@])(?:[$+<=>^`|$ff5c}]|" . $this->src_ZPCc . "))" .
+            "((?![$+<=>^`|$ff5c}])" . $this->tpl_host_port_no_ip_fuzzy_strict . $this->src_path . ")";
     }
 }

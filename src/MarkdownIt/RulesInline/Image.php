@@ -19,7 +19,7 @@ class Image
         $max = $state->posMax;
 
         if ($state->src[$state->pos] !== '!') { return false; }
-        if ($state->src[$state->pos + 1] !== '[') { return false; }
+        if (strlen($state->src) <= $state->pos+1 || $state->src[$state->pos + 1] !== '[') { return false; }
 
         $labelStart = $state->pos + 2;
         $labelEnd = $state->md->helpers->parseLinkLabel($state, $state->pos + 1, false);

@@ -67,6 +67,7 @@ class Table
                 $pos = $lastBackTick + 1;
             }
 
+            if( $pos >= $max ) break;
             $ch = $str[$pos];
         }
 

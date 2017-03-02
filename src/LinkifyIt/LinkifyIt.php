@@ -458,6 +458,10 @@ class LinkifyIt
      */
     private function compile()
     {
+        $ff5c = "\x{ff5c}";
+        if( PHP_VERSION_ID >= 70000){
+            $ff5c = "\u{ff5c}";
+        }
         $this->re = new Re($this->__opts__);
 
         // Define dynamic patterns
@@ -585,8 +589,9 @@ class LinkifyIt
 //            .join('|');
 
         // (?!_) cause 1.5x slowdown
-        $this->re->schema_test   = "/(^|(?!_)(?:[><\u{ff5c}]|" . $this->re->src_ZPCc . '))(' . $slist . ')/ui';
-        $this->re->schema_search = "/(^|(?!_)(?:[><\u{ff5c}]|" . $this->re->src_ZPCc . '))(' . $slist . ')/ui';
+        $this->re->schema_test   = "/(^|(?!_)(?:[><{$ff5c}]|" . $this->re->src_ZPCc . '))(' . $slist . ')/ui';
+        $this->re->schema_search = "/(^|(?!_)(?:[><{$ff5c}]|" . $this->re->src_ZPCc . '))(' . $slist . ')/ui';
+
 
         $this->re->pretest       =
             '/((^|(?!_)(?:[><]|' . $this->re->src_ZPCc . '))(' . $slist . '))|' .

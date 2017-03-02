@@ -6,10 +6,11 @@
 
 namespace Kaoken\Test\MarkdownIt;
 
-use Kaoken\MarkdownIt\Common\Utils as U;
+use Kaoken\MarkdownIt\Common\Utils as UtilCommon;
 
 trait UtilsTrait
 {
+
     private function utils()
     {
         $this->group('Utils',function($g){
@@ -22,65 +23,67 @@ trait UtilsTrait
      */
     private function utilsUtils($g)
     {
-        $g->group('fromCodePoint', function ($gg){
-            $gg->strictEqual(U::fromCodePoint(0x20), ' ');
-            $gg->strictEqual(U::fromCodePoint(0x1F601), '😁');
+        $u = new UtilCommon();
+        
+        $g->group('fromCodePoint', function ($gg) use($u){
+            $gg->strictEqual($u->fromCodePoint(0x20), ' ');
+            $gg->strictEqual($u->fromCodePoint(0x1F601), '😁');
         });
         //------------------------------------------------------
-        $g->group('isValidEntityCode', function ($gg) {
+        $g->group('isValidEntityCode', function ($gg) use($u) {
     
-            $gg->strictEqual(U::isValidEntityCode(0x20), true);
-            $gg->strictEqual(U::isValidEntityCode(0xD800), false);
-            $gg->strictEqual(U::isValidEntityCode(0xFDD0), false);
-            $gg->strictEqual(U::isValidEntityCode(0x1FFFF), false);
-            $gg->strictEqual(U::isValidEntityCode(0x1FFFE), false);
-            $gg->strictEqual(U::isValidEntityCode(0x00), false);
-            $gg->strictEqual(U::isValidEntityCode(0x0B), false);
-            $gg->strictEqual(U::isValidEntityCode(0x0E), false);
-            $gg->strictEqual(U::isValidEntityCode(0x7F), false);
+            $gg->strictEqual($u->isValidEntityCode(0x20), true);
+            $gg->strictEqual($u->isValidEntityCode(0xD800), false);
+            $gg->strictEqual($u->isValidEntityCode(0xFDD0), false);
+            $gg->strictEqual($u->isValidEntityCode(0x1FFFF), false);
+            $gg->strictEqual($u->isValidEntityCode(0x1FFFE), false);
+            $gg->strictEqual($u->isValidEntityCode(0x00), false);
+            $gg->strictEqual($u->isValidEntityCode(0x0B), false);
+            $gg->strictEqual($u->isValidEntityCode(0x0E), false);
+            $gg->strictEqual($u->isValidEntityCode(0x7F), false);
         });
         //------------------------------------------------------
-        /*$g->group('replaceEntities', function ($gg) {
-            $gg->strictEqual(U::replaceEntities('&amp;'), '&');
-            $gg->strictEqual(U::replaceEntities('&#32;'), ' ');
-            $gg->strictEqual(U::replaceEntities('&#x20;'), ' ');
-            $gg->strictEqual(U::replaceEntities('&amp;&amp;'), '&&');
+        /*$g->group('replaceEntities', function ($gg) use($u) {
+            $gg->strictEqual($u->replaceEntities('&amp;'), '&');
+            $gg->strictEqual($u->replaceEntities('&#32;'), ' ');
+            $gg->strictEqual($u->replaceEntities('&#x20;'), ' ');
+            $gg->strictEqual($u->replaceEntities('&amp;&amp;'), '&&');
     
-            $gg->strictEqual(U::replaceEntities('&am;'), '&am;');
-            $gg->strictEqual(U::replaceEntities('&#00;'), '&#00;');
+            $gg->strictEqual($u->replaceEntities('&am;'), '&am;');
+            $gg->strictEqual($u->replaceEntities('&#00;'), '&#00;');
         });*/
         //------------------------------------------------------
-        $g->group('assign', function ($gg) {
-            $gg->deepEqual(U::assign((object)["a"=>1], null, (object)["b"=>2]), (object)["a"=>1, "b"=>2]);
-            $gg->throws(function () {
-                U::assign((object)[], 123);
+        $g->group('assign', function ($gg) use($u) {
+            $gg->deepEqual($u->assign((object)["a"=>1], null, (object)["b"=>2]), (object)["a"=>1, "b"=>2]);
+            $gg->throws(function ()  use($u){
+                $u->assign((object)[], 123);
             });
         });
         //------------------------------------------------------
-        $g->group('escapeRE', function ($gg) {
-            $gg->strictEqual(U::escapeRE(" .?*+^$[]\\\\(){}|-"), " \\.\\?\\*\\+\\^\\$\\[\\]\\\\\\(\\)\\{\\}\\|\\-" );
+        $g->group('escapeRE', function ($gg) use($u) {
+            $gg->strictEqual($u->escapeRE(" .?*+^$[]\\\\(){}|-"), " \\.\\?\\*\\+\\^\\$\\[\\]\\\\\\(\\)\\{\\}\\|\\-" );
         });
         //------------------------------------------------------
-        $g->group('isWhiteSpace', function ($gg) {
-            $gg->strictEqual(U::isWhiteSpace("\x20\x00"), true);
-            $gg->strictEqual(U::isWhiteSpace(chr(0x09)), true);
-            $gg->strictEqual(U::isWhiteSpace(chr(0x30)), false);
+        $g->group('isWhiteSpace', function ($gg) use($u) {
+            $gg->strictEqual($u->isWhiteSpace("\x20\x00"), true);
+            $gg->strictEqual($u->isWhiteSpace(chr(0x09)), true);
+            $gg->strictEqual($u->isWhiteSpace(chr(0x30)), false);
         });
         //------------------------------------------------------
-        $g->group('isMdAsciiPunct', function ($gg) {
-            $gg->strictEqual(U::isMdAsciiPunct(chr(0x30)), false);
+        $g->group('isMdAsciiPunct', function ($gg) use($u) {
+            $gg->strictEqual($u->isMdAsciiPunct(chr(0x30)), false);
 
             foreach(str_split("!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~") as $val ){
-                $gg->strictEqual(U::isMdAsciiPunct($val), true);
+                $gg->strictEqual($u->isMdAsciiPunct($val), true);
             }
         });
         //------------------------------------------------------
-        $g->group('unescapeMd', function ($gg) {
-            $gg->strictEqual(U::unescapeMd("\\foo"), "\\foo");
-            $gg->strictEqual(U::unescapeMd('foo'), 'foo');
+        $g->group('unescapeMd', function ($gg) use($u) {
+            $gg->strictEqual($u->unescapeMd("\\foo"), "\\foo");
+            $gg->strictEqual($u->unescapeMd('foo'), 'foo');
 
             foreach(str_split("!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~") as $ch ){
-                $gg->strictEqual(U::unescapeMd("\\" . $ch), $ch);
+                $gg->strictEqual($u->unescapeMd("\\" . $ch), $ch);
             }
         });
     }
