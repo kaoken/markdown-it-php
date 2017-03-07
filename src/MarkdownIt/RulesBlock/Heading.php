@@ -19,6 +19,9 @@ class Heading
         $pos = $state->bMarks[$startLine] + $state->tShift[$startLine];
         $max = $state->eMarks[$startLine];
 
+        // if it's indented more than 3 spaces, it should be a code block
+        if ($state->sCount[$startLine] - $state->blkIndent >= 4) { return false; }
+
         $ch  = $state->src[$pos];
 
         if ($ch !== '#' || $pos >= $max) { return false; }

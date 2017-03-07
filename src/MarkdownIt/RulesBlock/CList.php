@@ -128,6 +128,9 @@ class CList
         $isTerminatingParagraph = false;
         $tight = true;
 
+        // if it's indented more than 3 spaces, it should be a code block
+        if ($state->sCount[$startLine] - $state->blkIndent >= 4) { return false; }
+
         // limit conditions when list can interrupt
         // a paragraph (validation mode only)
         if ($silent && $state->parentType === 'paragraph') {
@@ -141,7 +144,7 @@ class CList
             }
         }
 
-        // Detect list type and position after $marker
+        // Detect list type and position after marker
         if (($posAfterMarker = self::skipOrderedListMarker($state, $startLine)) >= 0) {
             $isOrdered = true;
             $start = $state->bMarks[$startLine] + $state->tShift[$startLine];

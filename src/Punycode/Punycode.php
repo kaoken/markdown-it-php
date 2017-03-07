@@ -13,7 +13,7 @@
  *
  *
  *
- * use javascript version 2.0.1
+ * use javascript version 2.1.0
  * @see https://github.com/bestiejs/punycode.js/tree/v2.1.0
  */
 namespace Kaoken\Punycode;

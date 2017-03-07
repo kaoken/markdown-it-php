@@ -16,8 +16,12 @@ class BlockQuote
      */
     public function set(&$state, $startLine, $endLine, $silent=false)
     {
+        $oldLineMax = $state->lineMax;
         $pos = $state->bMarks[$startLine] + $state->tShift[$startLine];
         $max = $state->eMarks[$startLine];
+
+        // if it's indented more than 3 spaces, it should be a code block
+        if ($state->sCount[$startLine] - $state->blkIndent >= 4) { return false; }
 
         // check the block quote marker
         if ($state->src[$pos++] !== '>') { return false; }
@@ -25,9 +29,6 @@ class BlockQuote
         // we know that it's going to be a valid blockquote,
         // so no point trying to find the end of it in $silent mode
         if ($silent) { return true; }
-
-        $oldIndent = $state->blkIndent;
-        $state->blkIndent = 0;
 
         // skip spaces after ">" and re-calculate $offset
         $initial = $offset = $state->sCount[$startLine] + $pos - ($state->bMarks[$startLine] + $state->tShift[$startLine]);
@@ -115,7 +116,15 @@ class BlockQuote
         //      - - -
         //     ```
         for ($nextLine = $startLine + 1; $nextLine < $endLine; $nextLine++) {
-            if ($state->sCount[$nextLine] < $oldIndent) { break; }
+            // check if it's outdented, i.e. it's inside list item and indented
+            // less than said list item:
+            //
+            // ```
+            // 1. anything
+            //    > current blockquote
+            // 2. checking this line
+            // ```
+            $isOutdented = $state->sCount[$nextLine] < $state->blkIndent;
 
             $pos = $state->bMarks[$nextLine] + $state->tShift[$nextLine];
             $max = $state->eMarks[$nextLine];
@@ -125,7 +134,7 @@ class BlockQuote
                 break;
             }
 
-            if ($state->src[$pos++]=== '>') {
+            if ($state->src[$pos++]=== '>' && !$isOutdented) {
                 // This line is inside the blockquote.
 
                 // skip spaces after ">" and re-calculate $offset
@@ -209,7 +218,13 @@ class BlockQuote
             }
 
             if ($terminate) {
-                if ($oldIndent !== 0) {
+                // Quirk to enforce "hard termination mode" for paragraphs;
+                // normally if you call `tokenize(state, startLine, nextLine)`,
+                // paragraphs will look below nextLine for paragraph continuation,
+                // but if blockquote is terminated by another tag, they shouldn't
+                $state->lineMax = $nextLine;
+
+                if ($state->blkIndent !== 0) {
                     // state.blkIndent was non-zero, we now set it to zero,
                     // so we need to re-calculate all offsets to appear as
                     // if indent wasn't changed
@@ -217,11 +232,13 @@ class BlockQuote
                     $oldBSCount[] = $state->bsCount[$nextLine];
                     $oldTShift[] = $state->tShift[$nextLine];
                     $oldSCount[] = $state->sCount[$nextLine];
-                    $state->sCount[$nextLine] -= $oldIndent;
+                    $state->sCount[$nextLine] -= $state->blkIndent;
                 }
 
                 break;
             }
+
+            if ($isOutdented) break;
 
             $oldBMarks[] = $state->bMarks[$nextLine];
             $oldBSCount[] = $state->bsCount[$nextLine];
@@ -233,6 +250,9 @@ class BlockQuote
             $state->sCount[$nextLine] = -1;
         }
 
+        $oldIndent = $state->blkIndent;
+        $state->blkIndent = 0;
+
         $token        = $state->push('blockquote_open', 'blockquote', 1);
         $token->markup = '>';
         $token->map    = $lines = [ $startLine, 0 ];
@@ -242,6 +262,7 @@ class BlockQuote
         $token        = $state->push('blockquote_close', 'blockquote', -1);
         $token->markup = '>';
 
+        $state->lineMax = $oldLineMax;
         $state->parentType = $oldParentType;
         $lines[1] = $state->line;
 

@@ -18,6 +18,9 @@ class Reference
         $max = $state->eMarks[$startLine];
         $nextLine = $startLine + 1;
 
+        // if it's indented more than 3 spaces, it should be a code block
+        if ($state->sCount[$startLine] - $state->blkIndent >= 4) { return false; }
+
         if ($state->src[$pos] !== '[') { return false; }
 
         // Simple check to quickly interrupt scan on [link](url) at the $start of line.

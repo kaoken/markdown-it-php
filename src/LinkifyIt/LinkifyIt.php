@@ -16,7 +16,7 @@
  *
  *
  *
- * use javascript version 2.0.2
+ * use javascript version 2.0.3
  * @see https://github.com/markdown-it/linkify-it/tree/2.0.3
  */
 
