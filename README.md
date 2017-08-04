@@ -1,12 +1,12 @@
 # markdown-it-php
 
 [![Build Status](https://img.shields.io/travis/markdown-it/markdown-it/master.svg?style=flat)](https://github.com/kaoken/markdown-it-php)
-[![composer version](https://img.shields.io/badge/version-8.3.101-blue.svg)](https://github.com/kaoken/markdown-it-php)
+[![composer version](https://img.shields.io/badge/version-8.3.201-blue.svg)](https://github.com/kaoken/markdown-it-php)
 [![licence](https://img.shields.io/badge/licence-MIT-blue.svg)](https://github.com/kaoken/markdown-it-php)
 [![php version](https://img.shields.io/badge/php%20version-≧5.6.4-red.svg)](https://github.com/kaoken/markdown-it-php)
 
 
-This gem is a port of the [markdown-it Javascript package](https://github.com/markdown-it/markdown-it) by Vitaly Puzrin and Alex Kocharin. Currently synced with markdown-it 8.3.1
+This gem is a port of the [markdown-it Javascript package](https://github.com/markdown-it/markdown-it) by Vitaly Puzrin and Alex Kocharin. Currently synced with markdown-it 8.3.2
 
 __[Javascript Live demo](https://markdown-it.github.io)__
 
@@ -130,7 +130,7 @@ $md = new MarkdownIt([
   "highlight"=> function ($str, $lang) {
     if ( $lang ) {
       try {
-        return '<pre class="hljs"><code>' +
+        return '<pre class="hljs"><code>' .
                highlight_string($str) .
                '</code></pre>';
       } catch (__) {}
@@ -156,8 +156,8 @@ $md->linkify->tlds('.py', false);  // disables .py as top level domain
 
 Embedded (enabled by default):
 
-- [Tables](https://help.github.com/articles/github-flavored-markdown/#tables) (GFM)
-- [Strikethrough](https://help.github.com/articles/github-flavored-markdown/#strikethrough) (GFM)
+- [Tables](https://help.github.com/articles/organizing-information-with-tables/) (GFM)
+- [Strikethrough](https://help.github.com/articles/basic-writing-and-formatting-syntax/#styling-text) (GFM)
 
 The following plugins are in the **kaoken\markdown-it-php\MarkdownIt\Plugins** directory:
 

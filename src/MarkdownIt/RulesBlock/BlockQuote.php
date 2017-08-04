@@ -96,6 +96,7 @@ class BlockQuote
 
         $oldParentType = $state->parentType;
         $state->parentType = 'blockquote';
+        $wasOutdented = false;
 
         // Search the end of the block
         //
@@ -124,7 +125,7 @@ class BlockQuote
             //    > current blockquote
             // 2. checking this line
             // ```
-            $isOutdented = $state->sCount[$nextLine] < $state->blkIndent;
+            if ($state->sCount[$nextLine] < $state->blkIndent) $wasOutdented = true;
 
             $pos = $state->bMarks[$nextLine] + $state->tShift[$nextLine];
             $max = $state->eMarks[$nextLine];
@@ -133,8 +134,7 @@ class BlockQuote
                 // Case 1: line is not inside the blockquote, and this line is empty.
                 break;
             }
-
-            if ($state->src[$pos++]=== '>' && !$isOutdented) {
+            if ($state->src[$pos++]=== '>' && !$wasOutdented) {
                 // This line is inside the blockquote.
 
                 // skip spaces after ">" and re-calculate $offset
@@ -237,8 +237,6 @@ class BlockQuote
 
                 break;
             }
-
-            if ($isOutdented) break;
 
             $oldBMarks[] = $state->bMarks[$nextLine];
             $oldBSCount[] = $state->bsCount[$nextLine];

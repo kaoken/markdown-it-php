@@ -12,8 +12,8 @@
  * http://opensource.org/licenses/mit-license.php
  *
  *
- * use javascript version 2.0.1
- * @see https://github.com/markdown-it/markdown-it-deflist/tree/2.0.1
+ * use javascript version 2.0.3
+ * @see https://github.com/markdown-it/markdown-it-deflist/tree/2.0.3
  */
 // Process definition lists
 //
@@ -94,8 +94,11 @@ class MarkdownItDeflist
         }
 
         $nextLine = $startLine + 1;
+        if ($nextLine >= $endLine) { return false; }
+
         if ($state->isEmpty($nextLine)) {
-            if (++$nextLine > $endLine) { return false; }
+            $nextLine++;
+            if ($nextLine >= $endLine) { return false; }
         }
 
         if ($state->sCount[$nextLine] < $state->blkIndent) { return false; }

@@ -17,7 +17,7 @@ class ParserBlock
         [ 'table',      \Kaoken\MarkdownIt\RulesBlock\Table::class,      [ 'paragraph', 'reference' ] ],
         [ 'code',       \Kaoken\MarkdownIt\RulesBlock\Code::class ],
         [ 'fence',      \Kaoken\MarkdownIt\RulesBlock\Fence::class,      [ 'paragraph', 'reference', 'blockquote', 'list' ] ],
-        [ 'blockquote', \Kaoken\MarkdownIt\RulesBlock\BlockQuote::class, [ 'paragraph', 'reference', 'list' ] ],
+        [ 'blockquote', \Kaoken\MarkdownIt\RulesBlock\BlockQuote::class, [ 'paragraph', 'reference', 'blockquote', 'list' ] ],
         [ 'hr',         \Kaoken\MarkdownIt\RulesBlock\Hr::class,         [ 'paragraph', 'reference', 'blockquote', 'list' ] ],
         [ 'list',       \Kaoken\MarkdownIt\RulesBlock\CList::class,       [ 'paragraph', 'reference', 'blockquote' ] ],
         [ 'reference',  \Kaoken\MarkdownIt\RulesBlock\Reference::class ],
@@ -95,7 +95,7 @@ class ParserBlock
                 if ($ok) { break; }
             }
 
-            // set state.tight iff we had an empty line before current tag
+            // set state.tight if we had an empty line before current tag
             // i.e. latest empty line should not count
             $state->tight = !$hasEmptyLines;
 

@@ -13,7 +13,7 @@
  *
  *
  * use javascript version 1.3.0
- * @see https://github.com/markdown-it/markdown-it-emoji/tree/1.3.0
+ * @see https://github.com/markdown-it/markdown-it-emoji/tree/1.4.0
  */
 
 namespace Kaoken\MarkdownIt\Plugins;

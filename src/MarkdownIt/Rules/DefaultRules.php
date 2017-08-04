@@ -79,7 +79,7 @@ class DefaultRules
             return $highlighted . "\n";
         }
 
-        // If language exists, inject class gently, without mudofying original $token->
+        // If language exists, inject class gently, without modifying original token.
         // May be, one day we will add .clone() for $token and simplify this part, but
         // now we prefer to keep things local.
         if ($info) {

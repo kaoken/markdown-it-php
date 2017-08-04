@@ -23,7 +23,7 @@ class Replace
      * @param string $scanRE
      * @param string $replaceRE
      */
-    function __construct($md, &$emojies, &$shortcuts, &$scanRE, &$replaceRE)
+    public function __construct($md, &$emojies, &$shortcuts, &$scanRE, &$replaceRE)
     {
         $this->emojies = $emojies;
         $this->shortcuts = $shortcuts;
@@ -112,7 +112,7 @@ class Replace
                     if ($token->info === 'auto') { $autolinkLevel -= $token->nesting; }
                 }
 
-                if ($token->type === 'text' && preg_match($this->scanRE, $token->content) && $autolinkLevel === 0) {
+                if ($token->type === 'text' && $autolinkLevel === 0 && preg_match($this->scanRE, $token->content)) {
                     // replace current node
                     $blockTokens[$j]->children = $tokens = $state->md->utils->arrayReplaceAt(
                         $tokens, $i, $this->splitTextToken($state, $token->content, $token->level)

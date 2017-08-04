@@ -77,7 +77,6 @@ class Def
         /**
          * @param string  $text
          * @param integer $pos
-         * @param $self
          * @return int
          */
         $http->validate = function ($text, $pos) {

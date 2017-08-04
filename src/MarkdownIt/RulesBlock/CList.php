@@ -8,7 +8,7 @@ use Kaoken\MarkdownIt\Common\Utils;
 class CList
 {
     /**
-     * Search `[-+*][\n ]`, returns next $pos arter $marker on success
+     * Search `[-+*][\n ]`, returns next pos after marker on success
      * or -1 on fail.
      * @param StateBlock $state
      * @param integer    $startLine
@@ -43,7 +43,7 @@ class CList
 
 
     /**
-     * Search `\d+[.)][\n ]`, returns next $pos arter $marker on success
+     * Search `\d+[.)][\n ]`, returns next pos after marker on success
      * or -1 on fail.
      * @param StateBlock $state
      * @param integer    $startLine
@@ -209,13 +209,11 @@ class CList
             while ($pos < $max) {
                 $ch = $state->src[$pos];
 
-                if ($state->md->utils->isSpace($ch)) {
-                    if ($ch === "\t") {
-                        $offset += 4 - ($offset + $state->bsCount[$nextLine]) % 4;
-                    } else {
-                        $offset++;
-                    }
-                } else {
+                if ($ch === "\t") {
+                    $offset += 4 - ($offset + $state->bsCount[$nextLine]) % 4;
+                } else if ($ch === ' ') {
+                    $offset++;
+                }else {
                     break;
                 }
 
@@ -322,7 +320,7 @@ class CList
             if ($markerCharCode !== $state->src[$posAfterMarker - 1]) { break; }
         }
 
-        // Finilize list
+        // Finalize list
         if ($isOrdered) {
             $token = $state->push('ordered_list_close', 'ol', -1);
         } else {

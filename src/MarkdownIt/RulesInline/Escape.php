@@ -1,5 +1,5 @@
 <?php
-// Proceess escaped chars and hardbreaks
+// Process escaped chars and hardbreaks
 
 namespace Kaoken\MarkdownIt\RulesInline;
 
