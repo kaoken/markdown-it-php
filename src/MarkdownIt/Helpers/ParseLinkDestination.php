@@ -68,18 +68,18 @@ trait ParseLinkDestination
 
             if ($ch === '(' ) {
                 $level++;
-                if ($level > 1) { break; }
             }
 
             if ($ch === ')' ) {
+                if ($level === 0) { break; }
                 $level--;
-                if ($level < 0) { break; }
             }
 
             $pos++;
         }
 
         if ($start === $pos) { return $result; }
+        if ($level !== 0) { return $result; }
 
         $result->str = $this->utils->unescapeAll(substr($str, $start, $pos-$start));
         $result->lines = $lines;

@@ -213,8 +213,8 @@ trait MiscTrait
 
             $md->enable("emphasis");
 
-            $gg->strictEqual($md->render("___foo___"), "<p><strong><em>foo</em></strong></p>\n");
-            $gg->strictEqual($md->renderInline("___foo___"), "<strong><em>foo</em></strong>");
+            $gg->strictEqual($md->render("___foo___"), "<p><em><strong>foo</strong></em></p>\n");
+            $gg->strictEqual($md->renderInline("___foo___"), "<em><strong>foo</strong></em>");
         });
         //-------------------------------------------------------------------
         $g->group("Should correctly check block termination rules when those are disabled (#13)", function ($gg) {

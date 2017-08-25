@@ -81,7 +81,7 @@ class Emphasis
         $delimiters = &$state->delimiters;
         $max = count($state->delimiters);
 
-        for ($i = 0; $i < $max; $i++) {
+        for ($i = $max - 1; $i >= 0; $i--) {
             $startDelim = &$delimiters[$i];
 
             if ($startDelim->marker !== '_' && $startDelim->marker !== '*') {
@@ -95,16 +95,16 @@ class Emphasis
 
             $endDelim = &$delimiters[$startDelim->end];
 
-            // If the next delimiter has the same $marker and is adjacent to this one,
+            // If the previous delimiter has the same marker and is adjacent to this one,
             // merge those into one strong delimiter->
             //
             // `<em><em>whatever</em></em>` -> `<strong>whatever</strong>`
             //
-            $isStrong = $i + 1 < $max &&
-                $delimiters[$i + 1]->end === $startDelim->end - 1 &&
-                $delimiters[$i + 1]->token === $startDelim->token + 1 &&
-                $delimiters[$startDelim->end - 1]->token === $endDelim->token - 1 &&
-                $delimiters[$i + 1]->marker === $startDelim->marker;
+            $isStrong = $i > 0 &&
+                $delimiters[$i - 1]->end === $startDelim->end + 1 &&
+                $delimiters[$i - 1]->token === $startDelim->token - 1 &&
+                $delimiters[$startDelim->end + 1]->token === $endDelim->token + 1 &&
+                $delimiters[$i - 1]->marker === $startDelim->marker;
 
             $ch = $startDelim->marker;
 
@@ -123,9 +123,9 @@ class Emphasis
             $token->content = '';
 
             if ($isStrong) {
-                $state->tokens[$delimiters[$i + 1]->token]->content = '';
-                $state->tokens[$delimiters[$startDelim->end - 1]->token]->content = '';
-                $i++;
+                $state->tokens[$delimiters[$i - 1]->token]->content = '';
+                $state->tokens[$delimiters[$startDelim->end + 1]->token]->content = '';
+                $i--;
             }
         }
     }

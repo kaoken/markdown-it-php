@@ -100,7 +100,8 @@ __HTML__;
     public function strictEqual($a, $b, $message="")
     {
         $this->itemCount++;
-        if ($a !== $b) $this->fail($a, $b, $message, '===', 'strictEqual');
+        if ($a !== $b)
+            $this->fail($a, $b, $message, '===', 'strictEqual');
         else $this->html .= $this->successText($message);
     }
     public function notStrictEqual($a, $b, $message="")
