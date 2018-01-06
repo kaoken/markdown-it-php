@@ -1,7 +1,7 @@
 # markdown-it-php
 
 [![Build Status](https://img.shields.io/travis/markdown-it/markdown-it/master.svg?style=flat)](https://github.com/kaoken/markdown-it-php)
-[![composer version](https://img.shields.io/badge/version-8.4.001-blue.svg)](https://github.com/kaoken/markdown-it-php)
+[![composer version](https://img.shields.io/badge/version-8.4.000-blue.svg)](https://github.com/kaoken/markdown-it-php)
 [![licence](https://img.shields.io/badge/licence-MIT-blue.svg)](https://github.com/kaoken/markdown-it-php)
 [![php version](https://img.shields.io/badge/php%20version-≧5.6.4-red.svg)](https://github.com/kaoken/markdown-it-php)
 
@@ -114,7 +114,7 @@ $md = new MarkdownIt([
     if ( $lang ) {
       try {
         return highlight_string($str);
-      } catch (__) {}
+      } catch (Exception $e) {}
     }
 
     return ''; // use external default escaping
@@ -133,7 +133,7 @@ $md = new MarkdownIt([
         return '<pre class="hljs"><code>' .
                highlight_string($str) .
                '</code></pre>';
-      } catch (__) {}
+      } catch (Exception $e) {}
     }
 
     return '<pre class="hljs"><code>' . $md->utils->escapeHtml($str) . '</code></pre>';
