@@ -73,7 +73,8 @@ class SmartQuotes
                     $lastChar = $text[$t[0][1] - 1];
                 } else {
                     for ($j = $i - 1; $j >= 0; $j--) {
-                        if ($tokens[$j]->type !== 'text') { continue; }
+                        if ($tokens[$j]->type === 'softbreak' || $tokens[$j]->type === 'hardbreak') break; // lastChar defaults to 0x20
+                        if ($tokens[$j]->type !== 'text') continue;
 
                         $lastChar = $tokens[$j]->content[strlen($tokens[$j]->content) - 1];
                         break;
@@ -89,7 +90,8 @@ class SmartQuotes
                     $nextChar = $text[$pos];
                 } else {
                     for ($j = $i + 1; $j < count($tokens); $j++) {
-                        if ($tokens[$j]->type !== 'text') { continue; }
+                        if ($tokens[$j]->type === 'softbreak' || $tokens[$j]->type === 'hardbreak') break; // lastChar defaults to 0x20
+                        if ($tokens[$j]->type !== 'text') continue;
 
                         $nextChar = $tokens[$j]->content[0];
                         break;

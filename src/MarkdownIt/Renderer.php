@@ -45,8 +45,9 @@ class Renderer
      * $md->renderer->rules->strong_close = [ $st, 'close' ];
      *
      * $result = $md->renderInline(...);
-     * ```     *
-     * Each rule is called as independed static function with fixed signature:
+     * ```
+     *
+     * Each rule is called as independent static function with fixed signature:
      *
      * ```PHP
      * function my_token_render($tokens, $idx, $options, $env, $renderer) {
