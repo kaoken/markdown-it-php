@@ -13,8 +13,8 @@
  *
  *
  *
- * use javascript version 2.1.0
- * @see https://github.com/bestiejs/punycode.js/tree/v2.1.0
+ * use javascript version 2.1.1
+ * @see https://github.com/bestiejs/punycode.js/tree/v2.1.1
  */
 namespace Kaoken\Punycode;
 
@@ -25,7 +25,7 @@ class Punycode
      * A string representing the current Punycode.js version number.
      * @type String
      */
-    const Version = '2.1.0';
+    const Version = '2.1.1';
 
     /** Highest positive signed 32-bit float value */
     const MAX_INT = 2147483647; // aka. 0x7FFFFFFF or 2^31-1

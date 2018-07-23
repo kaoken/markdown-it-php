@@ -104,7 +104,7 @@ class Ruler
      *
      * ##### Example
      *
-     * Replace existing typorgapher replacement rule with new one:
+     * Replace existing typographer replacement rule with new one:
      *
      * ```PHP
      * class Instance{
