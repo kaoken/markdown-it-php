@@ -53,6 +53,9 @@ class MarkdownItEmoji
         $opts = NormalizeOpts::normalize($md->utils->assign(new \stdClass(), $defaults, $options));
 
         $md->renderer->rules->emoji = [new Render(), 'emoji_html'];
+        // This can be replaced with the following, commented out line, if
+        // twemoji should be used instead of the standard emoji characters.
+        // $md->renderer->rules->emoji = [new Render(), 'twemoji'];
 
         $md->core->ruler->push('emoji',
             [
