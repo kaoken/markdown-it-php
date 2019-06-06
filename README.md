@@ -27,7 +27,7 @@ __Table of content__
 **composer**:
 
 ```bash
-composer install kaoken/markdown-it-php
+composer require kaoken/markdown-it-php
 ```
 
 
