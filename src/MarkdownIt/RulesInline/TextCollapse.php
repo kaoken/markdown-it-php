@@ -1,5 +1,11 @@
 <?php
-// Merge adjacent text nodes into one, and re-calculate all token levels
+// Clean up tokens after emphasis and strikethrough postprocessing:
+// merge adjacent text nodes into one and re-calculate all token levels
+//
+// This is necessary because initially emphasis delimiter markers (*, _, ~)
+// are treated as their own separate text tokens. Then emphasis rule either
+// leaves them as text (needed to merge with adjacent text) or turns them
+// into opening/closing tags (which messes up levels inside).
 //
 
 namespace Kaoken\MarkdownIt\RulesInline;
@@ -20,9 +26,12 @@ class TextCollapse
         $max = count($state->tokens);
 
         for ($curr = $last = 0; $curr < $max; $curr++) {
-            // re-calculate levels
-            $level += $tokens[$curr]->nesting;
+            // re-calculate levels after emphasis/strikethrough turns some text nodes
+            // into opening/closing tags
+            if ($tokens[$curr]->nesting < 0) $level--; // closing tag
             $tokens[$curr]->level = $level;
+            if ($tokens[$curr]->nesting > 0) $level++; // opening tag
+
 
             if ($tokens[$curr]->type === 'text' &&
                 $curr + 1 < $max &&

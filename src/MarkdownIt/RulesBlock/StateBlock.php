@@ -184,9 +184,9 @@ class StateBlock
         $token = $this->createToken($type, $tag, $nesting);
         $token->block = true;
     
-        if ($nesting < 0) { $this->level--; }
+        if ($nesting < 0) $this->level--; // closing tag
         $token->level = $this->level;
-        if ($nesting > 0) { $this->level++; }
+        if ($nesting > 0) $this->level++; // opening tag
     
         $this->tokens[] = $token;
         return $token;

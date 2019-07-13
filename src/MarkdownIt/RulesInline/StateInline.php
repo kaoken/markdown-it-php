@@ -96,9 +96,9 @@ class StateInline
 
         $token = $this->createToken($type, $tag, $nesting);
 
-        if ($nesting < 0) { $this->level--; }
+        if ($nesting < 0) $this->level--; // closing tag
         $token->level = $this->level;
-        if ($nesting > 0) { $this->level++; }
+        if ($nesting > 0) $this->level++; // opening tag
 
         $this->pendingLevel = $this->level;
         $this->tokens[] = $token;
