@@ -30,7 +30,7 @@ trait ParseLinkDestination
             $pos++;
             while ($pos < $max) {
                 $ch= $str[$pos];
-                if ($str[$pos] == "\n" || $this->utils->isSpace($ch)) { return $result; }
+                if ($str[$pos] === "\n") { return $result; }
                 if ($ch === '>') {
                     $result->pos = $pos + 1;
                     $result->str = $this->utils->unescapeAll(substr($str, $start + 1, $pos-($start+1)));

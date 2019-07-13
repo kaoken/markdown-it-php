@@ -33,11 +33,21 @@ class BalancePairs
                     $currDelim->end < 0 &&
                     $currDelim->level === $lastDelim->level
                 ) {
+                    $odd_match = false;
 
                     // typeofs are for backward compatibility with plugins
-                    $odd_match = ($currDelim->close || $lastDelim->open) &&
-                        isset($currDelim->length) && isset($lastDelim->length) &&
-                        ($currDelim->length + $lastDelim->length) % 3 === 0;
+                    if (($currDelim->close || $lastDelim->open) &&
+                        isset($currDelim->length) &&
+                        isset($lastDelim->length)) {
+                        // from spec:
+                        // sum of the lengths [...] must not be a multiple of 3
+                        // unless both lengths are multiples of 3
+                        if (($currDelim->length + $lastDelim->length) % 3 === 0) {
+                            if ($currDelim->length % 3 !== 0 || $lastDelim->length % 3 !== 0) {
+                                $odd_match = true;
+                            }
+                        }
+                    }
 
                     if (!$odd_match) {
                         $lastDelim->jump = $i - $j;

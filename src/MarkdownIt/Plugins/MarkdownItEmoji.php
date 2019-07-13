@@ -12,7 +12,7 @@
  * http://opensource->org/licenses/mit-license->php
  *
  *
- * use javascript version 1.3.0
+ * use javascript version 1.4.0
  * @see https://github.com/markdown-it/markdown-it-emoji/tree/1.4.0
  */
 
@@ -35,6 +35,7 @@ class MarkdownItEmoji
 
     /**
      * @param \Kaoken\MarkdownIt\MarkdownIt $md
+     * @param null|object|array $options
      */
     public function plugin($md, $options=null)
     {

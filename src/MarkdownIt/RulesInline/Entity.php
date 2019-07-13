@@ -23,7 +23,7 @@ class Entity
             $ch = $state->src[$pos + 1];
 
             if ($ch === '#') {
-                if (preg_match("/^&#((?:x[a-f0-9]{1,8}|[0-9]{1,8}));/i", substr($state->src,$pos), $match)) {
+                if (preg_match("/^&#((?:x[a-f0-9]{1,6}|[0-9]{1,7}));/i", substr($state->src,$pos), $match)) {
                     if (!$silent) {
                         $code = strtolower($match[1][0]) === 'x' ? intval(substr($match[1],1),16) : intval($match[1], 10);
                         $state->pending .= $state->md->utils->isValidEntityCode($code) ? $state->md->utils->fromCodePoint($code) : $state->md->utils->fromCodePoint(0xFFFD);

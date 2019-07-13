@@ -12,7 +12,7 @@
  * http://opensource.org/licenses/mit-license.php
  *
  *
- * use javascript version 3.0.1
+ * use javascript version 3.0.2
  * @see https://github.com/markdown-it/markdown-it-footnote
  */
 // Process footnotes
@@ -280,6 +280,7 @@ class MarkdownItFootnote
                 $token->meta->id = $footnoteId;
 
                 $state->env->footnotes->list[$footnoteId] = new \stdClass();
+                $state->env->footnotes->list[$footnoteId]->content =  substr($state->src, $labelStart, $labelEnd);
                 $state->env->footnotes->list[$footnoteId]->tokens = $tokens;
             }
 
@@ -399,11 +400,11 @@ class MarkdownItFootnote
 
                     $token          = $state->createToken('inline', '', 0);
                     $token->children = $list[$i]->tokens;
-                    $token->content  = '';
+                    $token->content  = $list[$i]->content;
                     $tokens[] = $token;
 
                     $token          = $state->createToken('paragraph_close', 'p', -1);
-                    $token->block    = true;
+                    $token->block   = true;
                     $tokens[] = $token;
 
                 } else if ( isset($list[$i]->label) ) {

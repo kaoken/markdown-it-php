@@ -7,7 +7,8 @@ use Kaoken\MarkdownIt\Common\Utils;
 use Kaoken\MarkdownIt\Helpers\Helpers;
 use Kaoken\LinkifyIt\LinkifyIt;
 use Kaoken\MDUrl\MDUrl;
-
+use \Exception;
+use \stdClass;
 
 /**
  * class MarkdownIt
@@ -204,7 +205,7 @@ class MarkdownIt
             if (empty($parsed->protocol) || $is) {
                 try {
                     $parsed->hostname = $this->punycode->toASCII($parsed->hostname);
-                } catch (\Exception $e) { /**/ }
+                } catch (Exception $e) { /**/ }
             }
         }
 
@@ -237,7 +238,7 @@ class MarkdownIt
             if (empty($parsed->protocol) || $is) {
                 try {
                     $parsed->hostname = $this->punycode->toUnicode($parsed->hostname);
-                } catch (\Exception $e) { /**/ }
+                } catch (Exception $e) { /**/ }
             }
         }
         return $this->mdurl->decode($this->mdurl->format($parsed));
@@ -344,13 +345,14 @@ class MarkdownIt
      * MarkdownIt constructor.
      * @param string $presetName optional, `commonmark` / `zero`
      * @param null|array $options
+     * @throws Exception
      */
     public function __construct($presetName='default', $options=null)
     {
         if( is_array($presetName) ) $presetName = (object)$presetName;
         if( is_array($options) ) $options = (object)$options;
         if (!is_string($presetName)) {
-            $options = is_object($presetName) ? $presetName : new \stdClass();
+            $options = is_object($presetName) ? $presetName : new stdClass();
             $presetName = 'default';
         }
         $this->inline = new ParserInline();
@@ -360,7 +362,7 @@ class MarkdownIt
         $this->linkify = new LinkifyIt();
         $this->utils = Utils::getInstance();
         $this->helpers = new Helpers();
-        $this->options = new \stdClass();
+        $this->options = new stdClass();
         $this->punycode = new Punycode();
         $this->mdurl = new MDUrl();
 
@@ -387,8 +389,9 @@ class MarkdownIt
      * `markdown-it` instance options on the fly. If you need multiple configurations
      * it's best to create multiple instances and initialize each with separate
      * config.
-     * @param \stdClass $options
+     * @param stdClass $options
      * @return $this
+     * @throws Exception
      */
     public function set($options)
     {
@@ -403,15 +406,16 @@ class MarkdownIt
      *
      * We strongly recommend to use presets instead of direct config loads. That
      * will give better compatibility with next versions.
-     * @param string|\stdClass $presets
+     * @param string|stdClass $presets
      * @return $this
-     **/
+     * @throws Exception
+     */
     public function configure($presets=null)
     {
         if (is_string($presets)) {
             $presetName = $presets;
             if(!array_key_exists ($presetName, $this->configList)){
-                throw new \Exception('Wrong `markdown-it` preset "' . $presetName . '", check name');
+                throw new Exception('Wrong `markdown-it` preset "' . $presetName . '", check name');
             }
             $class = $this->configList[$presetName];
             $presets = $class::get();
@@ -419,7 +423,7 @@ class MarkdownIt
             return $this;
         }
     
-        if (is_null($presets)) { throw new \Exception('Wrong `markdown-it` preset, can\'t be empty'); }
+        if (is_null($presets)) { throw new Exception('Wrong `markdown-it` preset, can\'t be empty'); }
     
         if (is_object($presets->options)) { $this->set($presets->options); }
     
@@ -454,6 +458,7 @@ class MarkdownIt
      * @param string|array $list          rule name or list of rule names to enable
      * @param boolean      $ignoreInvalid set `true` to ignore errors when rule not found.
      * @return $this
+     * @throws Exception
      */
     public function enable($list, $ignoreInvalid=false)
     {
@@ -472,7 +477,7 @@ class MarkdownIt
         $missed = array_filter ($list, function ($name) use(&$result) { return array_search ($name, $result) === false; });
 
         if (count($missed) !== 0 && !$ignoreInvalid) {
-            throw new \Exception('MarkdownIt. Failed to enable unknown rule(s): ' . implode(', ', $missed));
+            throw new Exception('MarkdownIt. Failed to enable unknown rule(s): ' . implode(', ', $missed));
         }
 
         return $this;
@@ -485,6 +490,7 @@ class MarkdownIt
      * @param string|array $list          rule name or list of rule names to enable
      * @param boolean      $ignoreInvalid set `true` to ignore errors when rule not found.
      * @return $this
+     * @throws Exception
      */
     public function disable($list, $ignoreInvalid=false)
     {
@@ -501,7 +507,7 @@ class MarkdownIt
         $missed = array_filter ($list, function ($name) use(&$result) { return array_search ($name, $result) === false; });
 
         if (count($missed) !== 0 && !$ignoreInvalid) {
-            throw new \Exception('MarkdownIt. Failed to disable unknown rule(s): ' . implode(', ', $missed));
+            throw new Exception('MarkdownIt. Failed to disable unknown rule(s): ' . implode(', ', $missed));
         }
         return $this;
     }
@@ -546,7 +552,7 @@ class MarkdownIt
      * @param callable|object $plubin
      * @param array ...$args
      * @return $this
-     * @throws \Exception
+     * @throws Exception
      */
     public function plugin($plubin, ...$args)
     {
@@ -556,7 +562,7 @@ class MarkdownIt
         }else if( is_object($plubin) ){
             call_user_func_array([$plubin, 'plugin'], $args);
         }else{
-            throw new \Exception();
+            throw new Exception();
         }
         return $this;
     }
@@ -576,11 +582,12 @@ class MarkdownIt
      * @param string $src source string
      * @param object $env environment sandbox
      * @return array
+     * @throws Exception
      */
     public function &parse($src, $env=null)
     {
         if ( !is_string($src)) {
-            throw new \Exception('Input data should be a String');
+            throw new Exception('Input data should be a String');
         }
 
         $state = $this->core->createState($src, $this, $env);
@@ -601,10 +608,11 @@ class MarkdownIt
      * @param string $src source string
      * @param object $env environment sandbox
      * @return string
+     * @throws Exception
      */
     public function render($src, $env=null)
     {
-        $env = is_object($env) ? $env : new \stdClass();
+        $env = is_object($env) ? $env : new stdClass();
 
         return $this->renderer->render($this->parse($src, $env), $this->options, $env);
     }
@@ -640,7 +648,7 @@ class MarkdownIt
      **/
     public function renderInline($src, $env=null)
     {
-        $env = is_object($env) ? $env : new \stdClass();
+        $env = is_object($env) ? $env : new stdClass();
 
         $tokens = $this->parseInline($src, $env);
         return $this->renderer->render($tokens, $this->options, $env);

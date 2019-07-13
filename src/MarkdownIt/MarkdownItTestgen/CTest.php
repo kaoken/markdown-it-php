@@ -21,7 +21,7 @@ class CTest extends EasyTest
     {
         $g->group('should parse meta', function ($gg) {
 
-            $this->testgen->load(__DIR__.'/Fixtures/meta.txt', function ($data) use($gg) {
+            $this->testgen->load(__DIR__ . '/Fixtures/meta.txt', function ($data) use($gg) {
                 $gg->deepEqual($data->meta, (object)[ "desc"=> 123, "skip"=> true ]);
 
                 $gg->strictEqual(count($data->fixtures), 1);
@@ -31,7 +31,7 @@ class CTest extends EasyTest
         });
 
         $g->group('should parse headers', function ($gg) {
-            $this->testgen->load(__DIR__.'/Fixtures/headers.txt', function ($data) use($gg) {
+            $this->testgen->load(__DIR__ . '/Fixtures/headers.txt', function ($data) use($gg) {
 
                 $gg->strictEqual(count($data->fixtures), 3);
 
@@ -50,7 +50,7 @@ class CTest extends EasyTest
         });
 
         $g->group('should parse multilines', function ($gg) {
-            $this->testgen->load(__DIR__.'/Fixtures/multilines.txt', function ($data) use($gg) {
+            $this->testgen->load(__DIR__ . '/Fixtures/multilines.txt', function ($data) use($gg) {
 
                 $gg->strictEqual(count($data->fixtures), 1);
 
@@ -61,7 +61,7 @@ class CTest extends EasyTest
         });
 
         $g->group('should not add \\n at empty to end of empty line', function ($gg) {
-            $this->testgen->load(__DIR__.'/Fixtures/empty.txt', function ($data) use($gg) {
+            $this->testgen->load(__DIR__ . '/Fixtures/empty.txt', function ($data) use($gg) {
 
                 $gg->strictEqual($data->fixtures[0]->first->text, "a\n");
                 $gg->strictEqual($data->fixtures[0]->second->text, '');
@@ -71,7 +71,7 @@ class CTest extends EasyTest
         $g->group('should scan dir', function ($gg) {
             $files = 0;
 
-            $this->testgen->load(__DIR__.'/Fixtures', function () use(&$files) {
+            $this->testgen->load(__DIR__ . '/Fixtures', function () use(&$files) {
                 $files++;
             });
             $gg->strictEqual($files, 4);

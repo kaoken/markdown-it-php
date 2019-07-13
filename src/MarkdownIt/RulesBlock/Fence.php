@@ -42,7 +42,11 @@ class Fence
         $markup = substr($state->src, $mem, $pos-$mem);
         $params = substr($state->src, $pos, $max-$pos);
 
-        if ( strpos($params, $marker) !== false) { return false; }
+        if ($marker === '`') {
+            if ( strpos($params, $marker) !== false) {
+                return false;
+            }
+        }
 
         // Since start is found, we can report success here in validation mode
         if ($silent) { return true; }

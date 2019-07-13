@@ -56,7 +56,7 @@ class StateBlock
 
     // block parser variables
     /**
-     * @var int Required block content indent
+     * @var int Required block content indent (for example, if we are inside a list, it would be positioned after list marker)
      */
     public $blkIndent  = 0;
     // (for example, if we are in list)
@@ -78,6 +78,12 @@ class StateBlock
      * @var int
      */
     public $ddIndent   = -1;
+
+    /**
+     * indent of the current list block (-1 if there isn't any)
+     * @var int
+     */
+    public $listIndent   = -1;
 
     /**
      * can be 'blockquote', 'list', 'root', 'paragraph' or 'reference'
@@ -160,6 +166,7 @@ class StateBlock
      * @param string  $type
      * @param string  $tag
      * @param integer $nesting
+     * @return Token
      */
     public function createToken($type, $tag, $nesting)
     {

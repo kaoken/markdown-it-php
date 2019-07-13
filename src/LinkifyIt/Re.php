@@ -97,10 +97,7 @@ class Re extends \stdClass
             "|" .
             "(?:" . $this->src_pseudo_letter . ")" .
             "|" .
-            // don"t allow `--` in domain names, because:
-            // - that can conflict with markdown &mdash; / &ndash;
-            // - nobody use those anyway
-            "(?:" . $this->src_pseudo_letter . "(?:-(?!-)|" . $this->src_pseudo_letter . "){0,61}" . $this->src_pseudo_letter . ")" .
+            "(?:" . $this->src_pseudo_letter . "(?:-|" . $this->src_pseudo_letter . "){0,61}" . $this->src_pseudo_letter . ")" .
             ")";
 
         $this->src_host =

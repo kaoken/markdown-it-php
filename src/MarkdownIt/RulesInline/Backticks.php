@@ -36,9 +36,10 @@ class Backticks
 
             if ($matchEnd - $matchStart === strlen($marker)) {
                 if (!$silent) {
-                    $token         = $state->push('code_inline', 'code', 0);
+                    $token          = $state->push('code_inline', 'code', 0);
                     $token->markup  = $marker;
-                    $token->content = trim(preg_replace("/[ \n]+/", ' ', substr($state->src, $pos, $matchStart-$pos))); // /g
+                    $token->content = preg_replace("/\n/", ' ', substr($state->src, $pos, $matchStart-$pos)); // /g
+                    $token->content = preg_replace("/^ (.+) $/", "$1", $token->content); // /g
                 }
                 $state->pos = $matchEnd;
                 return true;

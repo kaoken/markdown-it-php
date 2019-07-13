@@ -12,8 +12,8 @@
  * http://opensource.org/licenses/mit-license.php
  *
  *
- * use javascript version 3.0.1
- * @see https://github.com/markdown-it/markdown-it-footnote/blob/3.0.1/test/test.js
+ * use javascript version 3.0.2
+ * @see https://github.com/markdown-it/markdown-it-footnote/blob/3.0.2/test/test.js
  */
 namespace Kaoken\Test\MarkdownIt\Plugins\Footnote;
 
@@ -29,9 +29,10 @@ trait FootnoteTrait
      * Most of the rest of this is inlined from generate(), but modified
      * so we can pass in an `$env` object
      * @param string $fixturePath
-     * @param \Kaoken\MarkdownIt\MarkdownIt $md
+     * @param MarkdownIt $md
      * @param $g
      * @param null $env
+     * @throws \Exception
      */
     private function generateFootnote($fixturePath, $md, $g, $env=null)
     {
@@ -60,7 +61,7 @@ trait FootnoteTrait
     {
         $this->group('markdown-it-footnote', function ($g){
             $g->group('footnote.txt', function ($gg) {
-                $md = new MarkdownIt();
+                $md = new MarkdownIt(["linkify"=>true]);
                 $md->plugin(new MarkdownItFootnote());
 
                 // Check that defaults work correctly

@@ -194,7 +194,7 @@ class Utils
      * @param integer $pos       The current starting position.
      * @param integer $outOffset If the last character is found, its position is substituted.
      * If not found, -1 is substituted.
-     * @return If found, it returns the last. If you can not find, it returns an empty('').
+     * @return string If found, it returns the last. If you can not find, it returns an empty('').
      */
     public function lastCharUTF8(&$text, $pos, &$outOffset)
     {
@@ -329,9 +329,27 @@ class Utils
     // Hepler to unify [reference labels].
     //
     public function normalizeReference($str) {
-        // use .toUpperCase() instead of .toLowerCase()
-        // here to avoid a conflict with Object.prototype
-        // members (most notably, `__proto__`)
-        return mb_strtoupper( preg_replace("/\s+/", ' ', trim($str)) ); // /g
+        // Trim and collapse whitespace
+        //
+        $str = mb_strtoupper( preg_replace("/\s+/", ' ', trim($str)) ); // /g
+
+        // In node v10 'ẞ'.toLowerCase() === 'Ṿ', which is presumed to be a bug
+        // fixed in v12 (couldn't find any details).
+        //
+        // So treat this one as a special case
+        // (remove this when node v10 is no longer supported).
+        //
+        if (mb_strtoupper('ẞ') === 'Ṿ') {
+            $str = mb_strtoupper( preg_replace("/ẞ/", 'ß', trim($str)) ); // /g
+        }
+
+        // .toLowerCase().toUpperCase() should get rid of all differences
+        // between letter variants.
+        //
+        // Final result should be uppercased, because it's later stored in an object
+        // (this avoid a conflict with Object.prototype members,
+        // most notably, `__proto__`)
+        //
+        return mb_strtoupper(mb_strtolower($str));
     }
 }

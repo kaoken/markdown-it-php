@@ -131,6 +131,18 @@ class CList
         // if it's indented more than 3 spaces, it should be a code block
         if ($state->sCount[$startLine] - $state->blkIndent >= 4) { return false; }
 
+        // Special case:
+        //  - item 1
+        //   - item 2
+        //    - item 3
+        //     - item 4
+        //      - this one is a paragraph continuation
+        if ($state->listIndent >= 0 &&
+            $state->sCount[$startLine] - $state->listIndent >= 4 &&
+            $state->sCount[$startLine] < $state->blkIndent) {
+            return false;
+        }
+
         // limit conditions when list can interrupt
         // a paragraph (validation mode only)
         if ($silent && $state->parentType === 'paragraph') {
@@ -238,16 +250,24 @@ class CList
             $indent = $initial + $indentAfterMarker;
 
             // Run subparser & write tokens
-            $token        = $state->push('list_item_open', 'li', 1);
-            $token->markup = $markerCharCode;
-            $token->map    = $itemLines = [ $startLine, 0 ];
+            $token          = $state->push('list_item_open', 'li', 1);
+            $token->markup  = $markerCharCode;
+            $token->map     = $itemLines = [ $startLine, 0 ];
 
-            $oldIndent = $state->blkIndent;
+            // change current state, then restore it after parser subcall
             $oldTight = $state->tight;
             $oldTShift = $state->tShift[$startLine];
-            $oldLIndent = $state->sCount[$startLine];
-            $state->blkIndent = $indent;
-            $state->tight = true;
+            $oldSCount = $state->sCount[$startLine];
+
+            //  - example list
+            // ^ listIndent position will be here
+            //   ^ blkIndent position will be here
+            //
+            $oldListIndent      = $state->listIndent;
+            $state->listIndent  = $state->blkIndent;
+            $state->blkIndent   = $indent;
+
+            $state->tight       = true;
             $state->tShift[$startLine] = $contentStart - $state->bMarks[$startLine];
             $state->sCount[$startLine] = $offset;
 
@@ -272,9 +292,10 @@ class CList
             // but we should filter last element, because it means list finish
             $prevEmptyEnd = ($state->line - $startLine) > 1 && $state->isEmpty($state->line - 1);
 
-            $state->blkIndent = $oldIndent;
-            $state->tShift[$startLine] = $oldTShift;
-            $state->sCount[$startLine] = $oldLIndent;
+            $state->blkIndent           = $state->listIndent;
+            $state->listIndent          = $oldListIndent;
+            $state->tShift[$startLine]  = $oldTShift;
+            $state->sCount[$startLine]  = $oldSCount;
             $state->tight = $oldTight;
 
             $token        = $state->push('list_item_close', 'li', -1);
@@ -290,6 +311,9 @@ class CList
             // Try to check if list is terminated or continued.
             //
             if ($state->sCount[$nextLine] < $state->blkIndent) { break; }
+
+            // if it's indented more than 3 spaces, it should be a code block
+            if ($state->sCount[$startLine] - $state->blkIndent >= 4) { break; }
 
             // fail if terminating block found
             $terminate = false;

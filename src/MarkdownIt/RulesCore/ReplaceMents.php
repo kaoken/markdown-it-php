@@ -1,5 +1,5 @@
 <?php
-// Simple typographyc replacements
+// Simple typographic replacements
 //
 // (c) (C) → ©
 // (tm) (TM) → ™

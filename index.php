@@ -8,6 +8,13 @@ ini_set( 'error_reporting', E_ALL );
 
 use Kaoken\MarkdownIt\MarkdownIt;
 
+$md = new MarkdownIt([
+    "html"=> true,
+    "langPrefix"=> '',
+    "typographer"=> true,
+    "linkify"=> true
+]);
+
 switch(isset($_GET['i'])?$_GET['i']:'0'){
     case '1':
         new Kaoken\Test\MDUrl\CTest();break;
@@ -20,4 +27,4 @@ switch(isset($_GET['i'])?$_GET['i']:'0'){
     default:
         new Kaoken\Test\MarkdownIt\CTest();break;
 }
-?>
+
