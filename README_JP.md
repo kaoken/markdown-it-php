@@ -6,7 +6,7 @@
 [![php version](https://img.shields.io/badge/php%20version-≧7.3.6-red.svg)](https://github.com/kaoken/markdown-it-php)
 
 
-このジェムは、Puzrin とアレックス Kocharin による  [markdown-it Javascript package](https://github.com/markdown-it/markdown-it)ポートになります。現在、markdown-it 8.4.2 と同期しています。
+このジェムは、Puzrin とアレックス Kocharin による  [markdown-it Javascript package](https://github.com/markdown-it/markdown-it)ポートになります。現在、markdown-it 9.1.0 と同期しています。
 
 __[Javascript Live demo](https://markdown-it.github.io)__
 
