@@ -57,11 +57,13 @@ class Re extends \stdClass
             "\\\"(?:(?!" . $this->src_ZCc . "|[\"]).)+\\\"|" .
              "\\'(?:(?!" . $this->src_ZCc . "|[']).)+\\'|" .
              "\\'(?=" . $this->src_pseudo_letter . "|[-]).|" .  // allow `I"m_king` if no pair found
-            "\.{2,3}[a-zA-Z0-9%\/]|" . // github has ... in commit range links. Restrict to
-            // - english
-            // - percent-encoded
-            // - parts of file path
-            // until more examples found.
+            "\.{2,4}[a-zA-Z0-9%\/]|" .  // github has ... in commit range links. Restrict to
+                                        // google has .... in links (issue #66)
+                                        // Restrict to
+                                        // - english
+                                        // - percent-encoded
+                                        // - parts of file path
+                                        // until more examples found.
             "\.(?!" . $this->src_ZCc . "|[.]).|" .
             (isset($opts) && isset($opts["---"]) ?
                 "\-(?!--(?:[^-]|$))(?:-*)|" // `---` => long dash, terminate
@@ -74,7 +76,10 @@ class Re extends \stdClass
             ")+" .
             "|\/" .
             ")?";
-        $this->src_email_name = "[\-;:&=\+\$,\\\"\.a-zA-Z0-9_]+";
+        // Allow anything in markdown spec, forbid quote (") at the first position
+        // because emails enclosed in quotes are far more common
+        $this->src_email_name = "[\-;:&=\+\$,\.a-zA-Z0-9_][\-;:&=\+\$,\\\"\.a-zA-Z0-9_]*";
+
         $this->src_xn = "xn--[a-z0-9\-]{1,59}";
 
 
@@ -147,12 +152,12 @@ class Re extends \stdClass
 
         // Rude test fuzzy links by host, for quick deny
         $this->tpl_host_fuzzy_test =
-
             "localhost|www\.|\.\d{1,3}\.|(?:\.(?:%TLDS%)(?:" . $this->src_ZPCc . "|>|$))";
 
         $this->tpl_email_fuzzy =
+            "(^|" . $this->text_separators . "|\"|\\(|" . $this->src_ZCc . ")" .
+            "(" . $this->src_email_name . "@" . $this->tpl_host_fuzzy_strict . ")";
 
-            "(^|".$this->text_separators."|\\(|" . $this->src_ZCc . ")(" . $this->src_email_name . "@" . $this->tpl_host_fuzzy_strict . ")";
         $this->tpl_link_fuzzy =
             // Fuzzy link can"t be prepended with .:/\- and non punctuation.
             // but can start with > (markdown blockquote)

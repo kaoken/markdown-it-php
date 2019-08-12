@@ -16,8 +16,8 @@
  *
  *
  *
- * use javascript version 2.1.0
- * @see https://github.com/markdown-it/linkify-it/tree/2.1.0
+ * use javascript version 2.2.0
+ * @see https://github.com/markdown-it/linkify-it/tree/2.2.0
  */
 
 namespace Kaoken\LinkifyIt;

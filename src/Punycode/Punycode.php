@@ -73,7 +73,7 @@ class Punycode
      * @param array  $array The array to iterate over.
      * @param callable $fn     The function that gets called for every array
      * item.
-     * @returns array A new array of values returned by the callback function.
+     * @return array A new array of values returned by the callback function.
      */
     protected function map(array &$array, $fn) {
         $result = [];
@@ -92,7 +92,7 @@ class Punycode
      * @param string $string The domain name or email address.
      * @param callable $fn     The function that gets called for every
      * character.
-     * @returns array A new string of characters returned by the callback
+     * @return string A new string of characters returned by the callback
      * function.
      */
     protected function mapDomain($string, $fn)
@@ -117,7 +117,7 @@ class Punycode
      * Creates a string based on an array of numeric code points.
      * @see `punycode->ucs2Decode`
      * @param array $codePoints The array of numeric code points.
-     * @returns string The new Unicode string (UCS-2).
+     * @return string The new Unicode string (UCS-2).
      */
     public function ucs2Encode($codePoints)
     {
@@ -145,7 +145,7 @@ class Punycode
      * @see `punycode->ucs2encode`
      * @see <https://mathiasbynens.be/notes/javascript-encoding>
      * @param string $string The Unicode input string (UCS-2).
-     * @returns array The new array of code points.
+     * @return array The new array of code points.
      */
     public function ucs2Decode($string)
     {
@@ -182,8 +182,8 @@ class Punycode
      * Converts a basic code point into a digit/integer.
      * @see `digitToBasic()`
      * @private
-     * @param {Number} codePoint The basic numeric code point value.
-     * @returns {Number} The numeric value of a basic code point (for use in
+     * @param int codePoint The basic numeric code point value.
+     * @return int The numeric value of a basic code point (for use in
      * representing integers) in the range `0` to `base - 1`, or `base` if
      * the code point does not represent a value.
      */
@@ -205,8 +205,8 @@ class Punycode
      * Converts a digit/integer into a basic code point.
      * @see `basicToDigit()`
      * @private
-     * @param {Number} digit The numeric value of a basic code point.
-     * @returns {Number} The basic code point whose value (when used for
+     * @param int digit The numeric value of a basic code point.
+     * @return int The basic code point whose value (when used for
      * representing integers) is `digit`, which needs to be in the range
      * `0` to `base - 1`. If `flag` is non-zero, the uppercase form is
      * used; else, the lowercase form is used. The behavior is undefined
@@ -239,7 +239,8 @@ class Punycode
      * Converts a Punycode string of ASCII-only symbols to a string of Unicode
      * symbols.
      * @param string $input The Punycode string of ASCII-only symbols.
-     * @returns string The resulting string of Unicode symbols.
+     * @return string The resulting string of Unicode symbols.
+     * @throws \Exception
      */
     public function decode($input)
     {
@@ -329,7 +330,8 @@ class Punycode
      * Converts a string of Unicode symbols (e.g. a domain name label) to a
      * Punycode string of ASCII-only symbols.
      * @param string input The string of Unicode symbols.
-     * @returns string The resulting Punycode string of ASCII-only symbols.
+     * @return string The resulting Punycode string of ASCII-only symbols.
+     * @throws \Exception
      */
     public function encode($input)
     {
@@ -428,7 +430,7 @@ class Punycode
      * converted to Unicode.
      * @param string input The Punycoded domain name or email address to
      * convert to Unicode.
-     * @returns string The Unicode representation of the given Punycode
+     * @return string The Unicode representation of the given Punycode
      * string.
      */
     public  function toUnicode($input)
@@ -447,7 +449,7 @@ class Punycode
      * ASCII.
      * @param string input The domain name or email address to convert, as a
      * Unicode string.
-     * @returns string The Punycode representation of the given domain name or
+     * @return string The Punycode representation of the given domain name or
      * email address.
      */
     public function toASCII($input)
