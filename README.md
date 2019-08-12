@@ -6,7 +6,7 @@
 [![php version](https://img.shields.io/badge/php%20version-≧7.3.6-red.svg)](https://github.com/kaoken/markdown-it-php)
 
 
-This gem is a port of the [markdown-it Javascript package](https://github.com/markdown-it/markdown-it) by Vitaly Puzrin and Alex Kocharin. Currently synced with markdown-it 8.4.2
+This gem is a port of the [markdown-it Javascript package](https://github.com/markdown-it/markdown-it) by Vitaly Puzrin and Alex Kocharin. Currently synced with markdown-it 9.1.0
 
 __[Javascript Live demo](https://markdown-it.github.io)__
 
