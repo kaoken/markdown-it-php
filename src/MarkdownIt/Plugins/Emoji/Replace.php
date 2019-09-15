@@ -73,10 +73,10 @@ class Replace
                     $nodes[] = $token;
                 }
 
-                $token         = $state->createToken('emoji', '', 0);
+                $token          = $state->createToken('emoji', '', 0);
                 $token->markup  = $emoji_name;
-                $token->content = isset($this->emojies[$emoji_name]) ? $this->emojies[$emoji_name] : 'error';
-                $nodes[]       = $token;
+                $token->content = $this->emojies[$emoji_name] ?? 'error';
+                $nodes[]        = $token;
 
                 $last_pos = $offset + strlen($match[0]);
             }

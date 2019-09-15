@@ -19,12 +19,17 @@
 //
 namespace Kaoken\MarkdownIt\Plugins;
 
+use Exception;
 use Kaoken\MarkdownIt\Common\Utils;
+use Kaoken\MarkdownIt\MarkdownIt;
+use Kaoken\MarkdownIt\RulesBlock\StateBlock;
+use Kaoken\MarkdownIt\RulesInline\StateInline;
 
 class MarkdownItDeflist
 {
     /**
-     * @param \Kaoken\MarkdownIt\MarkdownIt $md
+     * @param MarkdownIt $md
+     * @throws Exception
      */
     public function plugin($md)
     {
@@ -35,7 +40,7 @@ class MarkdownItDeflist
 
     /**
      * Search `[:~][\n ]`, returns next $pos after $marker on success or -1 on fail.
-     * @param \Kaoken\MarkdownIt\RulesBlock\StateBlock $state
+     * @param StateBlock $state
      * @param integer $line
      * @return int
      */
@@ -62,7 +67,7 @@ class MarkdownItDeflist
     }
 
     /**
-     * @param \Kaoken\MarkdownIt\RulesInline\StateInline $state
+     * @param StateInline $state
      * @param integer $idx
      */
     protected function markTightParagraphs(&$state, $idx)
@@ -79,7 +84,7 @@ class MarkdownItDeflist
     }
 
     /**
-     * @param \Kaoken\MarkdownIt\RulesBlock\StateBlock $state
+     * @param StateBlock $state
      * @param integer $startLine
      * @param integer $endLine
      * @param bool $silent

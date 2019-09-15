@@ -10,8 +10,9 @@ class Strikethrough
     /**
      * Insert each marker as a separate text $token, and add it to delimiter list
      * @param StateInline $state
-     * @param boolean     $silent
+     * @param bool $silent
      * @return bool
+     * @throws \Exception
      */
     public function tokenize(&$state, $silent=false)
     {
@@ -35,15 +36,15 @@ class Strikethrough
 
         for ($i = 0; $i < $len; $i += 2) {
             $token         = $state->push('text', '', 0);
-            $token->content = $ch . $ch;
+            $token->content= $ch . $ch;
 
             $obj = new \stdClass();
-            $obj->marker = $marker;
-            $obj->jump =   $i;
+            $obj->marker= $marker;
+            $obj->length=  0; // disable "rule of 3" length checks meant for emphasis
+            $obj->jump  =  $i;
             $obj->token =  count($state->tokens) - 1;
-            $obj->level =  $state->level;
-            $obj->end =    -1;
-            $obj->open =   $scanned->can_open;
+            $obj->end   =  -1;
+            $obj->open  =  $scanned->can_open;
             $obj->close =  $scanned->can_close;
 
             $state->delimiters[] = $obj;
@@ -55,18 +56,16 @@ class Strikethrough
     }
 
     /**
-     *  Walk through delimiter list and replace text tokens with tags
      * @param StateInline $state
+     * @param array $delimiters
      */
-    public function postProcess(&$state)
+    private function strikethrough(&$state, &$delimiters)
     {
-
         $loneMarkers = [];
-        $delimiters = &$state->delimiters;
-        $max = count($state->delimiters);
+        $max = $delimiters->length();
 
         for ($i = 0; $i < $max; $i++) {
-            $startDelim = &$delimiters[$i];
+            $startDelim = $delimiters[$i];
 
             if ($startDelim->marker !== '~') {
                 continue;
@@ -78,14 +77,14 @@ class Strikethrough
 
             $endDelim = $delimiters[$startDelim->end];
 
-            $token         = $state->tokens[$startDelim->token];
+            $token          = &$state->tokens[$startDelim->token];
             $token->type    = 's_open';
             $token->tag     = 's';
             $token->nesting = 1;
             $token->markup  = '~~';
             $token->content = '';
 
-            $token         = $state->tokens[$endDelim->token];
+            $token          = &$state->tokens[$endDelim->token];
             $token->type    = 's_close';
             $token->tag     = 's';
             $token->nesting = -1;
@@ -119,6 +118,23 @@ class Strikethrough
                 $token = $state->tokens[$j];
                 $state->tokens[$j] = $state->tokens[$i];
                 $state->tokens[$i] = $token;
+            }
+        }
+    }
+
+    /**
+     * Walk through delimiter list and replace text tokens with tags
+     * @param StateInline $state
+     */
+    public function postProcess(&$state) {
+        $tokens_meta= &$state->tokens_meta;
+        $max        = $state->tokens_meta->length();
+
+        $this->strikethrough($state, $state->delimiters);
+
+        for ($curr = 0; $curr < $max; $curr++) {
+            if (!is_null($tokens_meta[$curr]) && !is_null($tokens_meta[$curr]->delimiters)) {
+                $this->strikethrough($state, $tokens_meta[$curr]->delimiters);
             }
         }
     }

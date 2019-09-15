@@ -18,14 +18,18 @@
 namespace Kaoken\MarkdownIt\Plugins;
 
 
+use Exception;
+use Kaoken\MarkdownIt\MarkdownIt;
+
 class MarkdownItForInline
 {
     /**
      * MarkdownItForInline constructor.
-     * @param \Kaoken\MarkdownIt\MarkdownIt $md
-     * @param string   $ruleName
-     * @param string   $tokenType
-     * @param callable   $iteartor
+     * @param MarkdownIt $md
+     * @param string $ruleName
+     * @param string $tokenType
+     * @param callable $iteartor
+     * @throws Exception
      */
     public function plugin($md, $ruleName, $tokenType, $iteartor)
     {

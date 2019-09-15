@@ -17,12 +17,18 @@
  */namespace Kaoken\MarkdownIt\Plugins;
 
 
+use Exception;
+use Kaoken\MarkdownIt\MarkdownIt;
+use Kaoken\MarkdownIt\RulesInline\StateInline;
+
 class MarkdownItSup
 {
     // same as UNESCAPE_MD_RE plus a space
     const UNESCAPE_RE = "/\\\\([ \\\\!\"#$%&'()*+,.\/:;<=>?@[\]^_`{|}~-])/";
+
     /**
-     * @param \Kaoken\MarkdownIt\MarkdownIt $md
+     * @param MarkdownIt $md
+     * @throws Exception
      */
     public function plugin($md)
     {
@@ -30,7 +36,7 @@ class MarkdownItSup
     }
 
     /**
-     * @param \Kaoken\MarkdownIt\RulesInline\StateInline $state
+     * @param StateInline $state
      * @param boolean $silent
      * @return bool
      */

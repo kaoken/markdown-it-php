@@ -12,17 +12,24 @@
  * http://opensource.org/licenses/mit-license.php
  *
  *
- * use javascript version 2.0.0
- * @see https://github.com/markdown-it/markdown-it-ins/tree/2.0.0
+ * use javascript version 3.0.0
+ * @see https://github.com/markdown-it/markdown-it-ins/tree/3.0.0
  */
 namespace Kaoken\MarkdownIt\Plugins;
 
+
+use Exception;
+use Kaoken\MarkdownIt\Common\ArrayObj;
+use Kaoken\MarkdownIt\MarkdownIt;
+use Kaoken\MarkdownIt\RulesInline\StateInline;
+use stdClass;
 
 class MarkdownItIns
 {
 
     /**
-     * @param \Kaoken\MarkdownIt\MarkdownIt $md
+     * @param MarkdownIt $md
+     * @throws Exception
      */
     public function plugin($md)
     {
@@ -32,9 +39,10 @@ class MarkdownItIns
 
     /**
      * Insert each marker as a separate text token, and add it to delimiter list
-     * @param \Kaoken\MarkdownIt\RulesInline\StateInline $state
+     * @param StateInline $state
      * @param bool $silent
      * @return bool
+     * @throws Exception
      */
     function tokenize($state, $silent=false)
     {
@@ -58,19 +66,21 @@ class MarkdownItIns
         }
 
         for ($i = 0; $i < $len; $i += 2) {
-            $token         = $state->push('text', '', 0);
+            $token          = $state->push('text', '', 0);
             $token->content = $ch . $ch;
 
-            $obj = new \stdClass();
-            $obj->marker = $marker;
-            $obj->jump = $i;
-            $obj->token = count($state->tokens) - 1;
-            $obj->level =  $state->level;
-            $obj->end =  -1;
-            $obj->open = $scanned->can_open;
-            $obj->close = $scanned->can_close;
+            if (!$scanned->can_open && !$scanned->can_close) { continue; }
+
+            $obj            = new stdClass();
+            $obj->marker    = $marker;
+            $obj->length    = 0; // disable "rule of 3" length checks meant for emphasis
+            $obj->jump      = $i;
+            $obj->token     = count($state->tokens) - 1;
+            $obj->end       =  -1;
+            $obj->open      = $scanned->can_open;
+            $obj->close     = $scanned->can_close;
             $state->delimiters[] = $obj;
-    }
+        }
 
         $state->pos += $scanned->length;
 
@@ -80,13 +90,13 @@ class MarkdownItIns
 
     /**
      * Walk through delimiter list and replace text tokens with tags
-     * @param \Kaoken\MarkdownIt\RulesInline\StateInline $state
+     * @param StateInline $state
+     * @param ArrayObj $delimiters
      */
-    function postProcess($state)
+    private function ins(&$state, &$delimiters)
     {
         $loneMarkers = [];
-        $delimiters = &$state->delimiters;
-        $max = count($state->delimiters);
+        $max = $delimiters->length();
 
         for ($i = 0; $i < $max; $i++) {
             $startDelim = $delimiters[$i];
@@ -142,6 +152,24 @@ class MarkdownItIns
                 $token = $state->tokens[$j];
                 $state->tokens[$j] = $state->tokens[$i];
                 $state->tokens[$i] = $token;
+            }
+        }
+    }
+
+    /**
+     *
+     * @param StateInline $state
+     */
+    public function postProcess(&$state)
+    {
+        $tokens_meta    = &$state->tokens_meta;
+        $max            = $state->tokens_meta->length();
+
+        $this->ins($state, $state->delimiters);
+
+        for ($curr = 0; $curr < $max; $curr++) {
+            if (!is_null($tokens_meta[$curr])  && !is_null($tokens_meta[$curr]->delimiters)) {
+                $this->ins($state, $tokens_meta[$curr]->delimiters);
             }
         }
     }

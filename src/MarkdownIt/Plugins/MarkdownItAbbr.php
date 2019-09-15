@@ -20,6 +20,8 @@
 namespace Kaoken\MarkdownIt\Plugins;
 
 use Kaoken\MarkdownIt\Common\Utils;
+use Kaoken\MarkdownIt\MarkdownIt;
+use Kaoken\MarkdownIt\RulesBlock\StateBlock;
 use Kaoken\MarkdownIt\RulesInline\StateInline;
 
 
@@ -29,7 +31,8 @@ class MarkdownItAbbr
 
 
     /**
-     * @param \Kaoken\MarkdownIt\MarkdownIt $md
+     * @param MarkdownIt $md
+     * @throws \Exception
      */
     public function plugin($md)
     {
@@ -38,7 +41,7 @@ class MarkdownItAbbr
     }
 
     /**
-     * @param \Kaoken\MarkdownIt\RulesBlock\StateBlock $state
+     * @param StateBlock $state
      * @param integer $startLine
      * @param integer $endLine
      * @param bool $silent

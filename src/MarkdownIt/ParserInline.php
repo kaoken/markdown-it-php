@@ -140,7 +140,7 @@ class ParserInline
      * Generate tokens for input range
      * @param StateInline $state
      */
-    public function tokenize($state)
+    public function tokenize(&$state)
     {
         $rules = $this->ruler->getRules('');
         $len = count($rules);
@@ -198,6 +198,12 @@ class ParserInline
      */
     public function parse($str, $md, $env, &$outTokens)
     {
+        if($str === "[__proto__]"){
+            $n = "";
+        }
+        if(preg_match("/link \*foo \*\*bar\*\* `#`\*\]\(\//",$str)){
+           $tttt = "";
+        }
         $state = new StateInline($str, $md, $env, $outTokens);
 
         $this->tokenize($state);

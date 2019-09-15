@@ -21,7 +21,7 @@
 namespace Kaoken\MarkdownIt\Plugins;
 
 
-use Kaoken\MarkdownIt\Common\Utils;
+use Kaoken\MarkdownIt\MarkdownIt;
 use Kaoken\MarkdownIt\RulesBlock\StateBlock;
 use Kaoken\MarkdownIt\Token;
 
@@ -41,21 +41,22 @@ class MarkdownItContainer
     protected $render;
 
     /**
-     * @param \Kaoken\MarkdownIt\MarkdownIt $md
+     * @param MarkdownIt $md
+     * @throws \Exception
      */
     public function plugin($md, $name, $options=null)
     {
         $this->name = $name;
 
         if( is_array($options)) $options = (object)$options;
-        $options = isset($options) ? $options : new \stdClass();
+        $options = $options ?? new \stdClass();
 
         $this->min_markers = 3;
-        $this->marker_str  = isset($options->marker) ? $options->marker : ':';
+        $this->marker_str  = $options->marker ?? ':';
         $this->marker_char = $this->marker_str[0];
         $this->marker_len  = strlen($this->marker_str);
-        $this->validate    = isset($options->validate) ?  $options->validate : [$this, 'validateDefault'];
-        $this->render      = isset($options->render) ?  $options->render : [$this, 'renderDefault'];
+        $this->validate    = $options->validate ?? [$this, 'validateDefault'];
+        $this->render      = $options->render ?? [$this, 'renderDefault'];
 
 
         $md->block->ruler->before('fence', 'container_' . $name, [$this,'container'], [

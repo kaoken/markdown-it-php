@@ -43,7 +43,7 @@ class ParserBlock
 
         foreach ($this->_rules as &$rule) {
             $obj = new \stdClass();
-            $obj->alt = isset($rule[2]) ? $rule[2] : [];
+            $obj->alt = $rule[2] ?? [];
             $class = $rule[1];
             $this->ruler->push($rule[0], [new $class(), 'set'], $obj);
         }

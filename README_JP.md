@@ -1,12 +1,12 @@
 # markdown-it-php
 
 [![Build Status](https://img.shields.io/travis/markdown-it/markdown-it/master.svg?style=flat)](https://github.com/kaoken/markdown-it-php)
-[![composer version](https://img.shields.io/badge/version-9.1.0.0-blue.svg)](https://github.com/kaoken/markdown-it-php)
+[![composer version](https://img.shields.io/badge/version-10.0.0.0-blue.svg)](https://github.com/kaoken/markdown-it-php)
 [![licence](https://img.shields.io/badge/licence-MIT-blue.svg)](https://github.com/kaoken/markdown-it-php)
 [![php version](https://img.shields.io/badge/php%20version-≧7.3.6-red.svg)](https://github.com/kaoken/markdown-it-php)
 
 
-このジェムは、Puzrin とアレックス Kocharin による  [markdown-it Javascript package](https://github.com/markdown-it/markdown-it)ポートになります。現在、markdown-it 9.1.0 と同期しています。
+このジェムは、Puzrin とアレックス Kocharin による  [markdown-it Javascript package](https://github.com/markdown-it/markdown-it)ポートになります。現在、markdown-it 10.0.0 と同期しています。
 
 __[Javascript Live demo](https://markdown-it.github.io)__
 
@@ -160,13 +160,13 @@ $md->linkify->tlds('.py', false);  // トップレベルドメインとして.py
 
 以下のプラグインは **kaoken\markdown-it-php\MarkdownIt\Plugins** ディレクトリにあります：
 
-- [subscript](https://github.com/markdown-it/markdown-it-sub) ``\MarkdownItSub``
+- [subscript](https://github.com/markdown-it/markdown-it-sub) ``\MarkdownItSub``(非推奨)
 - [superscript](https://github.com/markdown-it/markdown-it-sup) ``\MarkdownItSup``
 - [footnote](https://github.com/markdown-it/markdown-it-footnote) ``\MarkdownItFootnote``
-- [definition list](https://github.com/markdown-it/markdown-it-deflist) ``\MarkdownItDeflist``
+- [definition list](https://github.com/markdown-it/markdown-it-deflist) ``\MarkdownItDeflist``(非推奨)
 - [abbreviation](https://github.com/markdown-it/markdown-it-abbr) ``\MarkdownItAbbr``
 - [emoji](https://github.com/markdown-it/markdown-it-emoji) ``\MarkdownItEmoji``
-- [custom container](https://github.com/markdown-it/markdown-it-container) ``\MarkdownItContainer``
+- [custom container](https://github.com/markdown-it/markdown-it-container) ``\MarkdownItContainer``(非推奨)
 - [insert](https://github.com/markdown-it/markdown-it-ins) ``\MarkdownItIns``
 - [mark](https://github.com/markdown-it/markdown-it-mark) ``\MarkdownItMark``
 

@@ -1,12 +1,12 @@
 # markdown-it-php
 
 [![Build Status](https://img.shields.io/travis/markdown-it/markdown-it/master.svg?style=flat)](https://github.com/kaoken/markdown-it-php)
-[![composer version](https://img.shields.io/badge/version-9.1.0.0-blue.svg)](https://github.com/kaoken/markdown-it-php)
+[![composer version](https://img.shields.io/badge/version-10.0.0.0-blue.svg)](https://github.com/kaoken/markdown-it-php)
 [![licence](https://img.shields.io/badge/licence-MIT-blue.svg)](https://github.com/kaoken/markdown-it-php)
 [![php version](https://img.shields.io/badge/php%20version-≧7.3.6-red.svg)](https://github.com/kaoken/markdown-it-php)
 
 
-This gem is a port of the [markdown-it Javascript package](https://github.com/markdown-it/markdown-it) by Vitaly Puzrin and Alex Kocharin. Currently synced with markdown-it 9.1.0
+This gem is a port of the [markdown-it Javascript package](https://github.com/markdown-it/markdown-it) by Vitaly Puzrin and Alex Kocharin. Currently synced with markdown-it 10.0.0
 
 __[Javascript Live demo](https://markdown-it.github.io)__
 
@@ -161,13 +161,13 @@ Embedded (enabled by default):
 
 The following plugins are in the **kaoken\markdown-it-php\MarkdownIt\Plugins** directory:
 
-- [subscript](https://github.com/markdown-it/markdown-it-sub) ``\MarkdownItSub``
+- [subscript](https://github.com/markdown-it/markdown-it-sub) ``\MarkdownItSub``（Deprecated）
 - [superscript](https://github.com/markdown-it/markdown-it-sup) ``\MarkdownItSup``
 - [footnote](https://github.com/markdown-it/markdown-it-footnote) ``\MarkdownItFootnote``
-- [definition list](https://github.com/markdown-it/markdown-it-deflist) ``\MarkdownItDeflist``
+- [definition list](https://github.com/markdown-it/markdown-it-deflist) ``\MarkdownItDeflist`` （Deprecated）
 - [abbreviation](https://github.com/markdown-it/markdown-it-abbr) ``\MarkdownItAbbr``
 - [emoji](https://github.com/markdown-it/markdown-it-emoji) ``\MarkdownItEmoji``
-- [custom container](https://github.com/markdown-it/markdown-it-container) ``\MarkdownItContainer``
+- [custom container](https://github.com/markdown-it/markdown-it-container) ``\MarkdownItContainer``（Deprecated）
 - [insert](https://github.com/markdown-it/markdown-it-ins) ``\MarkdownItIns``
 - [mark](https://github.com/markdown-it/markdown-it-mark) ``\MarkdownItMark``
 

@@ -17,7 +17,6 @@ class TextCollapse
     /**
      * @param StateInline $state
      * @param boolean     $silent
-     * @return bool
      */
     public function textCollapse(&$state, $silent=false)
     {

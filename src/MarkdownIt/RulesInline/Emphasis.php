@@ -5,13 +5,17 @@
 namespace Kaoken\MarkdownIt\RulesInline;
 
 
+use Exception;
+use Kaoken\MarkdownIt\Common\ArrayObj;
+
 class Emphasis
 {
     /**
      * Insert each $marker as a separate text $token, and add it to delimiter list
      * @param StateInline $state
-     * @param boolean     $silent
+     * @param boolean $silent
      * @return bool
+     * @throws Exception
      */
     public function tokenize(&$state, $silent=false)
     {
@@ -25,7 +29,7 @@ class Emphasis
         $scanned = $state->scanDelims($state->pos, $marker === '*');
 
         for ($i = 0; $i < $scanned->length; $i++) {
-            $token         = $state->push('text', '', 0);
+            $token          = $state->push('text', '', 0);
             $token->content = $marker;
 
             $state->delimiters[] = (object)[
@@ -50,10 +54,6 @@ class Emphasis
                 //
                 "token" =>  count($state->tokens) - 1,
 
-                // Token level->
-                //
-                "level" =>  $state->level,
-
                 // If this delimiter is matched as a valid opener, `end` will be
                 // equal to its position, otherwise it's `-1`->
                 //
@@ -73,16 +73,16 @@ class Emphasis
     }
 
     /**
-     * Walk through delimiter list and replace text tokens with tags
+     *
      * @param StateInline $state
+     * @param ArrayObj    $delimiters
      */
-    public function postProcess(&$state)
+    private function emphasis(&$state, &$delimiters)
     {
-        $delimiters = &$state->delimiters;
-        $max = count($state->delimiters);
+        $max = $delimiters->length();
 
         for ($i = $max - 1; $i >= 0; $i--) {
-            $startDelim = &$delimiters[$i];
+            $startDelim = $delimiters[$i];
 
             if ($startDelim->marker !== '_' && $startDelim->marker !== '*') {
                 continue;
@@ -93,7 +93,7 @@ class Emphasis
                 continue;
             }
 
-            $endDelim = &$delimiters[$startDelim->end];
+            $endDelim = $delimiters[$startDelim->end];
 
             // If the previous delimiter has the same marker and is adjacent to this one,
             // merge those into one strong delimiter->
@@ -108,14 +108,14 @@ class Emphasis
 
             $ch = $startDelim->marker;
 
-            $token         = &$state->tokens[$startDelim->token];
+            $token          = &$state->tokens[$startDelim->token];
             $token->type    = $isStrong ? 'strong_open' : 'em_open';
             $token->tag     = $isStrong ? 'strong' : 'em';
             $token->nesting = 1;
             $token->markup  = $isStrong ? $ch . $ch : $ch;
             $token->content = '';
 
-            $token         = &$state->tokens[$endDelim->token];
+            $token          = &$state->tokens[$endDelim->token];
             $token->type    = $isStrong ? 'strong_close' : 'em_close';
             $token->tag     = $isStrong ? 'strong' : 'em';
             $token->nesting = -1;
@@ -126,6 +126,24 @@ class Emphasis
                 $state->tokens[$delimiters[$i - 1]->token]->content = '';
                 $state->tokens[$delimiters[$startDelim->end + 1]->token]->content = '';
                 $i--;
+            }
+        }
+    }
+
+    /**
+     * Walk through delimiter list and replace text tokens with tags
+     * @param StateInline $state
+     */
+    public function postProcess(&$state)
+    {
+        $tokens_meta    = &$state->tokens_meta;
+        $max            = $state->tokens_meta->length();
+
+        $this->emphasis($state, $state->delimiters);
+
+        for ($curr = 0; $curr < $max; $curr++) {
+            if (!is_null($tokens_meta[$curr])  && !is_null($tokens_meta[$curr]->delimiters)) {
+                $this->emphasis($state, $tokens_meta[$curr]->delimiters);
             }
         }
     }

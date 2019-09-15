@@ -27,7 +27,7 @@ Trait FormatTrait
     {
         $result = '';
 
-        $result .= isset($url->protocol) ? $url->protocol : '';
+        $result .= $url->protocol ?? '';
         $result .= $url->slashes ? '//' : '';
         $result .= isset($url->auth) ? $url->auth . '@' : '';
 
@@ -35,13 +35,13 @@ Trait FormatTrait
             // ipv6 address
             $result .= '[' . $url->hostname . ']';
         } else {
-            $result .= isset($url->hostname) ? $url->hostname : '';
+            $result .= $url->hostname ?? '';
         }
 
         $result .= isset($url->port) ? ':' . $url->port : '';
-        $result .= isset($url->pathname) ? $url->pathname : '';
-        $result .= isset($url->search) ? $url->search : '';
-        $result .= isset($url->hash) ? $url->hash : '';
+        $result .= $url->pathname ?? '';
+        $result .= $url->search ?? '';
+        $result .= $url->hash ?? '';
 
         return $result;
     }

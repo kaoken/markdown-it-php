@@ -18,10 +18,10 @@
 
 namespace Kaoken\MarkdownIt\Plugins;
 
+use Kaoken\MarkdownIt\MarkdownIt;
 use Kaoken\MarkdownIt\Plugins\Emoji\NormalizeOpts;
 use Kaoken\MarkdownIt\Plugins\Emoji\Data\Shortcuts;
 use Kaoken\MarkdownIt\Plugins\Emoji\Render;
-use Kaoken\MarkdownIt\Common\Utils;
 use Kaoken\MarkdownIt\Plugins\Emoji\Replace;
 
 class MarkdownItEmoji
@@ -34,8 +34,9 @@ class MarkdownItEmoji
     }
 
     /**
-     * @param \Kaoken\MarkdownIt\MarkdownIt $md
+     * @param MarkdownIt $md
      * @param null|object|array $options
+     * @throws \Exception
      */
     public function plugin($md, $options=null)
     {

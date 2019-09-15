@@ -171,7 +171,7 @@ class MarkdownItTestgen
         } else if (is_array($options)) {
             $options->sep = $options;
         }else if( is_object($options)){
-            $options->sep = isset($options->sep) ? $options->sep : [ '.' ];
+            $options->sep = $options->sep ?? [ '.' ];
         }
 
         if (is_file($path)) {

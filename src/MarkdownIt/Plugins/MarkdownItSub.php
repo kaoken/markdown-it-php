@@ -18,6 +18,10 @@
 namespace Kaoken\MarkdownIt\Plugins;
 
 
+use Exception;
+use Kaoken\MarkdownIt\MarkdownIt;
+use Kaoken\MarkdownIt\RulesInline\StateInline;
+
 class MarkdownItSub
 {
     // same as UNESCAPE_MD_RE plus a space
@@ -25,7 +29,8 @@ class MarkdownItSub
 
 
     /**
-     * @param \Kaoken\MarkdownIt\MarkdownIt $md
+     * @param MarkdownIt $md
+     * @throws Exception
      */
     public function plugin($md)
     {
@@ -34,7 +39,7 @@ class MarkdownItSub
 
 
     /**
-     * @param \Kaoken\MarkdownIt\RulesInline\StateInline $state
+     * @param StateInline $state
      * @param boolean $silent
      * @return bool
      */

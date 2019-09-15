@@ -40,9 +40,9 @@ trait FootnoteTrait
         $env = (object)$env;
 
         $generate->load($fixturePath, function ($data) use($md, $g, $env, $fixturePath) {
-            $data->meta = isset($data->meta) ? $data->meta : new \stdClass();
+            $data->meta = $data->meta ?? new \stdClass();
 
-            $desc = isset($data->meta->desc) ? $data->meta->desc : $fixturePath;
+            $desc = $data->meta->desc ?? $fixturePath;
 
             foreach ( $data->fixtures as &$fixture){
                 // add variant character after "↩", so we don't have to worry about

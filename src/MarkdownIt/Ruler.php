@@ -19,8 +19,8 @@
 
 namespace Kaoken\MarkdownIt;
 
-use \stdClass;
-use \Kaoken\MarkdownIt\Rules\DefaultRules;
+
+use Exception;
 
 class Ruler
 {
@@ -118,9 +118,10 @@ class Ruler
      *   //...
      * });
      * ```
-     * @param string        $name    rule name to replace.
-     * @param callable|array  $entity    new rule function or instance.
-     * @param object        $options new rule options (not mandatory).
+     * @param string $name rule name to replace.
+     * @param callable|array $entity new rule function or instance.
+     * @param object $options new rule options (not mandatory).
+     * @throws Exception
      */
     public function at($name, $entity, $options=null)
     {
@@ -128,10 +129,10 @@ class Ruler
         if( is_object($options) ) $opt = $options;
         else $opt = is_array($options) ? (object)$options : new \stdClass();
 
-        if ($index === -1) { throw new \Exception('Parser rule not found: ' . $name); }
+        if ($index === -1) { throw new Exception('Parser rule not found: ' . $name); }
 
         $this->__rules__[$index]->setEntity($entity);
-        $this->__rules__[$index]->alt = isset($opt->alt) ? $opt->alt : [];
+        $this->__rules__[$index]->alt = $opt->alt ?? [];
         $this->__cache__ = null;
     }
 
@@ -162,7 +163,7 @@ class Ruler
      * @param string          $ruleName   name of added rule.
      * @param callable|array  $entity     new rule function or instance.
      * @param object          $options    rule options (not mandatory).
-     * @throws \Exception
+     * @throws Exception
      */
     public function before($beforeName, $ruleName, $entity, $options=null)
     {
@@ -170,13 +171,13 @@ class Ruler
         if( is_object($options) ) $opt = $options;
         else $opt = is_array($options) ? (object)$options : new \stdClass();
 
-        if ($index === -1) { throw new \Exception('Parser rule not found: ' . $beforeName); }
+        if ($index === -1) { throw new Exception('Parser rule not found: ' . $beforeName); }
 
         $obj = new RulerObject(
             $ruleName,
             true,
             $entity,
-            isset($opt->alt) ? $opt->alt : []
+            $opt->alt ?? []
         );
 
         array_splice($this->__rules__, $index, 0, [$obj]);
@@ -211,7 +212,7 @@ class Ruler
      * @param string        $ruleName  name of added rule.
      * @param callable|array  $entity    new rule function or instance.
      * @param object        $options   rule options (not mandatory).
-     * @throws \Exception
+     * @throws Exception
      */
     public function after($afterName, $ruleName, $entity, $options=null)
     {
@@ -219,12 +220,12 @@ class Ruler
         if( is_object($options) ) $opt = $options;
         else $opt = is_array($options) ? (object)$options : new \stdClass();
 
-        if ($index === -1) { throw new \Exception('Parser rule not found: ' . $afterName); }
+        if ($index === -1) { throw new Exception('Parser rule not found: ' . $afterName); }
         $obj = new RulerObject(
             $ruleName,
             true,
             $entity,
-            isset($opt->alt) ? $opt->alt : []
+            $opt->alt ?? []
         );
 
         array_splice($this->__rules__, $index + 1, 0, [$obj]);
@@ -255,9 +256,10 @@ class Ruler
      *   //...
      * });
      * ```
-     * @param string        $ruleName  name of added rule.
-     * @param callable|array  $entity    new rule function or instance.
-     * @param array|null    $options   rule options (not mandatory).
+     * @param string $ruleName name of added rule.
+     * @param callable|array $entity new rule function or instance.
+     * @param array|null $options rule options (not mandatory).
+     * @throws Exception
      */
     public function push($ruleName, $entity, $options=null)
     {
@@ -268,7 +270,7 @@ class Ruler
             $ruleName,
             true,
             $entity,
-            isset($opt->alt) ? $opt->alt : []
+            $opt->alt ?? []
         );
 
         $this->__rules__[] = $obj;
@@ -284,9 +286,10 @@ class Ruler
      * Returns list of found rule names (if no exception happened).
      *
      * See also [[Ruler.disable]], [[Ruler.enableOnly]].
-     * @param string|array $list          list of rule names to enable.
-     * @param boolean      $ignoreInvalid set `true` to ignore errors when $rule not found.
+     * @param string|array $list list of rule names to enable.
+     * @param boolean $ignoreInvalid set `true` to ignore errors when $rule not found.
      * @return array
+     * @throws Exception
      */
 	 public function enable($list, $ignoreInvalid=false)
      {
@@ -300,7 +303,7 @@ class Ruler
 
              if ($idx < 0) {
                  if ($ignoreInvalid) continue;
-                 throw new \Exception("Rules manager: invalid rule name '{$name}''");
+                 throw new Exception("Rules manager: invalid rule name '{$name}''");
              }
              $this->__rules__[$idx]->enabled = true;
              $result[] = $name;
@@ -316,8 +319,9 @@ class Ruler
      * not found - throw Error. Errors can be disabled by second param.
      *
      * See also [[Ruler.disable]], [[Ruler.enable]].
-     * @param array|string $list           list of rule names to enable (whitelist).
-     * @param bool         $ignoreInvalid  set `true` to ignore errors when $rule not found.
+     * @param array|string $list list of rule names to enable (whitelist).
+     * @param bool $ignoreInvalid set `true` to ignore errors when $rule not found.
+     * @throws Exception
      */
     public function enableOnly($list, $ignoreInvalid=false)
     {
@@ -338,9 +342,10 @@ class Ruler
      * Returns list of found $rule names (if no exception happened).
      *
      * See also [[Ruler.enable]], [[Ruler.enableOnly]].
-     * @param string|array $list           list of rule names to disable.
-     * @param boolean      $ignoreInvalid  set `true` to ignore errors when rule not found.
+     * @param string|array $list list of rule names to disable.
+     * @param boolean $ignoreInvalid set `true` to ignore errors when rule not found.
      * @return array
+     * @throws Exception
      */
     public function disable($list, $ignoreInvalid=false)
     {
@@ -352,7 +357,7 @@ class Ruler
 
             if ($idx < 0) {
                 if ($ignoreInvalid) continue;
-                throw new \Exception('Rules manager: invalid rule name ' . $name);
+                throw new Exception('Rules manager: invalid rule name ' . $name);
             }
             $this->__rules__[$idx]->enabled = false;
             $result[] = $name;

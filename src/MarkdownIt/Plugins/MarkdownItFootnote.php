@@ -20,15 +20,18 @@
 namespace Kaoken\MarkdownIt\Plugins;
 
 
+use Exception;
+use Kaoken\MarkdownIt\MarkdownIt;
+use Kaoken\MarkdownIt\RulesInline\StateInline;
 use Kaoken\MarkdownIt\Token;
-use Kaoken\MarkdownIt\Common\Utils;
 
 class MarkdownItFootnote
 {
 ////////////////////////////////////////////////////////////////////////////////
 // Renderer partials
     /**
-     * @param \Kaoken\MarkdownIt\MarkdownIt $md
+     * @param MarkdownIt $md
+     * @throws Exception
      */
     function plugin($md)
     {
@@ -239,7 +242,7 @@ class MarkdownItFootnote
 
         /**
          * Process inline footnotes (^[...])
-         * @param \Kaoken\MarkdownIt\RulesInline\StateInline $state
+         * @param StateInline $state
          * @param boolean $silent
          * @return bool
          */
@@ -291,7 +294,7 @@ class MarkdownItFootnote
 
         /**
          * Process footnote references ([^...])
-         * @param \Kaoken\MarkdownIt\RulesInline\StateInline $state
+         * @param StateInline $state
          * @param boolean $silent
          * @return bool
          */
@@ -352,13 +355,11 @@ class MarkdownItFootnote
 
         /**
          * Glue footnote tokens to end of token stream
-         * @param \Kaoken\MarkdownIt\RulesInline\StateInline $state
+         * @param StateInline $state
          */
         $footnote_tail = function($state) {
             $insideRef = false;
             $refTokens = [];
-            $current;
-            $currentLabel;
             if (!isset($state->env->footnotes)) { return; }
 
             $state->tokens = array_filter($state->tokens, function ($tok) use(&$insideRef, &$refTokens, &$current, &$currentLabel) {
@@ -388,7 +389,7 @@ class MarkdownItFootnote
                 $token      = $state->createToken('footnote_open', '', 1);
                 $token->meta = new \stdClass();
                 $token->meta->id = $i;
-                $token->meta->label =  isset($list[$i]->label) ? $list[$i]->label :  '';
+                $token->meta->label =  $list[$i]->label ??  '';
                 $state->tokens[] = $token;
 
                 if ( isset($list[$i]->tokens) ) {
@@ -424,7 +425,7 @@ class MarkdownItFootnote
                     $token->meta = new \stdClass();
                     $token->meta->id = $i;
                     $token->meta->subId = $j;
-                    $token->meta->label = isset($list[$i]->label) ? $list[$i]->label : '';
+                    $token->meta->label = $list[$i]->label ?? '';
                     $state->tokens[] = $token;
                 }
 

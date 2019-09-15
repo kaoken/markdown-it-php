@@ -44,6 +44,7 @@ class RulerObject
      * @param bool            $enabled   rule Enable or Disable
      * @param callable|array  $entity    new rule function or instance.
      * @param array           $alt       rule options (not mandatory).
+     * @throws \Exception
      */
     public function __construct($name, $enabled, $entity, $alt)
     {
