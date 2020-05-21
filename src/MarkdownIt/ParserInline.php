@@ -156,12 +156,6 @@ class ParserInline
             // - update `state.pos`
             // - update `state.tokens`
             // - return true
-            if($state->pos == 3){
-                $test = 0;
-            }else if($state->pos == 17){
-                $test = 0;
-            }
-
             if ($state->level < $maxNesting) {
                 $i = 0;
                 foreach ($rules as &$rule) {
@@ -198,12 +192,6 @@ class ParserInline
      */
     public function parse($str, $md, $env, &$outTokens)
     {
-        if($str === "[__proto__]"){
-            $n = "";
-        }
-        if(preg_match("/link \*foo \*\*bar\*\* `#`\*\]\(\//",$str)){
-           $tttt = "";
-        }
         $state = new StateInline($str, $md, $env, $outTokens);
 
         $this->tokenize($state);

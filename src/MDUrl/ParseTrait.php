@@ -268,9 +268,9 @@ Trait ParseTrait
                                 array_unshift ($notHost, $bit[2]);
                             }
                             if (count($notHost)) {
-                                $rest = implode($notHost, '.') . $rest;
+                                $rest = implode('.', $notHost) . $rest;
                             }
-                            $objUrl->hostname = implode($validParts,'.');
+                            $objUrl->hostname = implode('.', $validParts);
                             break;
                         }
                     }

@@ -80,10 +80,10 @@ class ReplaceMents
                     $p = preg_replace("/([?!]){4,}/", '$1$1$1', $p);
                     $p = preg_replace("/,{2,}/", ',', $p);
                     // em-dash
-                    $p = preg_replace("/(^|[^-])---([^-]|$)/m", '$1—$2', $p);    // '$1\u2014$2'
+                    $p = preg_replace("/(^|[^-])---(?=[^-]|$)/m", '$1—', $p);    // '$1\u2014'
                     // en-dash
-                    $p = preg_replace("/(^|\s)--(\s|$)/m", '$1–$2', $p);            // '$1\u2013$2'
-                    $token->content = preg_replace("/(^|[^-\s])--([^-\s]|$)/m", '$1–$2', $p);    // '$1\u2013$2'
+                    $p = preg_replace("/(^|\s)--(?=\s|$)/m", '$1–', $p);            // '$1\u2013'
+                    $token->content = preg_replace("/(^|[^-\s])--(?=[^-\s]|$)/m", '$1–', $p);    // '$1\u2013'
                 }
             }
 

@@ -57,21 +57,23 @@ class Re extends \stdClass
             "\\\"(?:(?!" . $this->src_ZCc . "|[\"]).)+\\\"|" .
              "\\'(?:(?!" . $this->src_ZCc . "|[']).)+\\'|" .
              "\\'(?=" . $this->src_pseudo_letter . "|[-]).|" .  // allow `I"m_king` if no pair found
-            "\.{2,4}[a-zA-Z0-9%\/]|" .  // github has ... in commit range links. Restrict to
-                                        // google has .... in links (issue #66)
+            "\.{2,}[a-zA-Z0-9%\/&]|" .   // google has many dots in "google search" links (#66, #81).
+                                        // github has ... in commit range links,
                                         // Restrict to
                                         // - english
                                         // - percent-encoded
                                         // - parts of file path
+                                        // - params separator
                                         // until more examples found.
+
             "\.(?!" . $this->src_ZCc . "|[.]).|" .
             (isset($opts) && isset($opts["---"]) ?
                 "\-(?!--(?:[^-]|$))(?:-*)|" // `---` => long dash, terminate
                 :
                 "\-+|"
             ) .
-            "\,(?!" . $this->src_ZCc . ").|" .     // allow `,,,` in paths
-            "\!(?!" . $this->src_ZCc . "|[!]).|" .
+            "\,(?!" . $this->src_ZCc . ").|" .      // allow `,,,` in paths
+            "\!+(?!" . $this->src_ZCc . "|[!]).|" . // allow `!!!` in paths, but not at the end
             "\?(?!" . $this->src_ZCc . "|[?])." .
             ")+" .
             "|\/" .

@@ -27,4 +27,4 @@ switch(isset($_GET['i'])?$_GET['i']:'0'){
     default:
         new Kaoken\Test\MarkdownIt\CTest();break;
 }
-
+//echo($md->render("The dog---\"'man's' best friend\""));

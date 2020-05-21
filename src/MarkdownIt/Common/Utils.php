@@ -136,14 +136,18 @@ class Utils
 
 ////////////////////////////////////////////////////////////////////////////////
     /**
-     * @param int[] ...$args intrger array
+     * @param int[]|string[] ...$args intrger|string array
      * @return string
      */
     public function fromCharCode(...$args)
     {
         $output = '';
         foreach($args as $char){
-            $output .= chr($char);
+            if(is_string($char)){
+                $output .= $char;
+            }else if(is_int($char)){
+                $output .= chr($char);
+            }
         }
         return $output;
     }
@@ -198,24 +202,17 @@ class Utils
      */
     public function lastCharUTF8(&$text, $pos, &$outOffset)
     {
-        $outOffset = $pos;
-        $outLen = 0;
-        $code = ord($text[--$pos]);
-        if( $code < 0x80 ){
-            return $text[$pos];
-        }
-        $str = '';
-        do{
-            $t = $code & 0xC0;
-            if( $t === 0xC0 || $code < 0x80 ){
-                return $text[$pos] . $str;
-            }else {
-                $str = $text[$pos] . $str;
+        $chars = mb_str_split($text);
+        $idx = 0;
+        foreach($chars as $c){
+            $nextIdx = $idx + strlen($c);
+            if($nextIdx  >= $pos){
+                $outOffset = $idx;
+                return $c;
             }
-            $code = ord($text[--$pos]);
-        }while($outOffset>0);
-        $outOffset = -1;
-        return '';
+            $idx = $nextIdx ;
+        }
+        return "";
     }
 
     /**
@@ -316,7 +313,7 @@ class Utils
      * @return bool
      */
     public function isMdAsciiPunct($c) {
-        $code = ord($c);
+        $code = mb_ord($c);
         if(
             ( $code >= 0x21 /* ! */  && $code <= 0x2F /* / */) ||
             ( $code >= 0x3A /* : */  && $code <= 0x40 /* @ */) ||

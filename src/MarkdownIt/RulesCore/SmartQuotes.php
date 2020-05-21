@@ -10,7 +10,10 @@ class SmartQuotes
 
     const APOSTROPHE = "’"; /* \u2019 */
     protected $apostropheLen = 1;
-    
+
+    /**
+     * @var Utils|null
+     */
     public $utils;
     
     public function __construct()
@@ -57,7 +60,6 @@ class SmartQuotes
             /*eslint no-labels:0,block-scoped-var:0*/
             OUTER:
             while ($pos < $max) {
-                // var QUOTE_RE = /['\"]/g;
                 if (!preg_match_all(self::QUOTE_RE, $text, $t, PREG_SET_ORDER|PREG_OFFSET_CAPTURE, $pos)) { break; }
                 $t = $t[0];
                 $canOpen = $canClose = true;
@@ -70,7 +72,9 @@ class SmartQuotes
                 $lastChar = ' ';
 
                 if ($t[0][1] - 1 >= 0) {
-                    $lastChar = $text[$t[0][1] - 1];
+//                    $lastChar = $text[$t[0][1] - 1];
+                    $dummy = 0;
+                    $lastChar = $this->utils->lastCharUTF8($text,$t[0][1],$dummy );
                 } else {
                     for ($j = $i - 1; $j >= 0; $j--) {
                         if ($tokens[$j]->type === 'softbreak' || $tokens[$j]->type === 'hardbreak') break; // lastChar defaults to 0x20
@@ -104,6 +108,7 @@ class SmartQuotes
                 $isLastWhiteSpace = $this->utils->isWhiteSpace($lastChar);
                 $isNextWhiteSpace = $this->utils->isWhiteSpace($nextChar);
 
+
                 if ($isNextWhiteSpace) {
                     $canOpen = false;
                 } else if ($isNextPunctChar) {
@@ -121,15 +126,21 @@ class SmartQuotes
                 }
 
                 if ($nextChar === '"' && $t[0][0] === '"') {
-                    if (($x=ord($lastChar)) >= 0x30 /* 0 */ && $x <= 0x39 /* 9 */) {
+                    if (($x=mb_ord($lastChar)) >= 0x30 /* 0 */ && $x <= 0x39 /* 9 */) {
                         // special case: 1"" - count first quote as an inch
                         $canClose = $canOpen = false;
                     }
                 }
 
                 if ($canOpen && $canClose) {
-                    // treat this as the middle of the word
-                    $canOpen = false;
+                    // Replace quotes in the middle of punctuation sequence, but not
+                    // in the middle of the words, i.e.:
+                    //
+                    // 1. foo " bar " baz - not replaced
+                    // 2. foo-"-bar-"-baz - replaced
+                    // 3. foo"bar"baz     - not replaced
+                    //
+                    $canOpen = $isLastPunctChar;
                     $canClose = $isNextPunctChar;
                 }
 
@@ -139,7 +150,7 @@ class SmartQuotes
                         $token->content = self::replaceAt($token->content, $t[0][1], self::APOSTROPHE);
                         $text = $token->content;
                         $pos += $this->apostropheLen - 1;
-                        $max += $this->apostropheLen - 1;
+                        $max = strlen($text);
                     }
                     continue;
                 }
@@ -201,7 +212,7 @@ class SmartQuotes
                     $token->content = self::replaceAt($token->content, $t[0][1], self::APOSTROPHE);
                     $text = $token->content;
                     $pos += $this->apostropheLen - 1;
-                    $max += $this->apostropheLen - 1;
+                    $max = strlen($text);
                 }
             }
         }
