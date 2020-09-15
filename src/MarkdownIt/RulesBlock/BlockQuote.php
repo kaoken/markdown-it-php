@@ -30,8 +30,8 @@ class BlockQuote
         // so no point trying to find the end of it in $silent mode
         if ($silent) { return true; }
 
-        // skip spaces after ">" and re-calculate $offset
-        $initial = $offset = $state->sCount[$startLine] + $pos - ($state->bMarks[$startLine] + $state->tShift[$startLine]);
+        // set offset past spaces and ">"
+        $initial = $offset = $state->sCount[$startLine] + 1;
 
         // skip one optional space after '>'
         if ($state->src[$pos] === ' ') {
@@ -96,7 +96,6 @@ class BlockQuote
 
         $oldParentType = $state->parentType;
         $state->parentType = 'blockquote';
-        $wasOutdented = false;
 
         // Search the end of the block
         //
@@ -125,7 +124,7 @@ class BlockQuote
             //    > current blockquote
             // 2. checking this line
             // ```
-            if ($state->sCount[$nextLine] < $state->blkIndent) $wasOutdented = true;
+            $isOutdented = $state->sCount[$nextLine] < $state->blkIndent;
 
             $pos = $state->bMarks[$nextLine] + $state->tShift[$nextLine];
             $max = $state->eMarks[$nextLine];
@@ -134,11 +133,11 @@ class BlockQuote
                 // Case 1: line is not inside the blockquote, and this line is empty.
                 break;
             }
-            if ($state->src[$pos++]=== '>' && !$wasOutdented) {
+            if ($state->src[$pos++]=== '>' && !$isOutdented) {
                 // This line is inside the blockquote.
 
-                // skip spaces after ">" and re-calculate $offset
-                $initial = $offset = $state->sCount[$nextLine] + $pos - ($state->bMarks[$nextLine] + $state->tShift[$nextLine]);
+                // set offset past spaces and ">"
+                $initial = $offset = $state->sCount[$nextLine] + 1;
 
                 // skip one optional space after '>'
                 if ($state->src[$pos] === ' ') {

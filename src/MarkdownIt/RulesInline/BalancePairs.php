@@ -46,9 +46,7 @@ class BalancePairs
 
                 if ($newMinOpenerIdx === -1) $newMinOpenerIdx = $openerIdx;
 
-                if ($opener->open &&
-                    $opener->end < 0){/*} &&
-                    $opener->level === $closer->level) {*/
+                if ($opener->open && $opener->end < 0){
 
                     $isOddMatch = false;
 

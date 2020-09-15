@@ -193,11 +193,13 @@ class Table
             $token = $state->push('tr_open', 'tr', 1);
             for ($i = 0; $i < $columnCount; $i++) {
                 $token          = $state->push('td_open', 'td', 1);
+                $token->map     = [ $nextLine, $nextLine + 1 ];
                 if ( !empty($aligns[$i]) ) {
                     $token->attrs  = [ [ 'style', 'text-align:' . $aligns[$i] ] ];
                 }
 
                 $token          = $state->push('inline', '', 0);
+                $token->map      = [ $nextLine, $nextLine + 1 ];
                 $token->content  = isset($columns[$i]) ? trim($columns[$i]) : '';
                 $token->children = [];
 

@@ -78,7 +78,7 @@ class SmartQuotes
                 } else {
                     for ($j = $i - 1; $j >= 0; $j--) {
                         if ($tokens[$j]->type === 'softbreak' || $tokens[$j]->type === 'hardbreak') break; // lastChar defaults to 0x20
-                        if ($tokens[$j]->type !== 'text') continue;
+                        if (!$tokens[$j]->content) continue; // should skip all tokens except 'text', 'html_inline' or 'code_inline'
 
                         $lastChar = $tokens[$j]->content[strlen($tokens[$j]->content) - 1];
                         break;
@@ -95,7 +95,7 @@ class SmartQuotes
                 } else {
                     for ($j = $i + 1; $j < count($tokens); $j++) {
                         if ($tokens[$j]->type === 'softbreak' || $tokens[$j]->type === 'hardbreak') break; // lastChar defaults to 0x20
-                        if ($tokens[$j]->type !== 'text') continue;
+                        if (!$tokens[$j]->content) continue; // should skip all tokens except 'text', 'html_inline' or 'code_inline'
 
                         $nextChar = $tokens[$j]->content[0];
                         break;
