@@ -12,8 +12,8 @@
  * http://opensource.org/licenses/mit-license.php
  *
  *
- * use javascript version 2.0.3
- * @see https://github.com/markdown-it/markdown-it-deflist/tree/2.0.3
+ * use javascript version 2.1.0
+ * @see https://github.com/markdown-it/markdown-it-deflist/tree/2.1.0
  */
 // Process definition lists
 //
@@ -33,7 +33,7 @@ class MarkdownItDeflist
      */
     public function plugin($md)
     {
-        $md->block->ruler->before('paragraph', 'deflist', [$this, 'deflist'], [ "alt" => [ 'paragraph', 'reference' ] ]);
+        $md->block->ruler->before('paragraph', 'deflist', [$this, 'deflist'], [ "alt" => [ 'paragraph', 'reference', 'blockquote' ] ]);
     }
 
 

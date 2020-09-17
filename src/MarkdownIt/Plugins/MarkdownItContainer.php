@@ -12,8 +12,8 @@
  * http://opensource.org/licenses/mit-license.php
  *
  *
- * use javascript version 2.0.0
- * @see https://github.com/markdown-it/markdown-it-container/tree/2.0.0
+ * use javascript version 3.0.0
+ * @see https://github.com/markdown-it/markdown-it-container/tree/3.0.0
  */
 // Process block-level custom containers
 //
@@ -67,10 +67,12 @@ class MarkdownItContainer
     }
 
     /**
+     * Second param may be useful if you decide
+     * to increase minimal allowed marker length
      * @param $params
      * @return bool
      */
-    function validateDefault($params) {
+    function validateDefault($params/*, markup*/) {
         return explode(' ', trim($params), 2)[0] === $this->name;
     }
 
@@ -82,14 +84,14 @@ class MarkdownItContainer
      * @param $self
      * @return string
      */
-    function renderDefault(&$tokens, $idx, $options, $env, $self) {
+    function renderDefault(&$tokens, $idx, $options, $env, $slf) {
 
         // add a class to the opening tag
         if ($tokens[$idx]->nesting === 1) {
-            $tokens[$idx]->attrPush([ 'class', $this->name ]);
+            $tokens[$idx]->attrJoin('class', $this->name);
         }
 
-        return $self->renderToken($tokens, $idx, $options, $env, $self);
+        return $slf->renderToken($tokens, $idx, $options, $env, $slf);
     }
 
     /**
@@ -130,7 +132,7 @@ class MarkdownItContainer
             if (!$this->validate[0]->{$this->validate[1]}($params)) { return false; }
         }else if( is_callable($this->validate) ){
             $fn = $this->validate;
-            if (!$fn($params)) { return false; }
+            if (!$fn($params,$markup)) { return false; }
         }
 
 

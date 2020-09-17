@@ -12,8 +12,8 @@
  * http://opensource.org/licenses/mit-license.php
  *
  *
- * use javascript version 2.0.0
- * @see https://github.com/markdown-$g->group/markdown-$g->group-container/tree/2.0.0/test
+ * use javascript version 3.0.0
+ * @see https://github.com/markdown-it/markdown-it-container/tree/3.0.0/test
  */
 namespace Kaoken\Test\MarkdownIt\Plugins\Container;
 
@@ -91,28 +91,36 @@ Trait ContainerTrait
             $gg->equal($res, "<div class=\"name\">\n<p>bar</p>\n</div>\n",'should accept rule if return value is true');
 
             //------------------------------------------------------------
-            /**
-             * The javascript version of 'markdown-it v8' also looks like the following.
-             *
-             *  $count = 6
-             */
-            $count = 0;
+            $gg->group('count', function ($ggg) {
+                $count = 0;
 
-            (new MarkdownIt())
-                ->plugin(new MarkdownItContainer(), 'name', ['validate' => function () use(&$count) {
-                    $count++;
-                }])
-                ->parse(":\n::\n:::\n::::\n:::::\n", new \stdClass());
+                (new MarkdownIt())
+                    ->plugin(new MarkdownItContainer(), 'name', ['validate' => function () use (&$count) {
+                        $count++;
+                    }])
+                    ->parse(":\n::\n:::\n::::\n:::::\n", new \stdClass());
 
-            $gg->equal($count, 3, 'rule should call it');
-            // markdown-it version ^8.00
-            //$ggg->equal($count, 6);
-
+                // called by paragraph and lheading 3 times each
+                $ggg->assert($count > 0, "count > 0");
+                $ggg->assert($count % 3 === 0, "count % 3 === 0");
+            });
             //------------------------------------------------------------
             (new MarkdownIt())
                 ->plugin(new MarkdownItContainer(), 'name',
                     ['validate' => function ($p) use($gg) { $gg->equal($p, " \tname ",'should not trim params'); return 1; }])
                 ->parse("::: \tname \ncontent\n:::\n", new \stdClass());
+
+            //------------------------------------------------------------
+            $gg->group('should allow analyze mark', function ($ggg) {
+                $md = (new MarkdownIt());
+                $md->plugin(new MarkdownItContainer(), 'name',
+                    ['validate' => function ($p, $mark) use($ggg) {
+                        return strlen($mark) >= 4;
+                    }]);
+
+                $ggg->equal($md->render(":::\nfoo\n:::\n"), "<p>:::\nfoo\n:::</p>\n");
+                $ggg->equal($md->render("::::\nfoo\n::::\n"), "<div class=\"name\">\n<p>foo</p>\n</div>\n");
+            });
         });
     }
 

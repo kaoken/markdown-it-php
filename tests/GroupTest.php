@@ -116,6 +116,11 @@ __HTML__;
         if ($a != $b) $this->fail($a, $b, $message, '==', 'equal');
         else $this->html .= $this->successText($message);
     }
+    public function assert($a, $message){
+        $this->itemCount++;
+        if (!$a) $this->fail($a, '', $message, '', 'assert');
+        else $this->html .= $this->successText($message);
+    }
     public function notEqual($a, $b, $message="")
     {
         $this->itemCount++;
