@@ -8,12 +8,14 @@ ini_set( 'error_reporting', E_ALL );
 
 use Kaoken\MarkdownIt\MarkdownIt;
 
-$md = new MarkdownIt([
-    "html"=> true,
-    "langPrefix"=> '',
-    "typographer"=> true,
-    "linkify"=> true
-]);
+//$md = new MarkdownIt([
+//    "html"=> true,
+//    "langPrefix"=> '',
+//    "typographer"=> true,
+//    "linkify"=> true
+//]);
+//echo($md->render('*<foo@bar.com>*'));
+
 
 switch(isset($_GET['i'])?$_GET['i']:'0'){
     case '1':
@@ -24,7 +26,10 @@ switch(isset($_GET['i'])?$_GET['i']:'0'){
         new Kaoken\Test\Punycode\CTest();break;
     case '4':
         new Kaoken\Test\MarkdownIt\Plugins\CTest();break;
+    case '99':
+        phpinfo();
+        break;
     default:
         new Kaoken\Test\MarkdownIt\CTest();break;
 }
-//echo($md->render("The dog---\"'man's' best friend\""));
+

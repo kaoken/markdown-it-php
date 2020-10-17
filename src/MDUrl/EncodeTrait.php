@@ -19,9 +19,9 @@ namespace Kaoken\MDUrl;
 
 trait EncodeTrait
 {
-    protected $defaultChars   = ";/?:@&=+$,-_.!~*'()#";
-    protected $componentChars = "-_.!~*'()";
-    protected $encodeCache = [];
+    protected string $defaultChars = ";/?:@&=+$,-_.!~*'()#";
+    protected string $componentChars = "-_.!~*'()";
+    protected array $encodeCache = [];
 
 
     /**
@@ -30,7 +30,7 @@ trait EncodeTrait
      * @param string $exclude Ascii character staring
      * @return array
      */
-    protected function &getEncodeCache($exclude)
+    protected function &getEncodeCache(string $exclude)
     {
         if (array_key_exists($exclude, $this->encodeCache)) { return $this->encodeCache[$exclude]; }
 
@@ -56,15 +56,14 @@ trait EncodeTrait
     }
 
 
-
     /**
      * Encode unsafe characters with percent-encoding, skipping already encoded sequences.
      * @param string $string String to encode
-     * @param string $exclude List of characters to ignore (in addition to a-zA-Z0-9)
-     * @param bool   $keepEscaped Don't encode '%' in a correct escape sequence (default: true)
+     * @param null $exclude List of characters to ignore (in addition to a-zA-Z0-9)
+     * @param bool $keepEscaped Don't encode '%' in a correct escape sequence (default: true)
      * @return string
      */
-    public function encode($string, $exclude=null, $keepEscaped=true)
+    public function encode(string $string, $exclude=null, $keepEscaped=true)
     {
         $result = '';
 

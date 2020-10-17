@@ -61,39 +61,39 @@ Trait ParseTrait
 
     // define these here so at least they only have to be
     // compiled once on the first module load.
-    protected $protocolPattern = '/^([a-z0-9.+-]+:)/i';
-    protected $portPattern = '/:[0-9]*$/';
+    protected string $protocolPattern = '/^([a-z0-9.+-]+:)/i';
+    protected string $portPattern = '/:[0-9]*$/';
 
     // Special case for a simple path URL
-    protected $simplePathPattern = '/^(\/\/?(?!\/)[^\\?\s]*)(\\?[^\s]*)?$/';
+    protected string $simplePathPattern = '/^(\/\/?(?!\/)[^\\?\s]*)(\\?[^\s]*)?$/';
 
     // RFC 2396: characters reserved for delimiting URLs.
     // We actually just auto-escape these.
-    protected $delims = [ '<', '>', '"', '`', ' ', "\r", "\n", "\t" ];
+    protected array $delims = ['<', '>', '"', '`', ' ', "\r", "\n", "\t"];
 
     // RFC 2396: characters not allowed for various reasons.
-    protected $unwise = [ '{', '}', '|', '\\', '^', '`', '<', '>', '"', '`', ' ', "\r", "\n", "\t" ];
+    protected array $unwise = ['{', '}', '|', '\\', '^', '`', '<', '>', '"', '`', ' ', "\r", "\n", "\t"];
 
     // Allowed by RFCs, but cause of XSS attacks.  Always escape these.
-    protected $autoEscape = [ '\'', '{', '}', '|', '\\', '^', '`', '<', '>', '"', '`', ' ', "\r", "\n", "\t" ];
+    protected array $autoEscape = ['\'', '{', '}', '|', '\\', '^', '`', '<', '>', '"', '`', ' ', "\r", "\n", "\t"];
     // Characters that are never ever allowed in a hostname.
     // Note that any invalid chars are also handled, but these
     // are the ones that are *expected* to be seen, so we fast-path
     // them.
-    protected $nonHostChars = [ '%', '/', '?', ';', '#', '\'', '{', '}', '|', '\\', '^', '`', '<', '>', '"', '`', ' ', "\r", "\n", "\t" ];
-    protected $hostEndingChars = [ '/', '?', '#' ];
-    protected $hostnameMaxLen = 255;
-    protected $hostnamePartPattern = '/^[+a-z0-9A-Z_-]{0,63}$/';
-    protected $hostnamePartStart = '/^([+a-z0-9A-Z_-]{0,63})(.*)$/';
+    protected array $nonHostChars = ['%', '/', '?', ';', '#', '\'', '{', '}', '|', '\\', '^', '`', '<', '>', '"', '`', ' ', "\r", "\n", "\t"];
+    protected array $hostEndingChars = ['/', '?', '#'];
+    protected int $hostnameMaxLen = 255;
+    protected string $hostnamePartPattern = '/^[+a-z0-9A-Z_-]{0,63}$/';
+    protected string $hostnamePartStart = '/^([+a-z0-9A-Z_-]{0,63})(.*)$/';
     // protocols that can allow "unsafe" and "unwise" chars.
     /* eslint-disable no-script-url */
     // protocols that never have a hostname.
-    protected $hostlessProtocol = [
-        'javascript'=> true,
-        'javascript:'=> true
+    protected array $hostlessProtocol = [
+        'javascript' => true,
+        'javascript:' => true
     ];
     // protocols that always contain a // bit.
-    protected $slashedProtocol = [
+    protected array $slashedProtocol = [
         'http' => true,
         'https' => true,
         'ftp' => true,
@@ -109,22 +109,22 @@ Trait ParseTrait
 
 
     /**
-     * @param $url
-     * @param $slashesDenoteHost
+     * @param string $url
+     * @param bool $slashesDenoteHost
      * @return mixed
      */
-    public function urlParse($url, $slashesDenoteHost=false) {
+    public function urlParse(string $url, $slashesDenoteHost=false) {
         if (isset($url) && $url instanceof \stdClass) { return $url; }
 
         return $this->parse($url, $slashesDenoteHost);
     }
 
     /**
-     * @param $url
-     * @param $slashesDenoteHost
+     * @param string $url
+     * @param bool $slashesDenoteHost
      * @return \stdClass
      */
-    public function parse($url, $slashesDenoteHost=false)
+    public function parse(string $url, $slashesDenoteHost=false)
     {
 
         $rest = $url;
@@ -309,10 +309,10 @@ Trait ParseTrait
     }
 
     /**
-     * @param $host
+     * @param string $host
      * @param $obj
      */
-    protected function parseHost($host, &$obj) {
+    protected function parseHost(string $host, &$obj) {
         if (preg_match($this->portPattern, $host, $port)) {
             $port = $port[0];
             if ($port !== ':') {

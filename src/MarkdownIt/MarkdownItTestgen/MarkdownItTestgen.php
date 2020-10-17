@@ -224,12 +224,12 @@ class MarkdownItTestgen
 
 
     /**
-     * @param starint                              $path
-     * @param object|\Kaoken\MarkdownIt\MarkdownIt  $options
-     * @param \Kaoken\MarkdownIt\MarkdownIt|null    $md
+     * @param string $path
+     * @param object|\Kaoken\MarkdownIt\MarkdownIt $options
+     * @param \Kaoken\MarkdownIt\MarkdownIt|null $md
      * @throws \Exception
      */
-    function generate($path, $options, $md=null)
+    function generate(string $path, $options, $md=null)
     {
         if (!$md) {
             $md = $options;

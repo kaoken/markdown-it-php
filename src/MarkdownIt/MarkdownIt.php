@@ -208,7 +208,6 @@ class MarkdownIt
                 } catch (Exception $e) { /**/ }
             }
         }
-
         return $this->mdurl->encode($this->mdurl->format($parsed));
     }
 
@@ -241,7 +240,8 @@ class MarkdownIt
                 } catch (Exception $e) { /**/ }
             }
         }
-        return $this->mdurl->decode($this->mdurl->format($parsed));
+        // add '%' to exclude list because of https://github.com/markdown-it/markdown-it/issues/720
+        return $this->mdurl->decode($this->mdurl->format($parsed), $this->mdurl->decodeDefaultChars() . '%');
     }
 
     /**
@@ -422,11 +422,11 @@ class MarkdownIt
         }else if( !is_null($presets) && empty($presets) ){
             return $this;
         }
-    
+
         if (is_null($presets)) { throw new Exception('Wrong `markdown-it` preset, can\'t be empty'); }
-    
+
         if (is_object($presets->options)) { $this->set($presets->options); }
-    
+
         if (isset($presets->components)) {
             foreach ($presets->components as $name=>&$val) {
                 if( !property_exists($this,$name) ) continue;

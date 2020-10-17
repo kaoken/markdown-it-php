@@ -62,14 +62,18 @@ class DefaultRules
         $token = $tokens[$idx];
         $info = $token->info ? trim($this->utils->unescapeAll( $token->info )) : '';
         $langName = '';
+        $langAttrs = '';
+        $arr = [];
 
         if ($info) {
-            $langName = preg_split("/\s+/",$info)[0]; // /g
+            $arr = preg_split("/(\s+)/",$info,-1,PREG_SPLIT_DELIM_CAPTURE); // /g
+            $langName = $arr[0];
+            $langAttrs = implode ('', array_slice($arr, 2));
         }
 
         if ( isset($options->highlight) ) {
             $fn = $options->highlight;
-            if( empty( $highlighted = $fn($token->content, $langName)) )
+            if( empty( $highlighted = $fn($token->content, $langName, $langAttrs)) )
                 $highlighted = htmlspecialchars($token->content);
         } else {
             $highlighted = htmlspecialchars($token->content);

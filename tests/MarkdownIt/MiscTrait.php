@@ -79,6 +79,18 @@ trait MiscTrait
             $gg->strictEqual($md->render("```\n&\n```"), "<pre><code>&amp;\n</code></pre>\n");
         });
         //-------------------------------------------------------------------
+        $g->group("highlight arguments", function ($gg) {
+            $md = new MarkdownIt([
+                "highlight"=> function ($str, $lang, $attrs) use($gg) {
+                    $gg->strictEqual($lang, "a");
+                    $gg->strictEqual($attrs, "b  c  d");
+                    return "<pre><code>==" . $str . "==</code></pre>";
+                }
+            ]);
+
+            $gg->strictEqual($md->render("``` a  b  c  d \nhl\n```"), "<pre><code>==hl\n==</code></pre>\n");
+        });
+        //-------------------------------------------------------------------
         $g->group("force hardbreaks", function ($gg) {
             $md = new MarkdownIt([ "breaks" => true ]);
 

@@ -20,13 +20,16 @@ namespace Kaoken\MDUrl;
 trait DecodeTrait
 {
 
-    protected $decodeCache = [];
+    protected array $decodeCache = [];
+
+
+    public function decodeDefaultChars(){return ';/?:@&=+$,#';}
 
     /**
      * @param string $exclude Ascii character staring
      * @return array
      */
-    protected function getDecodeCache($exclude)
+    protected function getDecodeCache(string $exclude)
     {
         if (array_key_exists($exclude, $this->encodeCache)) { return $this->encodeCache[$exclude]; }
 
@@ -51,10 +54,10 @@ trait DecodeTrait
      * @param string|null $exclude
      * @return mixed
      */
-    public function decode($string, $exclude=null)
+    public function decode(string $string, $exclude=null)
     {
         if ( !is_string( $exclude) ) {
-            $exclude = ';/?:@&=+$,#';
+            $exclude = $this->decodeDefaultChars();
         }
 
         $cache = $this->getDecodeCache($exclude);

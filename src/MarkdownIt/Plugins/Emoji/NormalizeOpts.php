@@ -21,7 +21,7 @@ class NormalizeOpts
      * @param object $options
      * @return \stdClass
      */
-    public static function normalize($options)
+    public static function normalize(object $options)
     {
         $emojies = &$options->defs;
         // Filter $emojies by whitelist, if needed
@@ -48,21 +48,28 @@ class NormalizeOpts
             $shortcuts[$options->shortcuts[$key]] = $key;
         }
 
-        // Compile regexp
-        $a = array_merge(
-            array_map(function (&$name) {
-                return ':' . $name . ':';
-            }, array_keys($emojies)),
-            array_keys($shortcuts)
-        );
-        rsort($a);
-        $names = join('|',
-            array_map(function ($name) {
-                return self::quoteRE($name);
-            },$a)
-        );
-        unset($a);
 
+        $keys = isset($emojies) ? array_keys($emojies) : [];
+        $names = "";
+        // If no definitions are given, return empty regex to avoid replacements with 'undefined'.
+        if (count($keys) === 0) {
+            $names = '^$';
+        } else {
+            // Compile regexp
+            $a = array_merge(
+                array_map(function (&$name) {
+                    return ':' . $name . ':';
+                }, $keys),
+                array_keys($shortcuts)
+            );
+            rsort($a);
+            $names = join('|',
+                array_map(function ($name) {
+                    return self::quoteRE($name);
+                },$a)
+            );
+            unset($a);
+        }
 
         $o = new \stdClass();
         $o->defs = &$emojies;

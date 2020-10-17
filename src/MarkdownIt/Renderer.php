@@ -93,12 +93,12 @@ class Renderer
     /**
      * Default token renderer. Can be overriden by custom function
      * in [[Renderer#rules]].
-     * @param Token[]  $tokens   list of tokens
-     * @param integer  $idx      token index to render
-     * @param object   $options  params of parser instance
+     * @param Token[] $tokens list of tokens
+     * @param integer $idx token index to render
+     * @param object $options params of parser instance
      * @return string
      */
-    public function renderToken(array &$tokens, $idx, $options)
+    public function renderToken(array &$tokens, int $idx, object $options)
     {
         $result = '';
         $needLf = false;
@@ -161,12 +161,12 @@ class Renderer
 
     /**
      * The same as [[Renderer.render]], but for single token of `inline` type.
-     * @param Token[]  $tokens   list on block tokens to renter
-     * @param object   $options  params of parser instance
-     * @param object   $env      additional data from parsed input (references, for example)
+     * @param Token[] $tokens list on block tokens to renter
+     * @param object $options params of parser instance
+     * @param object $env additional data from parsed input (references, for example)
      * @return string
      */
-    public function renderInline(array &$tokens, $options, $env)
+    public function renderInline(array &$tokens, object $options, object $env)
     {
         $result = '';
         $rules = $this->rules;
@@ -192,12 +192,12 @@ class Renderer
      * Special kludge for image `alt` attributes to conform CommonMark spec.
      * Don't try to use it! Spec requires to show `alt` content with stripped markup,
      * instead of simple escaping.
-     * @param Token[]  $tokens    list on block tokens to renter
-     * @param object   $options   params of parser instance
-     * @param object   $env       additional data from parsed input (references, for example)
+     * @param Token[] $tokens list on block tokens to renter
+     * @param object $options params of parser instance
+     * @param object $env additional data from parsed input (references, for example)
      * @return string
      */
-    public function renderInlineAsText(array &$tokens, $options, $env)
+    public function renderInlineAsText(array &$tokens, object $options, object $env)
     {
         $result = '';
 
@@ -216,12 +216,12 @@ class Renderer
     /**
      * Takes token stream and generates HTML. Probably, you will never need to call
      * this method directly.
-     * @param Token[]      $tokens    list on block tokens to renter
-     * @param object       $options   params of parser instance
-     * @param object|null  $env       additional data from parsed input (references, for example)
+     * @param Token[] $tokens list on block tokens to renter
+     * @param object $options params of parser instance
+     * @param object|null $env additional data from parsed input (references, for example)
      * @return string
-     **/
-    public function render(array &$tokens, $options, $env=null)
+     */
+    public function render(array &$tokens, object $options, $env=null)
     {
         $result = '';
         $rules = $this->rules;

@@ -1,5 +1,5 @@
 <?php
-// GFM table, non-standard
+// GFM table, https://github.github.com/gfm/#tables-extension-
 
 namespace Kaoken\MarkdownIt\RulesBlock;
 
@@ -9,10 +9,10 @@ class Table
 {
     /**
      * @param StateBlock $state
-     * @param integer    $line
+     * @param integer $line
      * @return string
      */
-    protected function getLine(&$state, $line)
+    protected function getLine(StateBlock &$state, int $line)
     {
         $pos = $state->bMarks[$line] + $state->blkIndent;
         $max = $state->eMarks[$line];
@@ -24,54 +24,38 @@ class Table
      * @param string $str
      * @return array
      */
-    protected function escapedSplit($str)
+    protected function escapedSplit(string $str)
     {
         $result = [];
         $pos = 0;
         $max = strlen($str);
-        $escapes = 0;
+        $isEscaped = false;
         $lastPos = 0;
-        $backTicked = false;
-        $lastBackTick = 0;
-
+        $current = '';
         $ch  = $str[$pos];
 
         while ($pos < $max) {
-            if ($ch === '`') {
-                if ($backTicked) {
-                    // make \` close code sequence, but not open it;
-                    // the reason is: `\` is correct code block
-                    $backTicked = false;
-                    $lastBackTick = $pos;
-                } else if ($escapes % 2 === 0) {
-                    $backTicked = true;
-                    $lastBackTick = $pos;
+            if ($ch === '|') {
+                if (!$isEscaped) {
+                    // pipe separating cells, '|'
+                    $result[] = $current . substr($str, $lastPos, $pos - $lastPos);
+                    $current = '';
+                    $lastPos = $pos + 1;
+                }else {
+                    // escaped pipe, '\|'
+                    $current .= substr($str, $lastPos, ($pos - $lastPos) - 1);
+                    $lastPos = $pos;
                 }
-            } else if ($ch === '|' && ($escapes % 2 === 0) && !$backTicked) {
-                $result[] = substr($str, $lastPos, $pos - $lastPos);
-                $lastPos = $pos + 1;
             }
 
-            if ($ch === '\\') {
-                $escapes++;
-            } else {
-                $escapes = 0;
-            }
-
+            $isEscaped = $ch === '\\';
             $pos++;
-
-            // If there was an un-closed backtick, go back to just after
-            // the last backtick, but as if it was a normal character
-            if ($pos === $max && $backTicked) {
-                $backTicked = false;
-                $pos = $lastBackTick + 1;
-            }
 
             if( $pos >= $max ) break;
             $ch = $str[$pos];
         }
 
-        $result[] = substr($str, $lastPos);
+        $result[] = $current . substr($str, $lastPos);
 
         return $result;
     }
@@ -84,7 +68,7 @@ class Table
      * @param boolean $silent
      * @return bool
      */
-    public function set(&$state, $startLine, $endLine, $silent=false)
+    public function set(StateBlock &$state, int $startLine, int $endLine, $silent=false)
     {
         // should have at least two lines
         if ($startLine + 2 > $endLine) { return false; }
@@ -143,14 +127,24 @@ class Table
         $lineText = trim(self::getLine($state, $startLine));
         if ( strpos($lineText, '|') === false) { return false; }
         if ( $state->sCount[$startLine] - $state->blkIndent >= 4) { return false; }
-        $columns = self::escapedSplit(preg_replace("/^\||\|$/", '', $lineText));   // /g
+        $columns = self::escapedSplit($lineText);
+        if (count($columns) && $columns[0] === '') array_shift($columns);
+        if (count($columns) && $columns[count($columns) - 1] === '') array_pop($columns);
 
         // header row will define an amount of $columns in the entire table,
-        // and align row shouldn't be smaller than that (the rest of the rows can)
+        // and align row should be exactly the same (the rest of the rows can differ)
         $columnCount = count($columns);
-        if ($columnCount > count($aligns) ) { return false; }
+        if ($columnCount !== count($aligns) ) { return false; }
 
         if ($silent) { return true; }
+
+        $oldParentType = $state->parentType;
+        $state->parentType = 'table';
+
+        // use 'blockquote' lists for termination because it's
+        // the most similar to tables
+        $terminatorRules = $state->md->block->ruler->getRules('blockquote');
+
 
         $token     = $state->push('table_open', 'table', 1);
         $token->map = $tableLines = [ $startLine, 0 ];
@@ -161,45 +155,58 @@ class Table
         $token     = $state->push('tr_open', 'tr', 1);
         $token->map = [ $startLine, $startLine + 1 ];
 
+        $tbodyLines = [];
         for ($i = 0; $i < count($columns); $i++) {
-            $token          = $state->push('th_open', 'th', 1);
-            $token->map      = [ $startLine, $startLine + 1 ];
+            $token = $state->push('th_open', 'th', 1);
             if ( !empty($aligns[$i]) ) {
                 $token->attrs  = [ [ 'style', 'text-align:' . $aligns[$i] ] ];
             }
 
-            $token          = $state->push('inline', '', 0);
-            $token->content  = trim($columns[$i]);
-            $token->map      = [ $startLine, $startLine + 1 ];
-            $token->children = [];
+            $token              = $state->push('inline', '', 0);
+            $token->content     = trim($columns[$i]);
+            $token->children    = [];
 
             $token          = $state->push('th_close', 'th', -1);
         }
 
-        $token     = $state->push('tr_close', 'tr', -1);
-        $token     = $state->push('thead_close', 'thead', -1);
-
-        $token     = $state->push('tbody_open', 'tbody', 1);
-        $token->map = $tbodyLines = [ $startLine + 2, 0 ];
+        $token = $state->push('tr_close', 'tr', -1);
+        $token = $state->push('thead_close', 'thead', -1);
 
         for ($nextLine = $startLine + 2; $nextLine < $endLine; $nextLine++) {
             if ($state->sCount[$nextLine] < $state->blkIndent) { break; }
 
+            $terminate = false;
+            for ($i = 0, $l = count($terminatorRules); $i < $l; $i++) {
+                if ($terminatorRules[$i]($state, $nextLine, $endLine, true)) {
+                    $terminate = true;
+                    break;
+                }
+            }
+
+            if ($terminate) { break; }
             $lineText = trim(self::getLine($state, $nextLine));
-            if ( strpos($lineText, '|') === false) { break; }
+            if (!$lineText) { break; }
             if ( $state->sCount[$nextLine] - $state->blkIndent >= 4) { break; }
-            $columns = self::escapedSplit(preg_replace("/^\||\|$/", '', $lineText));
+            $columns = self::escapedSplit($lineText);
+            if (count($columns) && $columns[0] === '') array_shift($columns);
+            if (count($columns) && $columns[count($columns) - 1] === '') array_pop($columns);
+
+            if ($nextLine === $startLine + 2) {
+                $token      = $state->push('tbody_open', 'tbody', 1);
+                $token->map = $tbodyLines = [ $startLine + 2, 0 ];
+            }
+
 
             $token = $state->push('tr_open', 'tr', 1);
+            $token->map = [ $nextLine, $nextLine + 1 ];
+
             for ($i = 0; $i < $columnCount; $i++) {
                 $token          = $state->push('td_open', 'td', 1);
-                $token->map     = [ $nextLine, $nextLine + 1 ];
                 if ( !empty($aligns[$i]) ) {
                     $token->attrs  = [ [ 'style', 'text-align:' . $aligns[$i] ] ];
                 }
 
                 $token          = $state->push('inline', '', 0);
-                $token->map      = [ $nextLine, $nextLine + 1 ];
                 $token->content  = isset($columns[$i]) ? trim($columns[$i]) : '';
                 $token->children = [];
 
@@ -207,10 +214,14 @@ class Table
             }
             $token = $state->push('tr_close', 'tr', -1);
         }
-        $token = $state->push('tbody_close', 'tbody', -1);
+        if ($tbodyLines) {
+            $token = $state->push('tbody_close', 'tbody', -1);
+            $tbodyLines[1] = $nextLine;
+        }
         $token = $state->push('table_close', 'table', -1);
+        $tbodyLines[1] = $nextLine;
 
-        $tableLines[1] = $tbodyLines[1] = $nextLine;
+        $state->parentType = $oldParentType;
         $state->line = $nextLine;
         return true;
     }

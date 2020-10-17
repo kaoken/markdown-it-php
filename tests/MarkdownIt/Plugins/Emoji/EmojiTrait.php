@@ -18,6 +18,7 @@
 namespace Kaoken\Test\MarkdownIt\Plugins\Emoji;
 
 
+use Exception;
 use Kaoken\Test\MarkdownItTestgen\MarkdownItTestgen;
 use Kaoken\MarkdownIt\MarkdownIt;
 use Kaoken\MarkdownIt\Plugins\Emoji\Data\Shortcuts;
@@ -25,6 +26,9 @@ use Kaoken\MarkdownIt\Plugins\MarkdownItEmoji;
 
 trait EmojiTrait
 {
+    /**
+     * @throws Exception
+     */
     private function emoji()
     {
         $this->group('markdown-it-emoji', function ($g){
@@ -34,6 +38,9 @@ trait EmojiTrait
             $g->group('light', function ($gg){
                 $this->emojiLight($gg);
             });
+            $g->group('bare', function ($gg){
+                $this->emojiBare($gg);
+            });
             $g->group('integrity', function ($gg){
                 $this->emojiIntegrity($gg);
             });
@@ -42,6 +49,7 @@ trait EmojiTrait
 
     /**
      * @param $g
+     * @throws Exception
      */
     private function emojiDefault($g)
     {
@@ -75,6 +83,7 @@ trait EmojiTrait
 
     /**
      * @param $g
+     * @throws Exception
      */
     private function emojiLight($g)
     {
@@ -107,6 +116,31 @@ trait EmojiTrait
 
     /**
      * @param $g
+     * @throws Exception
+     */
+    private function emojiBare($g){
+        $obj = new MarkdownItTestgen();
+
+        $md = (new MarkdownIt())->plugin(new MarkdownItEmoji('bare'));
+        $obj->generate(__DIR__.'/Fixtures/bare.txt', [ 'header' => true, 'assert' => $g ], $md);
+
+        $md = (new MarkdownIt())->plugin(new MarkdownItEmoji('light'), [
+            'defs' => [
+                'one' => '!!!one!!!',
+                'fifty' => '!!50!!'
+            ],
+            'shortcuts' => [
+                'fifty' => [ ':50', '|50' ],
+                'one' =>':uno'
+            ]
+        ]);
+
+        $obj->generate(__DIR__.'/Fixtures/options.txt', [ 'header' => true, 'assert' => $g ], $md);
+    }
+
+    /**
+     * @param $g
+     * @throws Exception
      */
     private function emojiIntegrity($g)
     {

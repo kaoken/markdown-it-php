@@ -12,17 +12,19 @@
  * http://opensource->org/licenses/mit-license->php
  *
  *
- * use javascript version 1.4.0
- * @see https://github.com/markdown-it/markdown-it-emoji/tree/1.4.0
+ * use javascript version 2.0.0
+ * @see https://github.com/markdown-it/markdown-it-emoji/tree/2.0.0
  */
 
 namespace Kaoken\MarkdownIt\Plugins;
 
+use Exception;
 use Kaoken\MarkdownIt\MarkdownIt;
 use Kaoken\MarkdownIt\Plugins\Emoji\NormalizeOpts;
 use Kaoken\MarkdownIt\Plugins\Emoji\Data\Shortcuts;
 use Kaoken\MarkdownIt\Plugins\Emoji\Render;
 use Kaoken\MarkdownIt\Plugins\Emoji\Replace;
+use stdClass;
 
 class MarkdownItEmoji
 {
@@ -36,23 +38,31 @@ class MarkdownItEmoji
     /**
      * @param MarkdownIt $md
      * @param null|object|array $options
-     * @throws \Exception
+     * @throws Exception
      */
     public function plugin($md, $options=null)
     {
-        $defaults = new \stdClass();
-        $defaults->defs = json_decode(file_get_contents(__DIR__."/Emoji/Data/{$this->type}.json"), true);
-        $defaults->shortcuts = Shortcuts::get();
-        $defaults->enabled = [];
-
         if( !isset($options) ){
-            $options = new \stdClass();
+            $options = new stdClass();
         }else if( is_array($options) ){
             $options = (object)$options;
         }
 
+        $this->{$this->type}($md, $options);
+    }
 
-        $opts = NormalizeOpts::normalize($md->utils->assign(new \stdClass(), $defaults, $options));
+    /**
+     * @param MarkdownIt $md
+     * @param stdClass $options
+     * @throws Exception
+     */
+    private function bare(MarkdownIt $md, stdClass $options){
+        $defaults = new stdClass();
+        $defaults->defs = [];
+        $defaults->shortcuts = [];
+        $defaults->enabled = [];
+
+        $opts = NormalizeOpts::normalize($md->utils->assign(new stdClass(), $defaults, $options));
 
         $md->renderer->rules->emoji = [new Render(), 'emoji_html'];
 
@@ -62,5 +72,35 @@ class MarkdownItEmoji
                 'replace'
             ]
         );
+    }
+    /**
+     * @param MarkdownIt $md
+     * @param stdClass $options
+     * @throws Exception
+     */
+    private function full(MarkdownIt $md, stdClass $options){
+        $defaults = new stdClass();
+        $defaults->defs = json_decode(file_get_contents(__DIR__."/Emoji/Data/full.json"), true);
+        $defaults->shortcuts = Shortcuts::get();
+        $defaults->enabled = [];
+
+        $opts = $md->utils->assign(new stdClass(), $defaults, $options);
+
+        $this->bare($md, $opts);
+    }
+    /**
+     * @param MarkdownIt $md
+     * @param stdClass $options
+     * @throws Exception
+     */
+    private function light(MarkdownIt $md, stdClass $options){
+        $defaults = new stdClass();
+        $defaults->defs = json_decode(file_get_contents(__DIR__."/Emoji/Data/light.json"), true);
+        $defaults->shortcuts = Shortcuts::get();
+        $defaults->enabled = [];
+
+        $opts = $md->utils->assign(new stdClass(), $defaults, $options);
+
+        $this->bare($md, $opts);
     }
 }

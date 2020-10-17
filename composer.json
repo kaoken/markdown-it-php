@@ -7,7 +7,9 @@
     "type": "library",
     "license": "MIT",
     "require": {
-        "php": ">=7.4.0"
+        "php": ">=7.4.0",
+        "ext-mbstring": "*",
+        "ext-json": "*"
     },
     "authors": [
         {
