@@ -1,6 +1,9 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [12.0.1.0] - 2020-10-20
+### Updated
+- This gem is a port of the [markdown-it Javascript package](https://github.com/markdown-it/markdown-it) by Vitaly Puzrin and Alex Kocharin. Currently synced with markdown-it 12.0.1
 
 ## [12.0.0.0] - 2020-10-17
 ### Updated

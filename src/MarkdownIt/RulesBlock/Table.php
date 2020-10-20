@@ -14,7 +14,7 @@ class Table
      */
     protected function getLine(StateBlock &$state, int $line)
     {
-        $pos = $state->bMarks[$line] + $state->blkIndent;
+        $pos = $state->bMarks[$line] + $state->tShift[$line];
         $max = $state->eMarks[$line];
 
         return substr($state->src, $pos, $max - $pos);
