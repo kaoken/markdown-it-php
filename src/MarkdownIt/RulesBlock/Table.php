@@ -134,7 +134,7 @@ class Table
         // header row will define an amount of $columns in the entire table,
         // and align row should be exactly the same (the rest of the rows can differ)
         $columnCount = count($columns);
-        if ($columnCount !== count($aligns) ) { return false; }
+        if ($columnCount === 0 || $columnCount !== count($aligns) ) { return false; }
 
         if ($silent) { return true; }
 
