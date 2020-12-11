@@ -23,13 +23,14 @@ trait DecodeTrait
     protected array $decodeCache = [];
 
 
-    public function decodeDefaultChars(){return ';/?:@&=+$,#';}
+    public function decodeDefaultChars(): string
+    {return ';/?:@&=+$,#';}
 
     /**
      * @param string $exclude Ascii character staring
      * @return array
      */
-    protected function getDecodeCache(string $exclude)
+    protected function getDecodeCache(string $exclude): array
     {
         if (array_key_exists($exclude, $this->encodeCache)) { return $this->encodeCache[$exclude]; }
 
@@ -52,7 +53,7 @@ trait DecodeTrait
      * Decode percent-encoded string.
      * @param string $string
      * @param string|null $exclude
-     * @return mixed
+     * @return string|string[]|null
      */
     public function decode(string $string, $exclude=null)
     {

@@ -7,7 +7,7 @@ class Block
     /**
      * @param StateCore $state
      */
-    public function set(&$state)
+    public function set(StateCore &$state)
     {
         if ($state->inlineMode) {
             $token          = $state->createToken('inline', '', 0);

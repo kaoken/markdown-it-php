@@ -31,11 +31,10 @@ class MarkdownItDeflist
      * @param MarkdownIt $md
      * @throws Exception
      */
-    public function plugin($md)
+    public function plugin(MarkdownIt $md)
     {
         $md->block->ruler->before('paragraph', 'deflist', [$this, 'deflist'], [ "alt" => [ 'paragraph', 'reference', 'blockquote' ] ]);
     }
-
 
 
     /**
@@ -44,7 +43,7 @@ class MarkdownItDeflist
      * @param integer $line
      * @return int
      */
-    protected function skipMarker(&$state, $line)
+    protected function skipMarker(StateBlock &$state, int $line): int
     {
         $start = $state->bMarks[$line] + $state->tShift[$line];
         $max = $state->eMarks[$line];
@@ -67,10 +66,10 @@ class MarkdownItDeflist
     }
 
     /**
-     * @param StateInline $state
+     * @param StateBlock $state
      * @param integer $idx
      */
-    protected function markTightParagraphs(&$state, $idx)
+    protected function markTightParagraphs(StateBlock &$state, int $idx)
     {
         $level = $state->level + 2;
 
@@ -90,7 +89,7 @@ class MarkdownItDeflist
      * @param bool $silent
      * @return bool
      */
-    public function deflist($state, $startLine, $endLine=-1, $silent=false)
+    public function deflist(StateBlock $state, int $startLine, $endLine=-1, $silent=false): bool
     {
         if ($silent) {
             // quirk: validation mode validates a dd block only, not a whole deflist

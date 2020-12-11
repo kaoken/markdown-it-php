@@ -10,7 +10,7 @@ class NormalizeOpts
      * @param string $str
      * @return mixed
      */
-    public static function quoteRE($str)
+    public static function quoteRE(string $str)
     {
 //        return preg_replace("/([\.\?*+^$\[\]\\\\(){}|-])/", '\\\\$1', preg_replace("/([\\\\])/", '\\\\$1', $str));
         return preg_replace("/([\/\.\?*+^$\[\]\\\\(){}|-])/", '\\\\$1',$str);
@@ -21,7 +21,7 @@ class NormalizeOpts
      * @param object $options
      * @return \stdClass
      */
-    public static function normalize(object $options)
+    public static function normalize(object $options): \stdClass
     {
         $emojies = &$options->defs;
         // Filter $emojies by whitelist, if needed

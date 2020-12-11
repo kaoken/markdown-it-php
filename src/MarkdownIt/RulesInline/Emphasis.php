@@ -17,7 +17,7 @@ class Emphasis
      * @return bool
      * @throws Exception
      */
-    public function tokenize(&$state, $silent=false)
+    public function tokenize(StateInline &$state, $silent=false): bool
     {
         $start = $state->pos;
         $marker = $state->src[$start];
@@ -75,9 +75,9 @@ class Emphasis
     /**
      *
      * @param StateInline $state
-     * @param ArrayObj    $delimiters
+     * @param ArrayObj $delimiters
      */
-    private function emphasis(&$state, &$delimiters)
+    private function emphasis(StateInline &$state, ArrayObj &$delimiters)
     {
         $max = $delimiters->length();
 
@@ -134,7 +134,7 @@ class Emphasis
      * Walk through delimiter list and replace text tokens with tags
      * @param StateInline $state
      */
-    public function postProcess(&$state)
+    public function postProcess(StateInline &$state)
     {
         $tokens_meta    = &$state->tokens_meta;
         $max            = $state->tokens_meta->length();

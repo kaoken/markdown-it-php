@@ -7,12 +7,13 @@
  **/
 
 namespace Kaoken\MarkdownIt;
+use Exception;
 use Kaoken\MarkdownIt\Ruler;
 use \Kaoken\MarkdownIt\RulesCore\StateCore;
 
 class ParserCore
 {
-    protected $_rules = [
+    protected array $_rules = [
         'normalize' =>     \Kaoken\MarkdownIt\RulesCore\Normalize::class,
         'block' =>         \Kaoken\MarkdownIt\RulesCore\Block::class,
         'inline' =>        \Kaoken\MarkdownIt\RulesCore\Inline::class,
@@ -23,13 +24,15 @@ class ParserCore
 
     /**
      * [[Ruler]] instance. Keep configuration of core rules.
-     * @var Kaoken\MarkdownIt\Ruler
+     * @var Ruler
      */
-    public $ruler;
+    public Ruler $ruler;
 
     /**
      * new Core()
-     **/
+     *
+     * @throws Exception
+     */
     public function __construct()
     {
         $this->ruler = new Ruler();
@@ -41,11 +44,11 @@ class ParserCore
 
     /**
      * @param string $src
-     * @param \Kaoken\MarkdownIt\MarkdownIt $md
-     * @param object $env
-     * @return \Kaoken\MarkdownIt\RulesCore\StateCore
+     * @param MarkdownIt $md
+     * @param null $env
+     * @return StateCore
      */
-    public function createState($src, $md, $env=null)
+    public function createState(string $src, MarkdownIt $md, $env=null): StateCore
     {
         return new StateCore($src, $md, $env);
     }
@@ -53,7 +56,7 @@ class ParserCore
     /**
      * @param object $state
      */
-    public function process($state)
+    public function process(object $state)
     {
         $rules = $this->ruler->getRules('');
 

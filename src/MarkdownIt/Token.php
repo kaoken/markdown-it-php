@@ -12,25 +12,25 @@ class Token
      * Type of the token (string, e.g. "paragraph_open")
      * @var string
      **/
-    public $type     = '';
+    public string $type     = '';
 
     /**
      * html tag $name, e.g. "p"
      * @var string
      **/
-    public $tag      = '';
+    public string $tag      = '';
 
     /**
      * Html attributes. Format: `[ [ $name1, $value1 ], [ $name2, $value2 ] ]`
-     * @var array
+     * @var null|array
      **/
-    public $attrs    = null;
+    public ?array $attrs    = null;
 
     /**
      * Source map info. Format: `[ line_begin, line_end ]`
-     * @var array
+     * @var null|array
      **/
-    public $map      = null;
+    public ?array $map      = null;
 
     /**
      * Level change (number in {-1, 0, 1} set), where:
@@ -40,66 +40,66 @@ class Token
      * - `-1` means the tag is closing
      * @var integer
      **/
-    public $nesting  = 0;
+    public int $nesting  = 0;
 
     /**
      * nesting level, the same as `state.level`
      * @var integer
      **/
-    public $level    = 0;
+    public int $level    = 0;
 
     /**
      * An array of child nodes (inline and img tokens)
      * @var Token[]
      **/
-    public $children = null;
+    public ?array $children = null;
 
     /**
      * In a case of self-closing tag (code, html, fence, etc.),
      * it has contents of 	protected $tag.
      * @var string
      **/
-	public $content  = '';
+	public string $content  = '';
 
     /**
      * '*' or '_' for emphasis, fence string for fence, etc.
      * @var string
      **/
-    public $markup   = '';
+    public string $markup   = '';
 
     /**
      * fence infostring
      * @var string
      **/
-    public $info     = '';
+    public string $info     = '';
 
     /**
      * A place for plugins to store an arbitrary data
-     * @var object
+     * @var ?object
      **/
-    public $meta     = null;
+    public ?object $meta     = null;
 
     /**
      * True for block-level tokens, false for inline tokens.
      * Used in renderer to calculate line breaks
      * @var boolean
      **/
-    public $block    = false;
+    public bool $block    = false;
 
     /**
      * If it's true, ignore 	protected $element when rendering. Used for tight lists
      * to hide paragraphs.
      * @var boolean
      **/
-    public $hidden  = false;
+    public bool $hidden  = false;
 
     /**
      * Token constructor.
-     * @param string  $type
-     * @param string  $tag
+     * @param string $type
+     * @param string $tag
      * @param integer $nesting
      */
-    public function __construct($type, $tag, $nesting)
+    public function __construct(string $type, string $tag, int $nesting)
     {
         $this->type = $type;
         $this->tag = $tag;
@@ -111,7 +111,7 @@ class Token
      * @param $name
      * @return int
      */
-    public function attrIndex($name)
+    public function attrIndex($name): int
     {
         if (!isset($this->attrs)) { return -1; }
 
@@ -126,7 +126,7 @@ class Token
      * Add `[ $name, $value ]` attribute to list. Init  $attrs if necessary
      * @param array $attrData
      */
-    public function attrPush($attrData)
+    public function attrPush(array $attrData)
     {
         $this->attrs[] = $attrData;
     }
@@ -137,7 +137,7 @@ class Token
      * @param string $name
      * @param mixed $value
      */
-    public function attrSet($name, $value)
+    public function attrSet(string $name, $value)
     {
         $idx = $this->attrIndex($name);
         $attrData = [ $name, $value ];
@@ -155,7 +155,7 @@ class Token
      * @param string $name
      * @return mixed
      */
-    public function attrGet($name)
+    public function attrGet(string $name)
     {
         $idx = $this->attrIndex($name);
         $value = null;
@@ -172,7 +172,7 @@ class Token
      * @param string $name
      * @param mixed $value
      */
-    public function attrJoin($name, $value)
+    public function attrJoin(string $name, $value)
     {
         $idx = $this->attrIndex($name);
         

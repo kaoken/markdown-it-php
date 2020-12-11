@@ -40,7 +40,7 @@ class MarkdownItEmoji
      * @param null|object|array $options
      * @throws Exception
      */
-    public function plugin($md, $options=null)
+    public function plugin(MarkdownIt $md, $options=null)
     {
         if( !isset($options) ){
             $options = new stdClass();

@@ -8,7 +8,7 @@ use Kaoken\MarkdownIt\Common\Utils;
 
 class Escape
 {
-    protected $ESCAPED = [];
+    protected array $ESCAPED = [];
     public function __construct()
     {
         $this->ESCAPED = array_fill(0, 256, 0);
@@ -20,10 +20,10 @@ class Escape
 
     /**
      * @param StateInline $state
-     * @param boolean     $silent
+     * @param boolean $silent
      * @return bool
      */
-    public function escape(&$state, $silent=false)
+    public function escape(StateInline &$state, $silent=false): bool
     {
         $pos = $state->pos;
         $max = $state->posMax;

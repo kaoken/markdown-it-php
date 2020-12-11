@@ -7,7 +7,7 @@ class Inline
     /**
      * @param StateCore $state
      */
-    public function set(&$state)
+    public function set(StateCore &$state)
     {
         $tokens = &$state->tokens;
 

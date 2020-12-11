@@ -32,7 +32,7 @@ class MarkdownItMark
      * @param MarkdownIt $md
      * @throws Exception
      */
-    public function plugin($md)
+    public function plugin(MarkdownIt $md)
     {
         $md->inline->ruler->before('emphasis', 'mark', [$this, 'tokenize']);
         $md->inline->ruler2->before('emphasis', 'mark', [$this, 'postProcess']);
@@ -45,7 +45,8 @@ class MarkdownItMark
      * @return bool
      * @throws Exception
      */
-    public function tokenize($state, $silent=false) {
+    public function tokenize(StateInline $state, $silent=false): bool
+    {
         $start = $state->pos;
         $marker = $state->src[$start];
 
@@ -94,7 +95,7 @@ class MarkdownItMark
      * @param StateInline $state
      * @param ArrayObj $delimiters
      */
-    private function mark(&$state, &$delimiters)
+    private function mark(StateInline &$state, ArrayObj &$delimiters)
     {
         $loneMarkers = [];
         $max = $delimiters->length();
@@ -162,7 +163,7 @@ class MarkdownItMark
      * Walk through delimiter list and replace text tokens with tags
      * @param StateInline $state
      */
-    public function postProcess(&$state)
+    public function postProcess(StateInline &$state)
     {
         $tokens_meta    = &$state->tokens_meta;
         $max            = $state->tokens_meta->length();

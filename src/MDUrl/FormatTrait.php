@@ -17,13 +17,15 @@
 namespace Kaoken\MDUrl;
 
 
+use stdClass;
+
 Trait FormatTrait
 {
     /**
-     * @param \stdClass $url
+     * @param stdClass $url
      * @return string
      */
-    public function format(\stdClass $url)
+    public function format(stdClass $url): string
     {
         $result = '';
 

@@ -13,17 +13,17 @@ class StateInline
 {
 	public $src = '';
     /**
-     * @var object
+     * @var null|object
      */
-	public $env;
+	public ?object $env;
     /**
-     * @var MarkdownIt
+     * @var MarkdownIt|null
      */
-	public $md = null;
+	public ?MarkdownIt $md = null;
     /**
      * @var Token[]
      */
-	public $tokens = [];
+	public array $tokens = [];
 
     /**
      * @var array
@@ -33,48 +33,58 @@ class StateInline
     /**
      * @var int
      */
-	public $pos         = 0;
+	public int $pos         = 0;
     /**
      * @var int
      */
-	public $posMax      = -1;
+	public int $posMax      = -1;
     /**
      * @var int
      */
-	public $level       = 0;
+	public int $level       = 0;
     /**
      * @var string
      */
-	public $pending     = '';
+	public string $pending     = '';
     /**
      * @var int
      */
-	public $pendingLevel= 0;
+	public int $pendingLevel= 0;
 
     /**
      * Stores { start: end } pairs. Useful for backtrack
      * optimization of pairs parse (emphasis, strikes).
      * @var array
      */
-	public $cache = [];
+	public array $cache = [];
 
     /**
-     * @var ArrayObj List of emphasis-like delimiters for current tag
+     * @var null|ArrayObj List of emphasis-like delimiters for current tag
      */
-	public $delimiters = null;
+	public ?ArrayObj $delimiters = null;
 
     /**
-     * @var ArrayObj Stack of delimiter lists for upper level tags
+     * @var null|ArrayObj Stack of delimiter lists for upper level tags
      */
-    private $_prev_delimiters = null;
+    private ?ArrayObj $_prev_delimiters = null;
+
+    // backtick length => last seen position
+    /**
+     * @var array
+     */
+    public array $backticks = [];
+    /**
+     * @var bool
+     */
+    public bool $backticksScanned = false;
 
     /**
      * @param string $src
      * @param MarkdownIt $md
-     * @param object $env
-     * @param Token[]  $outTokens
+     * @param null|object $env
+     * @param Token[] $outTokens
      */
-    public function __construct($src, $md, $env, &$outTokens)
+    public function __construct(string $src, MarkdownIt $md, ?object $env, array &$outTokens)
     {
         $this->cache            = [];
         $this->src              = $src;
@@ -90,7 +100,7 @@ class StateInline
     /**
      * @return Token
      */
-    public function pushPending()
+    public function pushPending(): Token
     {
         $token          = new Token('text', '', 0);
         $token->content = $this->pending;
@@ -101,12 +111,12 @@ class StateInline
     }
 
     /**
-     * @param string  $type
-     * @param string  $tag
+     * @param string $type
+     * @param string $tag
      * @param integer $nesting
      * @return Token
      */
-    public function createToken($type, $tag, $nesting)
+    public function createToken(string $type, string $tag, int $nesting): Token
     {
         return new Token($type, $tag, $nesting);
     }
@@ -114,12 +124,12 @@ class StateInline
     /**
      * Push new token to "stream".
      * If pending text exists - flush it as text token
-     * @param string  $type
-     * @param string  $tag
+     * @param string $type
+     * @param string $tag
      * @param integer $nesting
      * @return Token
      */
-    public function push($type, $tag, $nesting)
+    public function push(string $type, string $tag, int $nesting): Token
     {
         if ($this->pending) {
             $this->pushPending();
@@ -154,12 +164,12 @@ class StateInline
     /**
      * Scan a sequence of emphasis-like markers, and determine whether
      * it can start an emphasis sequence or end an emphasis sequence.
-     * @param integer $start         position to scan from (it should point at a valid marker);
-     * @param boolean $canSplitWord  determine if these markers can be found inside a word
+     * @param integer $start position to scan from (it should point at a valid marker);
+     * @param boolean $canSplitWord determine if these markers can be found inside a word
      * @return stdClass
      * @throws Exception
      */
-    public function scanDelims($start, $canSplitWord)
+    public function scanDelims(int $start, bool $canSplitWord): stdClass
     {
         $pos            = $start;
         $left_flanking  = true;

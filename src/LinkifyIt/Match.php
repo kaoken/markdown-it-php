@@ -20,17 +20,17 @@ class Match
      * Prefix (protocol) for matched string.
      * @var string
      **/
-	public $schema;
+	public string $schema;
     /**
      * First position of matched string.
      * @var integer
      **/
-	public $index;
+	public int $index;
     /**
      * Next position after matched string.
      * @var integer
      **/
-	public $lastIndex;
+	public int $lastIndex;
     /**
      * Matched string.
      * @var string
@@ -46,12 +46,13 @@ class Match
      * @var string
      **/
 	public $url;
+
     /**
      * Match constructor.
      * @param LinkifyIt $self
      * @param $shift
      */
-    public function __construct($self, $shift)
+    public function __construct(LinkifyIt $self, $shift)
     {
         $start = $self->getIndex();
         $end   = $self->getLastIndex();

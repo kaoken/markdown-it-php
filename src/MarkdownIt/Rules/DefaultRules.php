@@ -7,7 +7,7 @@ use Kaoken\MarkdownIt\Token;
 
 class DefaultRules
 {
-    public $utils = null;
+    public ?Utils $utils = null;
 
     public function __construct()
     {
@@ -18,11 +18,11 @@ class DefaultRules
      * @param Token[]  $tokens
      * @param integer  $idx
      * @param object   $options
-     * @param object   $env
+     * @param null|object   $env
      * @param Renderer $slf
      * @return string
      */
-    public function code_inline(array &$tokens, $idx, $options, $env, $slf)
+    public function code_inline(array &$tokens, int $idx, object $options, ?object $env, Renderer $slf) : string
     {
         $token = $tokens[$idx];
 
@@ -35,11 +35,11 @@ class DefaultRules
      * @param Token[]  $tokens
      * @param integer  $idx
      * @param object   $options
-     * @param object   $env
+     * @param null|object   $env
      * @param Renderer $slf
      * @return string
      */
-    public function code_block(array &$tokens, $idx, $options, $env, $slf)
+    public function code_block(array &$tokens, int $idx, object $options, ?object $env, Renderer $slf) : string
     {
         $token = $tokens[$idx];
 
@@ -53,11 +53,11 @@ class DefaultRules
      * @param Token[]  $tokens
      * @param integer  $idx
      * @param object   $options
-     * @param object   $env
+     * @param null|object   $env
      * @param Renderer $slf
-     * @return bool|string
+     * @return string
      */
-    public function fence(array &$tokens, $idx, $options, $env, $slf)
+    public function fence(array &$tokens, int $idx, object $options, ?object $env, Renderer $slf) : string
     {
         $token = $tokens[$idx];
         $info = $token->info ? trim($this->utils->unescapeAll( $token->info )) : '';
@@ -97,7 +97,7 @@ class DefaultRules
             }
 
             // Fake $token just to render attributes
-            $tmpToken = new \stdClass();
+            $tmpToken = new Token('','',0);
             $tmpToken->attrs = $tmpAttrs;
 
             return  '<pre><code' . $slf->renderAttrs($tmpToken) . '>'
@@ -112,14 +112,14 @@ class DefaultRules
     }
 
     /**
-     * @param Token[]  $tokens
-     * @param integer  $idx
-     * @param object   $options
-     * @param object   $env
+     * @param Token[] $tokens
+     * @param integer $idx
+     * @param object $options
+     * @param object $env
      * @param Renderer $slf
-     * @return mixed
+     * @return string
      */
-    public function image(array &$tokens, $idx, $options, $env, $slf)
+    public function image(array &$tokens, int $idx, object $options, object $env, Renderer $slf) : string
     {
         $token = $tokens[$idx];
 
@@ -141,7 +141,8 @@ class DefaultRules
      * @param object  $options
      * @return string
      */
-    public function hardbreak(array &$tokens, $idx, $options, $env=null) {
+    public function hardbreak(array &$tokens, int $idx, object $options, $env=null): string
+    {
         return $options->xhtmlOut ? "<br />\n" : "<br>\n";
     }
 
@@ -160,9 +161,11 @@ class DefaultRules
     /**
      * @param Token[] $tokens
      * @param integer $idx
+     * @param null $options
+     * @param null $env
      * @return string
      */
-    public function text(array &$tokens, $idx, $options=null, $env=null)
+    public function text(array &$tokens, int $idx, $options=null, $env=null): string
     {
         return htmlspecialchars($tokens[$idx]->content);
     }
@@ -174,7 +177,7 @@ class DefaultRules
      * @param object|null $env
      * @return string
      */
-    public function html_block($tokens, $idx, $options=null, $env=null)
+    public function html_block(array $tokens, int $idx, $options=null, $env=null)
     {
         return $tokens[$idx]->content;
     }
@@ -186,7 +189,7 @@ class DefaultRules
      * @param object|null $env
      * @return string
      */
-    public function html_inline(array &$tokens, $idx, $options=null, $env=null)
+    public function html_inline(array &$tokens, int $idx, $options=null, $env=null)
     {
         return $tokens[$idx]->content;
     }

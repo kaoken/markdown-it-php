@@ -15,7 +15,7 @@ class Hr
      * @param boolean $silent
      * @return bool
      */
-    public function set(&$state, $startLine, $endLine, $silent=false)
+    public function set(StateBlock &$state, int $startLine, int $endLine, $silent=false): bool
     {
         $pos = $state->bMarks[$startLine] + $state->tShift[$startLine];
         $max = $state->eMarks[$startLine];

@@ -12,7 +12,7 @@ class HtmlBlock
     // An array of opening and corresponding closing sequences for html tags,
     // last argument defines whether it can terminate a paragraph or not
     //
-    protected $HTML_SEQUENCES = [];
+    protected array $HTML_SEQUENCES = [];
 
 
     public function __construct()
@@ -35,7 +35,7 @@ class HtmlBlock
      * @param boolean $silent
      * @return bool
      */
-    public function set(&$state, $startLine, $endLine, $silent=false)
+    public function set(StateBlock &$state, int $startLine, int $endLine, $silent=false): bool
     {
         $pos = $state->bMarks[$startLine] + $state->tShift[$startLine];
         $max = $state->eMarks[$startLine];

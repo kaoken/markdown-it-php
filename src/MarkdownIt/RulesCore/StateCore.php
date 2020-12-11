@@ -4,6 +4,7 @@
 
 namespace Kaoken\MarkdownIt\RulesCore;
 
+use Kaoken\MarkdownIt\MarkdownIt;
 use Kaoken\MarkdownIt\Token;
 
 class StateCore
@@ -11,28 +12,28 @@ class StateCore
     /**
      * @var string
      */
-    public $src = '';
+    public string $src = '';
     /**
-     * @var object
+     * @var null|object
      */
-    public $env;
+    public ?object $env;
     /**
-     * @var \Kaoken\MarkdownIt\Token[]
+     * @var Token[]
      */
-    public $tokens = [];
-    public $inlineMode = false;
+    public array $tokens = [];
+    public bool $inlineMode = false;
     /**
-     * @var \Kaoken\MarkdownIt\MarkdownIt
+     * @var null|MarkdownIt
      */
-    public $md = null; // link to parser instance
+    public ?MarkdownIt $md = null; // link to parser instance
 
     /**
      * StateCore constructor.
      * @param string $src
-     * @param \Kaoken\MarkdownIt\MarkdownIt $md
+     * @param MarkdownIt $md
      * @param object|null $env
      */
-    public function __construct($src, $md, $env=null) {
+    public function __construct(string $src, MarkdownIt $md, $env=null) {
         $this->src = $src;
         $this->env = $env;
         $this->tokens = [];
@@ -41,12 +42,12 @@ class StateCore
     }
 
     /**
-     * @param string  $type
-     * @param string  $tag
+     * @param string $type
+     * @param string $tag
      * @param integer $nesting
-     * @return \Kaoken\MarkdownIt\Token
+     * @return Token
      */
-    public function createToken($type, $tag, $nesting)
+    public function createToken(string $type, string $tag, int $nesting): Token
     {
         return new Token($type, $tag, $nesting);
     }

@@ -7,15 +7,17 @@
 namespace Kaoken\MarkdownIt\Helpers;
 
 
+use Kaoken\MarkdownIt\RulesInline\StateInline;
+
 trait ParseLinkLabel
 {
     /**
-     * @param \Kaoken\MarkdownIt\RulesInline\StateInline $state
+     * @param StateInline $state
      * @param integer $start
      * @param boolean $disableNested
      * @return int
      */
-    public function parseLinkLabel(&$state, $start, $disableNested=false)
+    public function parseLinkLabel(StateInline &$state, int $start, $disableNested=false): int
     {
         $labelEnd = -1;
         $max = $state->posMax;

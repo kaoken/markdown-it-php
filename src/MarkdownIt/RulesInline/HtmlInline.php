@@ -7,19 +7,20 @@ use Kaoken\MarkdownIt\Common\HtmlRegexs;
 
 class HtmlInline
 {
-    protected function isLetter($c)
+    protected function isLetter($c): bool
     {
         $ch = ord($c);
         /*eslint no-bitwise:0*/
         $lc = $ch | 0x20; // to lower case
         return ($lc >= 0x61/* a */) && ($lc <= 0x7a/* z */);
     }
+
     /**
      * @param StateInline $state
-     * @param boolean     $silent
+     * @param boolean $silent
      * @return bool
      */
-    public function htmlInline(&$state, $silent=false)
+    public function htmlInline(StateInline &$state, $silent=false): bool
     {
         $pos = $state->pos;
 

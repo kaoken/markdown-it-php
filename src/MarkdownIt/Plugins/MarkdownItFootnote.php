@@ -22,6 +22,8 @@ namespace Kaoken\MarkdownIt\Plugins;
 
 use Exception;
 use Kaoken\MarkdownIt\MarkdownIt;
+use Kaoken\MarkdownIt\RulesBlock\StateBlock;
+use Kaoken\MarkdownIt\RulesCore\StateCore;
 use Kaoken\MarkdownIt\RulesInline\StateInline;
 use Kaoken\MarkdownIt\Token;
 
@@ -33,7 +35,7 @@ class MarkdownItFootnote
      * @param MarkdownIt $md
      * @throws Exception
      */
-    function plugin($md)
+    function plugin(MarkdownIt $md)
     {
 
         /**
@@ -74,12 +76,12 @@ class MarkdownItFootnote
         /**
          * @param Token[] $tokens
          * @param integer $idx
-         * @param object  $options
-         * @param object  $env
+         * @param object $options
+         * @param object $env
          * @param $slf
          * @return string
          */
-        $md->renderer->rules->footnote_open = function (&$tokens, $idx, $options, $env, $slf) {
+        $md->renderer->rules->footnote_open = function (array &$tokens, int $idx, object $options, object $env, $slf) {
             $fn = $slf->rules->footnote_anchor_name;
             $id = $fn($tokens, $idx, $options, $env, $slf);
 
@@ -95,12 +97,12 @@ class MarkdownItFootnote
         /**
          * @param Token[] $tokens
          * @param integer $idx
-         * @param object  $options
+         * @param object $options
          * @param $env
          * @param $slf
          * @return string
          */
-        $md->renderer->rules->footnote_anchor = function (&$tokens, $idx, $options, $env, $slf) {
+        $md->renderer->rules->footnote_anchor = function (array &$tokens, int $idx, object $options, $env, $slf) {
             $fn = $slf->rules->footnote_anchor_name;
             $id = $fn($tokens, $idx, $options, $env, $slf);
 
@@ -121,7 +123,7 @@ class MarkdownItFootnote
          * @param null $slf
          * @return string
          */
-        $md->renderer->rules->footnote_caption = function ($tokens, $idx, $options=null, $env=null, $slf=null) {
+        $md->renderer->rules->footnote_caption = function (array $tokens, int $idx, $options=null, $env=null, $slf=null) {
             $n = (string)($tokens[$idx]->meta->id + 1);
 
             if ( isset($tokens[$idx]->meta->subId) && $tokens[$idx]->meta->subId > 0) {
@@ -135,9 +137,10 @@ class MarkdownItFootnote
          * @param integer $idx
          * @param $options
          * @param $env
+         * @param null $slf
          * @return string
          */
-        $md->renderer->rules->footnote_anchor_name  = function ($tokens, $idx, $options, $env, $slf=null) {
+        $md->renderer->rules->footnote_anchor_name  = function (array $tokens, int $idx, $options, $env, $slf=null) {
             $n = (string)($tokens[$idx]->meta->id + 1);
             $prefix = '';
 
@@ -150,13 +153,13 @@ class MarkdownItFootnote
 
         /**
          * Process footnote block definition
-         * @param \Kaoken\MarkdownIt\RulesBlock\StateBlock $state
-         * @param $startLine
-         * @param $endLine
-         * @param $silent
+         * @param StateBlock $state
+         * @param int $startLine
+         * @param int $endLine
+         * @param bool $silent
          * @return bool
          */
-        $footnote_def = function($state, $startLine, $endLine, $silent=false)
+        $footnote_def = function(StateBlock $state, int $startLine, int $endLine, $silent=false)
         {
             $start = $state->bMarks[$startLine] + $state->tShift[$startLine];
             $max = $state->eMarks[$startLine];
@@ -246,7 +249,7 @@ class MarkdownItFootnote
          * @param boolean $silent
          * @return bool
          */
-        $footnote_inline = function($state, $silent)
+        $footnote_inline = function(StateInline $state, bool $silent)
         {
 
             $max = $state->posMax;
@@ -298,7 +301,7 @@ class MarkdownItFootnote
          * @param boolean $silent
          * @return bool
          */
-        $footnote_ref = function($state, $silent)
+        $footnote_ref = function(StateInline $state, bool $silent)
         {
             $max = $state->posMax;
             $start = $state->pos;
@@ -355,9 +358,9 @@ class MarkdownItFootnote
 
         /**
          * Glue footnote tokens to end of token stream
-         * @param StateInline $state
+         * @param StateCore $state
          */
-        $footnote_tail = function($state) {
+        $footnote_tail = function(StateCore $state) {
             $insideRef = false;
             $refTokens = [];
             if (!isset($state->env->footnotes)) { return; }

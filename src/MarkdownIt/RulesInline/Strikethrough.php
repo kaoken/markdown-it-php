@@ -5,6 +5,9 @@
 namespace Kaoken\MarkdownIt\RulesInline;
 
 
+use Exception;
+use Kaoken\MarkdownIt\Common\ArrayObj;
+
 class Strikethrough
 {
     /**
@@ -12,9 +15,9 @@ class Strikethrough
      * @param StateInline $state
      * @param bool $silent
      * @return bool
-     * @throws \Exception
+     * @throws Exception
      */
-    public function tokenize(&$state, $silent=false)
+    public function tokenize(StateInline &$state, $silent=false): bool
     {
         $marker = $state->src[$state->pos];
 
@@ -57,9 +60,9 @@ class Strikethrough
 
     /**
      * @param StateInline $state
-     * @param array $delimiters
+     * @param ArrayObj $delimiters
      */
-    private function strikethrough(&$state, &$delimiters)
+    private function strikethrough(StateInline &$state, ArrayObj &$delimiters)
     {
         $loneMarkers = [];
         $max = $delimiters->length();
@@ -126,7 +129,7 @@ class Strikethrough
      * Walk through delimiter list and replace text tokens with tags
      * @param StateInline $state
      */
-    public function postProcess(&$state) {
+    public function postProcess(StateInline &$state) {
         $tokens_meta= &$state->tokens_meta;
         $max        = $state->tokens_meta->length();
 

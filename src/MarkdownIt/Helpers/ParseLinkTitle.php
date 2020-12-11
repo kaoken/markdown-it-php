@@ -5,14 +5,21 @@
 namespace Kaoken\MarkdownIt\Helpers;
 
 use Kaoken\MarkdownIt\Common\Utils;
+use stdClass;
 
 trait ParseLinkTitle
 {
-    public function parseLinkTitle($str, $pos, $max)
+    /**
+     * @param string $str
+     * @param int $pos
+     * @param int $max
+     * @return stdClass
+     */
+    public function parseLinkTitle(string $str, int $pos, int $max): stdClass
     {
         $lines = 0;
         $start = $pos;
-        $result = new \stdClass();
+        $result = new stdClass();
         $result->ok = false;
         $result->pos = 0;
         $result->lines = 0;
@@ -32,9 +39,7 @@ trait ParseLinkTitle
         $pos++;
 
         // if opening marker is "(", switch it to closing marker ")"
-        if ($marker === '(') {
-            $marker = ')';
-        }
+        if ($marker === '(') { $marker = ')'; }
 
         while ($pos < $max) {
             $code = $str[$pos];
@@ -43,6 +48,8 @@ trait ParseLinkTitle
                 $result->lines = $lines;
                 $result->str = $this->utils->unescapeAll(substr($str, $start + 1, $pos-($start+1)));
                 $result->ok = true;
+                return $result;
+            } else if ($code === '(' && $marker === ')') {
                 return $result;
             } else if ($code === "\n") {
                 $lines++;

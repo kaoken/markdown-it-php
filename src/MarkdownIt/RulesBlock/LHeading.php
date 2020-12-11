@@ -14,7 +14,7 @@ class LHeading
      * @param boolean $silent
      * @return bool
      */
-    public function set(&$state, $startLine, $endLine, $silent=false)
+    public function set(StateBlock &$state, int $startLine, int $endLine, $silent=false): bool
     {
         $level = 0;
         $nextLine = $startLine + 1;

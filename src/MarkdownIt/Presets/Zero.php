@@ -10,7 +10,7 @@ class Zero
     /**
      * @return object
      */
-    public static function get()
+    public static function get(): object
     {
         $o = [
             "options" => [

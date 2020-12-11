@@ -8,7 +8,7 @@ class Normalize
     /**
      * @param StateCore $state
      */
-    public function set(&$state) {
+    public function set(StateCore &$state) {
         // Normalize newlines /g
         $str = preg_replace("/\r\n?|\n/u", "\n", $state->src);
 

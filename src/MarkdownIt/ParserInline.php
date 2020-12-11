@@ -14,7 +14,7 @@ use Kaoken\MarkdownIt\RulesInline\StateInline;
  **/
 class ParserInline
 {
-    protected $_rules = [
+    protected array $_rules = [
         [ 'text',            \Kaoken\MarkdownIt\RulesInline\Text::class, 'text' ],
         [ 'newline',         \Kaoken\MarkdownIt\RulesInline\NewLine::class, 'newline'],
         [ 'escape',          \Kaoken\MarkdownIt\RulesInline\Escape::class, 'escape'],
@@ -28,7 +28,7 @@ class ParserInline
         [ 'entity',          \Kaoken\MarkdownIt\RulesInline\Entity::class, 'entity' ]
     ];
 
-    protected $_rules2 = [
+    protected array $_rules2 = [
         [ 'balance_pairs',   \Kaoken\MarkdownIt\RulesInline\BalancePairs::class, 'linkPairs'  ],
         [ 'strikethrough',   \Kaoken\MarkdownIt\RulesInline\Strikethrough::class, 'postProcess' ],
         [ 'emphasis',        \Kaoken\MarkdownIt\RulesInline\Emphasis::class, 'postProcess' ],
@@ -86,7 +86,7 @@ class ParserInline
      * returns `true` if any rule reported success
      * @param StateInline $state
      */
-    public function skipToken(&$state)
+    public function skipToken(StateInline &$state)
     {
         $pos = $state->pos;
         $rules = $this->ruler->getRules('');
@@ -140,7 +140,7 @@ class ParserInline
      * Generate tokens for input range
      * @param StateInline $state
      */
-    public function tokenize(&$state)
+    public function tokenize(StateInline &$state)
     {
         $rules = $this->ruler->getRules('');
         $len = count($rules);
@@ -185,12 +185,12 @@ class ParserInline
     /**
      * Process input string and push inline tokens into `outTokens`
      *
-     * @param string     $str
+     * @param string $str
      * @param MarkdownIt $md
-     * @param string     $env
-     * @param Token[]    $outTokens
+     * @param null|object $env
+     * @param Token[] $outTokens
      */
-    public function parse($str, $md, $env, &$outTokens)
+    public function parse(string $str, MarkdownIt $md, ?object $env, array &$outTokens)
     {
         $state = new StateInline($str, $md, $env, $outTokens);
 

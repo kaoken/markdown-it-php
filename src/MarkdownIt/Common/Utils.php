@@ -5,6 +5,9 @@
 namespace Kaoken\MarkdownIt\Common;
 
 
+use Exception;
+use stdClass;
+
 class Utils
 {
     const UNESCAPE_MD = "\\\\([!\"#$%&'()*+,\-\.\/:;<=>?@[\\\\\]^_`{\|}~])";
@@ -13,12 +16,12 @@ class Utils
     const UNESCAPE_ALL_RE = "/".self::UNESCAPE_MD."|&([a-z#][a-z0-9]{1,31});/i";  // /g
     const DIGITAL_ENTITY_TEST_RE = "/^#((?:x[a-f0-9]{1,8}|[0-9]{1,8}))/i";
 
-    protected static $instance=null;
+    protected static ?Utils $instance=null;
 
     /**
      * @return Utils
      */
-    public static function getInstance()
+    public static function getInstance(): ?Utils
     {
         if( self::$instance === null ) self::$instance = new Utils();
         return self::$instance;
@@ -29,7 +32,7 @@ class Utils
      * @param string $str
      * @return string|null
      */
-    public function unescapeMd($str)
+    public function unescapeMd($str): ?string
     {
         if (strpos ($str,'\\') === false) return $str;
         return preg_replace(self::UNESCAPE_MD_RE, '$1', $str);
@@ -40,7 +43,7 @@ class Utils
      * @param string|null $name
      * @return string
      */
-    public function replaceEntityPattern($match, $name)
+    public function replaceEntityPattern(string $match, ?string $name): string
     {
         $code = 0;
 
@@ -66,7 +69,8 @@ class Utils
      * @param string $str
      * @return string
      */
-    public function unescapeAll($str) {
+    public function unescapeAll(string $str): string
+    {
         if (strpos($str, '\\') === false && strpos($str, '&') === false) { return $str; }
 
         return preg_replace_callback(self::UNESCAPE_ALL_RE, function ($match) {
@@ -77,11 +81,11 @@ class Utils
 
 
     /**
-     * @param array   $a
+     * @param array $a
      * @param integer $size
-     * @param mixed   $val
+     * @param mixed $val
      */
-    public function resizeArray(array &$a, $size, $val=null)
+    public function resizeArray(array &$a, int $size, $val=null)
     {
         $l = count($a);
         if( $size > $l ){
@@ -96,25 +100,26 @@ class Utils
     //
     /**
      * Merge objects
-     * @param \stdClass $obj
-     * @return \stdClass|array
-     * @throws \Exception
+     * @param stdClass $obj
+     * @param mixed ...$args
+     * @return stdClass|array
+     * @throws Exception
      */
-    public function assign($obj, ...$args)
+    public function assign(stdClass $obj, ...$args)
     {
         if(is_object($obj)){
             foreach($args as &$source){
                 if (!isset($source)) continue;
 
                 if ( !is_object($source) ) {
-                    throw new \Exception($source . 'must be object');
+                    throw new Exception($source . 'must be object');
                 }
                 foreach($source as $key=>&$val){
                     $obj->{$key} = $source->{$key};
                 }
             }
         }else{
-            throw new \Exception("Utlis::assign() parameter 1 by not object");
+            throw new Exception("Utlis::assign() parameter 1 by not object");
         }
 
         return $obj;
@@ -123,12 +128,12 @@ class Utils
     /**
      * Remove element from array and put another array at those position.
      * Useful for some operations with tokens
-     * @param array  $src
+     * @param array $src
      * @param integer $pos
-     * @param array  $newElements
+     * @param array $newElements
      * @return array
      */
-    public function arrayReplaceAt($src, $pos, $newElements)
+    public function arrayReplaceAt(array $src, int $pos, array $newElements): array
     {
         if(empty($newElements))$newElements=[];
         return array_merge(array_slice($src, 0, $pos), $newElements, array_slice($src, $pos + 1));
@@ -139,7 +144,7 @@ class Utils
      * @param int[]|string[] ...$args intrger|string array
      * @return string
      */
-    public function fromCharCode(...$args)
+    public function fromCharCode(...$args): string
     {
         $output = '';
         foreach($args as $char){
@@ -156,7 +161,7 @@ class Utils
      * @param integer $c
      * @return bool
      */
-    public function isValidEntityCode($c)
+    public function isValidEntityCode($c): bool
     {
         /*eslint no-bitwise:0*/
         // broken sequence
@@ -179,7 +184,7 @@ class Utils
      * @param integer $c
      * @return string
      */
-    public function fromCodePoint($c)
+    public function fromCodePoint($c): string
     {
         if ($c < 0x7F) // U+0000-U+007F - 1 byte
             return chr($c);
@@ -194,13 +199,13 @@ class Utils
     /**
      * Acquire the character one last the $pos position.
      * simple and easy utf8 check.
-     * @param string  $text      Only string variable
-     * @param integer $pos       The current starting position.
+     * @param string $text Only string variable
+     * @param integer $pos The current starting position.
      * @param integer $outOffset If the last character is found, its position is substituted.
      * If not found, -1 is substituted.
      * @return string If found, it returns the last. If you can not find, it returns an empty('').
      */
-    public function lastCharUTF8(&$text, $pos, &$outOffset)
+    public function lastCharUTF8(string &$text, int $pos, int &$outOffset): string
     {
         $chars = mb_str_split($text);
         $idx = 0;
@@ -218,13 +223,13 @@ class Utils
     /**
      * Get the character at the current position '$pos'.
      * simple and easy utf8 check.
-     * @param string  $text     Only string variable
-     * @param integer $pos      The current starting position.
-     * @param integer $outLen   The length of the string is substituted.
+     * @param string $text Only string variable
+     * @param integer $pos The current starting position.
+     * @param null|int $outLen The length of the string is substituted.
      * If not found, -1 is substituted.
      * @return If found, Returns a 1 character.
      */
-    public function currentCharUTF8(&$text, $pos, &$outLen)
+    public function currentCharUTF8(string &$text, int $pos, ?int &$outLen)
     {
         $max = strlen($text);
         $startPos = $pos;
@@ -262,7 +267,8 @@ class Utils
      * @return string|null
      * If matches are found, the new $str will be returned, otherwise $str will be returned unchanged or NULL if an error occurred.
      */
-    public function escapeRE($str) {
+    public function escapeRE(string $str): ?string
+    {
         return preg_replace(self::REGEXP_ESCAPE_RE, '\\\\$0', $str);
     }
 
@@ -272,7 +278,8 @@ class Utils
      * @param string $ch
      * @return bool
      */
-    public function isSpace($ch) {
+    public function isSpace(string $ch): bool
+    {
         return $ch == "\t" || $ch == ' ';
     }
 
@@ -281,7 +288,8 @@ class Utils
      * @param $code
      * @return bool
      */
-    public function isWhiteSpace($code) {
+    public function isWhiteSpace($code): bool
+    {
         return preg_match("/\p{Zs}|[\t\f\v\r\n]/u", $code) === 1;
     }
 
@@ -293,11 +301,13 @@ class Utils
     const UNICODE_PUNCT = "[!-#%-\*,-\/:;\?@\[-\]_\{\}]|\p{P}|\p{Pc}\p{Pd}|\p{Pe}|\p{Pf}|\p{Pi}|\p{Po}|\p{Ps}";
     const UNICODE_PUNCT_RE = "/".self::UNICODE_PUNCT."/u";
     // Currently without astral characters support.
+
     /**
      * @param string $c
      * @return int
      */
-    public function isPunctChar($c) {
+    public function isPunctChar(string $c): int
+    {
         return preg_match(self::UNICODE_PUNCT_RE, $c);
     }
 
@@ -312,7 +322,8 @@ class Utils
      * @param string $c
      * @return bool
      */
-    public function isMdAsciiPunct($c) {
+    public function isMdAsciiPunct(string $c): bool
+    {
         $code = mb_ord($c);
         if(
             ( $code >= 0x21 /* ! */  && $code <= 0x2F /* / */) ||
@@ -325,7 +336,8 @@ class Utils
 
     // Hepler to unify [reference labels].
     //
-    public function normalizeReference($str) {
+    public function normalizeReference($str): string
+    {
         // Trim and collapse whitespace
         //
         $str = mb_strtoupper( preg_replace("/\s+/", ' ', trim($str)) ); // /g

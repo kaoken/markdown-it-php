@@ -31,7 +31,7 @@ class MarkdownItForInline
      * @param callable $iteartor
      * @throws Exception
      */
-    public function plugin($md, $ruleName, $tokenType, $iteartor)
+    public function plugin(MarkdownIt $md, string $ruleName, string $tokenType, callable $iteartor)
     {
         $scan = function($state) use($md, $ruleName, $tokenType, $iteartor) {
             for ($blkIdx = count($state->tokens) - 1; $blkIdx >= 0; $blkIdx--) {

@@ -7,11 +7,11 @@ class Paragraph
     /**
      * @param StateBlock $state
      * @param integer $startLine
-     * @param integer $endLine    I do not use it
-     * @param boolean $silent     I do not use it
+     * @param integer $endLine I do not use it
+     * @param boolean $silent I do not use it
      * @return bool
      */
-    public function set(&$state, $startLine, $endLine=0, $silent=false)
+    public function set(StateBlock &$state, int $startLine, int $endLine=0, $silent=false): bool
     {
         $nextLine = $startLine + 1;
         $terminatorRules = $state->md->block->ruler->getRules('paragraph');

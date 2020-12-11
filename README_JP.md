@@ -1,12 +1,12 @@
 # markdown-it-php
 
 [![Build Status](https://img.shields.io/travis/markdown-it/markdown-it/master.svg?style=flat)](https://github.com/kaoken/markdown-it-php)
-[![composer version](https://img.shields.io/badge/version-12.0.2.0-blue.svg)](https://github.com/kaoken/markdown-it-php)
+[![composer version](https://img.shields.io/badge/version-12.0.3.0-blue.svg)](https://github.com/kaoken/markdown-it-php)
 [![licence](https://img.shields.io/badge/licence-MIT-blue.svg)](https://github.com/kaoken/markdown-it-php)
 [![php version](https://img.shields.io/badge/php%20version-≧7.4.0-red.svg)](https://github.com/kaoken/markdown-it-php)
 
 
-このジェムは、Puzrin とアレックス Kocharin による  [markdown-it Javascript package](https://github.com/markdown-it/markdown-it)ポートになります。現在、markdown-it 12.0.2 と同期しています。
+このジェムは、Puzrin とアレックス Kocharin による  [markdown-it Javascript package](https://github.com/markdown-it/markdown-it)ポートになります。現在、markdown-it 12.0.3 と同期しています。
 
 __[Javascript Live demo](https://markdown-it.github.io)__
 
@@ -75,6 +75,7 @@ $md = new MarkdownIt([
   "linkify"=>      false,        // URLに似たテキストをリンクに自動変換する
 
   // 言語に依存しないきれいな 置換 + 引用符 を有効にします。
+  // 置換の完全なリストについては、 https://github.com/markdown-it/markdown-it/blob/master/lib/rules_core/replacements.js を参照してください。
   "typographer"=>  false,
 
   // タイポグラフィが有効になっているときにダブル+シングルクォートの置換ペア
@@ -146,7 +147,7 @@ $md = new MarkdownIt([
  linkify-itを設定するには、`$md->linkify`を通してlinkifyインスタンスにアクセスします：
 
 ```php
-$md->linkify->tlds('.py', false);  // トップレベルドメインとして.pyを無効にする
+$md->linkify->set(['fuzzyEmail'=>false]);  // トップレベルドメインとして.pyを無効にする
 ```
 
 

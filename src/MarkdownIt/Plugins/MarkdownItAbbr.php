@@ -22,7 +22,7 @@ namespace Kaoken\MarkdownIt\Plugins;
 use Kaoken\MarkdownIt\Common\Utils;
 use Kaoken\MarkdownIt\MarkdownIt;
 use Kaoken\MarkdownIt\RulesBlock\StateBlock;
-use Kaoken\MarkdownIt\RulesInline\StateInline;
+use Kaoken\MarkdownIt\RulesCore\StateCore;
 
 
 class MarkdownItAbbr
@@ -47,7 +47,7 @@ class MarkdownItAbbr
      * @param bool $silent
      * @return bool
      */
-    public function abbr_def($state, $startLine, $endLine, $silent=false)
+    public function abbr_def(StateBlock $state, int $startLine, int $endLine, $silent=false): bool
     {
         $pos = $state->bMarks[$startLine] + $state->tShift[$startLine];
         $max = $state->eMarks[$startLine];
@@ -96,9 +96,9 @@ class MarkdownItAbbr
 
 
     /**
-     * @param StateInline $state
+     * @param StateCore $state
      */
-    public function abbr_replace($state)
+    public function abbr_replace(StateCore $state)
     {
         $blockTokens = &$state->tokens;
 

@@ -9,12 +9,13 @@ class Link
 {
     /**
      * @param StateInline $state
-     * @param boolean     $silent
+     * @param boolean $silent
      * @return bool
      */
-    public function link(&$state, $silent=false)
+    public function link(StateInline &$state, bool $silent): bool
     {
         $href = '';
+        $title = '';
         $oldPos = $state->pos;
         $max = $state->posMax;
         $start = $state->pos;
@@ -57,31 +58,33 @@ class Link
                 } else {
                     $href = '';
                 }
-            }
-
-            // [link](  <href>  "title"  )
-            //                ^^ skipping these spaces
-            $start = $pos;
-            for (; $pos < $max; $pos++) {
-                $code = $state->src[$pos];
-                if (!$state->md->utils->isSpace($code) && $code !== "\n") { break; }
-            }
-
-            // [link](  <href>  "title"  )
-            //                  ^^^^^^^ parsing link title
-            $res = $state->md->helpers->parseLinkTitle($state->src, $pos, $state->posMax);
-            if ($pos < $max && $start !== $pos && $res->ok) {
-                $title = $res->str;
-                $pos = $res->pos;
 
                 // [link](  <href>  "title"  )
-                //                         ^^ skipping these spaces
+                //                ^^ skipping these spaces
+                $start = $pos;
                 for (; $pos < $max; $pos++) {
                     $code = $state->src[$pos];
-                    if (!$state->md->utils->isSpace($code) && $code !== "\n") { break; }
+                    if (!$state->md->utils->isSpace($code) && $code !== "\n") {
+                        break;
+                    }
                 }
-            } else {
-                $title = '';
+
+                // [link](  <href>  "title"  )
+                //                  ^^^^^^^ parsing link title
+                $res = $state->md->helpers->parseLinkTitle($state->src, $pos, $state->posMax);
+                if ($pos < $max && $start !== $pos && $res->ok) {
+                    $title = $res->str;
+                    $pos = $res->pos;
+
+                    // [link](  <href>  "title"  )
+                    //                         ^^ skipping these spaces
+                    for (; $pos < $max; $pos++) {
+                        $code = $state->src[$pos];
+                        if (!$state->md->utils->isSpace($code) && $code !== "\n") {
+                            break;
+                        }
+                    }
+                }
             }
 
             if ($pos >= $max || $state->src[$pos] !== ')') {

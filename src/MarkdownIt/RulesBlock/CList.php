@@ -11,10 +11,10 @@ class CList
      * Search `[-+*][\n ]`, returns next pos after marker on success
      * or -1 on fail.
      * @param StateBlock $state
-     * @param integer    $startLine
+     * @param integer $startLine
      * @return int
      */
-    protected function skipBulletListMarker(&$state, $startLine)
+    protected function skipBulletListMarker(StateBlock &$state, int $startLine): int
     {
         $pos = $state->bMarks[$startLine] + $state->tShift[$startLine];
         $max = $state->eMarks[$startLine];
@@ -46,10 +46,10 @@ class CList
      * Search `\d+[.)][\n ]`, returns next pos after marker on success
      * or -1 on fail.
      * @param StateBlock $state
-     * @param integer    $startLine
+     * @param integer $startLine
      * @return int
      */
-    protected function skipOrderedListMarker(&$state, $startLine)
+    protected function skipOrderedListMarker(StateBlock &$state, int $startLine): int
     {
         $start = $state->bMarks[$startLine] + $state->tShift[$startLine];
         $pos = $start;
@@ -101,9 +101,9 @@ class CList
 
     /**
      * @param StateBlock $state
-     * @param integer    $idx
+     * @param integer $idx
      */
-    protected function markTightParagraphs(&$state, $idx)
+    protected function markTightParagraphs(StateBlock &$state, int $idx)
     {
         $level = $state->level + 2;
 
@@ -123,7 +123,7 @@ class CList
      * @param boolean $silent
      * @return bool
      */
-    public function set(&$state, $startLine, $endLine, $silent=false)
+    public function set(StateBlock &$state, int $startLine, int $endLine, $silent=false): bool
     {
         $isTerminatingParagraph = false;
         $tight = true;

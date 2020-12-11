@@ -34,7 +34,7 @@ class MarkdownIt
     /**
      * @array
      */
-    protected $configList = [
+    protected array $configList = [
         'default'      => \Kaoken\MarkdownIt\Presets\PresetDefault::class,
         'zero'         => \Kaoken\MarkdownIt\Presets\Zero::class,
         'commonmark'   =>\Kaoken\MarkdownIt\Presets\CommonMark::class
@@ -48,7 +48,7 @@ class MarkdownIt
      * [[MarkdownIt.enable]].
      * @var ParserInline
      **/
-    public $inline = null;
+    public ?ParserInline $inline = null;
 
   /**
    * MarkdownIt#block -> ParserBlock
@@ -57,7 +57,7 @@ class MarkdownIt
    * [[MarkdownIt.enable]].
    * @vare ParserBlock
    **/
-    public $block = null;
+    public ?ParserBlock $block = null;
 
   /**
    * Instance of [[Core]] chain executor. You may need it to add new rules when
@@ -66,7 +66,7 @@ class MarkdownIt
    *
    * @var ParserCore
    **/
-    public $core = null;
+    public ?ParserCore $core = null;
 
     /**
      * Instance of [[Renderer]]. Use it to modify output look. Or to add rendering
@@ -88,7 +88,7 @@ class MarkdownIt
      * See [[Renderer]] docs and [source code](https://github.com/markdown-it/markdown-it/blob/master/lib/renderer.js).
      * @var Renderer
      **/
-    public $renderer;
+    public Renderer $renderer;
 
     /**
      * MarkdownIt#linkify -> LinkifyIt
@@ -98,7 +98,7 @@ class MarkdownIt
      * rule.
      * @LinkifyIt
      **/
-    public $linkify = null;
+    public ?LinkifyIt $linkify = null;
 
     // Expose utils & helpers for easy acces from plugins
 
@@ -108,7 +108,7 @@ class MarkdownIt
      * Assorted utility functions, useful to write plugins. See details
      * [here](https://github.com/markdown-it/markdown-it/blob/master/lib/common/utils.js).
      **/
-    public $utils = null;
+    public ?Utils $utils = null;
 
     /**
      * Link components parser functions, useful to write plugins. See details
@@ -116,17 +116,17 @@ class MarkdownIt
      *
      * @var Helpers
      **/
-    public $helpers;
+    public Helpers $helpers;
 
     /**
      * @var MDUrl
      */
-    protected $mdurl;
+    protected MDUrl $mdurl;
 
     /**
      * @var Punycode
      */
-    protected $punycode;
+    protected Punycode $punycode;
 
     /**
      * @var array
@@ -160,8 +160,8 @@ class MarkdownIt
      * ```
      * @param string $url
      * @return boolean
-     **/
-    public function validateLink($url)
+     */
+    public function validateLink(string $url): bool
     {
         if( property_exists($this,'validateLink') && is_callable($this->validateLink)){
             $fn = $this->validateLink;
@@ -183,7 +183,7 @@ class MarkdownIt
      * @param string $url
      * @return string
      **/
-    public function normalizeLink($url)
+    public function normalizeLink($url): string
     {
         if( property_exists($this,'normalizeLink') && is_callable($this->normalizeLink)){
             $fn = $this->normalizeLink;
@@ -215,7 +215,7 @@ class MarkdownIt
      * @param string $url
      * @return string
      **/
-    public function normalizeLinkText($url)
+    public function normalizeLinkText($url): string
     {
         if( property_exists($this,'normalizeLinkText') && is_callable($this->normalizeLinkText)){
             $fn = $this->normalizeLinkText;
@@ -393,7 +393,7 @@ class MarkdownIt
      * @return $this
      * @throws Exception
      */
-    public function set($options)
+    public function set($options): MarkdownIt
     {
         if( is_array($options) )$options = (object)$options;//json_decode(json_encode($options));
         $this->utils->assign($this->options, $options);
@@ -410,7 +410,7 @@ class MarkdownIt
      * @return $this
      * @throws Exception
      */
-    public function configure($presets=null)
+    public function configure($presets=null): MarkdownIt
     {
         if (is_string($presets)) {
             $presetName = $presets;
@@ -460,7 +460,7 @@ class MarkdownIt
      * @return $this
      * @throws Exception
      */
-    public function enable($list, $ignoreInvalid=false)
+    public function enable($list, $ignoreInvalid=false): MarkdownIt
     {
         $result = [];
 
@@ -492,7 +492,7 @@ class MarkdownIt
      * @return $this
      * @throws Exception
      */
-    public function disable($list, $ignoreInvalid=false)
+    public function disable($list, $ignoreInvalid=false): MarkdownIt
     {
         $result = [];
 
@@ -549,18 +549,18 @@ class MarkdownIt
      * });
      * ```
      *
-     * @param callable|object $plubin
+     * @param callable|object $plugin
      * @param array ...$args
      * @return $this
      * @throws Exception
      */
-    public function plugin($plubin, ...$args)
+    public function plugin($plugin, ...$args): MarkdownIt
     {
         array_unshift($args, $this);
-        if( is_callable($plubin) ){
-            call_user_func_array($plubin, $args);
-        }else if( is_object($plubin) ){
-            call_user_func_array([$plubin, 'plugin'], $args);
+        if( is_callable($plugin) ){
+            call_user_func_array($plugin, $args);
+        }else if( is_object($plugin) ){
+            call_user_func_array([$plugin, 'plugin'], $args);
         }else{
             throw new Exception();
         }
@@ -579,12 +579,12 @@ class MarkdownIt
      * inject data in specific cases. Usually, you will be ok to pass `{}`,
      * and then pass updated object to renderer.
      *
-     * @param string $src source string
-     * @param object $env environment sandbox
+     * @param null|string $src source string
+     * @param null $env environment sandbox
      * @return array
      * @throws Exception
      */
-    public function &parse($src, $env=null)
+    public function &parse(?string $src, $env=null): array
     {
         if ( !is_string($src)) {
             throw new Exception('Input data should be a String');
@@ -605,12 +605,12 @@ class MarkdownIt
      * But you will not need it with high probability. See also comment
      * in [[MarkdownIt.parse]].
      *
-     * @param string $src source string
-     * @param object $env environment sandbox
+     * @param null|string $src source string
+     * @param null $env environment sandbox
      * @return string
      * @throws Exception
      */
-    public function render($src, $env=null)
+    public function render(?string $src, $env=null): string
     {
         $env = is_object($env) ? $env : new stdClass();
 
@@ -627,7 +627,7 @@ class MarkdownIt
      * @param object $env environment sandbox
      * @return array
      */
-    public function &parseInline($src, $env)
+    public function &parseInline(string $src, object $env): array
     {
         $state = $this->core->createState($src, $this, $env);
 
@@ -643,10 +643,10 @@ class MarkdownIt
      * will NOT be wrapped into `<p>` tags.
      *
      * @param string $src source string
-     * @param object $env environment sandbox
+     * @param null $env environment sandbox
      * @return string
-     **/
-    public function renderInline($src, $env=null)
+     */
+    public function renderInline(string $src, $env=null): string
     {
         $env = is_object($env) ? $env : new stdClass();
 

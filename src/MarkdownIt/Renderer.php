@@ -76,7 +76,7 @@ class Renderer
      * @param Token $token
      * @return string
      */
-    public function renderAttrs($token)
+    public function renderAttrs(Token $token): string
     {
         if (!isset($token->attrs)) return '';
 
@@ -98,7 +98,7 @@ class Renderer
      * @param object $options params of parser instance
      * @return string
      */
-    public function renderToken(array &$tokens, int $idx, object $options)
+    public function renderToken(array &$tokens, int $idx, object $options): string
     {
         $result = '';
         $needLf = false;
@@ -166,7 +166,7 @@ class Renderer
      * @param object $env additional data from parsed input (references, for example)
      * @return string
      */
-    public function renderInline(array &$tokens, object $options, object $env)
+    public function renderInline(array &$tokens, object $options, object $env): string
     {
         $result = '';
         $rules = $this->rules;
@@ -197,7 +197,7 @@ class Renderer
      * @param object $env additional data from parsed input (references, for example)
      * @return string
      */
-    public function renderInlineAsText(array &$tokens, object $options, object $env)
+    public function renderInlineAsText(array &$tokens, object $options, object $env): string
     {
         $result = '';
 
@@ -221,7 +221,7 @@ class Renderer
      * @param object|null $env additional data from parsed input (references, for example)
      * @return string
      */
-    public function render(array &$tokens, object $options, $env=null)
+    public function render(array &$tokens, object $options, $env=null): string
     {
         $result = '';
         $rules = $this->rules;

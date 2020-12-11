@@ -10,7 +10,8 @@ class ArrayObj implements ArrayAccess
      * @param int $length
      * @return ArrayObj
      */
-    public function __construct(int $length=0){
+    public function __construct(int $length=0)
+    {
         if($length > 0){
             $this->container = array_fill(0, $length, null);
         }
@@ -21,7 +22,8 @@ class ArrayObj implements ArrayAccess
      * @return mixed Returns the value of the last element of array.
      * If array is empty (or is not an array), NULL will be returned.
      */
-    public function pop() {
+    public function pop()
+    {
         return array_pop ( $this->container );
     }
 
@@ -29,7 +31,8 @@ class ArrayObj implements ArrayAccess
      * Push one or more elements onto the end of array
      * @param mixed $value
      */
-    public function push($value){
+    public function push($value)
+    {
         $this->container[] = $value;
     }
 
@@ -38,7 +41,8 @@ class ArrayObj implements ArrayAccess
      * @return int Returns the number of elements in array.
      * if array is empty, 0 will be returned.
      */
-    public function length() : int{
+    public function length() : int
+    {
         return count($this->container);
     }
     /**
@@ -53,7 +57,7 @@ class ArrayObj implements ArrayAccess
      * The return value will be casted to boolean if non-boolean was returned.
      * @since 5.0.0
      */
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return isset($this->container[$offset]);
     }

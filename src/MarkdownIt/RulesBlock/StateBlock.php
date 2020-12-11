@@ -2,43 +2,44 @@
 namespace Kaoken\MarkdownIt\RulesBlock;
 
 use Kaoken\MarkdownIt\Common\Utils;
+use Kaoken\MarkdownIt\MarkdownIt;
 use Kaoken\MarkdownIt\Token;
 
 class StateBlock
 {
-    public $src = '';
+    public string $src = '';
 
     /**
-     * @var \Kaoken\MarkdownIt\MarkdownIt
+     * @var MarkdownIt
      */
-    public $md     = null;
+    public ?MarkdownIt $md     = null;
 
     /**
-     * @var object
+     * @var null|object
      */
-    public $env;
+    public ?object $env;
 
     /**
      * @var Token[]
      */
-    public $tokens = [];
+    public array $tokens = [];
 
     /**
      * @var array Line begin offsets for fast jumps
      */
-    public $bMarks = [];
+    public array $bMarks = [];
     /**
      * @var array Line end offsets for fast jumps
      */
-    public $eMarks = [];
+    public array $eMarks = [];
     /**
      * @var array Offsets of the first non-space characters (tabs not expanded)
      */
-    public $tShift = [];
+    public array $tShift = [];
     /**
      * @var array Indents for each line (tabs expanded)
      */
-    public $sCount = [];
+    public array $sCount = [];
 
     /**
      * An amount of virtual spaces (tabs expanded) between beginning
@@ -52,18 +53,18 @@ class StateBlock
      * means first tab should be expanded to 4-21%4 === 3 spaces.
      * @var array
      */
-    public $bsCount = [];
+    public array $bsCount = [];
 
     // block parser variables
     /**
      * @var int Required block content indent (for example, if we are inside a list, it would be positioned after list marker)
      */
-    public $blkIndent  = 0;
+    public int $blkIndent  = 0;
     // (for example, if we are in list)
     /**
      * @var int Line index in src
      */
-    public $line       = 0;
+    public int $line       = 0;
     /**
      * @var int|string Lines count
      */
@@ -72,44 +73,44 @@ class StateBlock
      * loose/tight mode for lists
      * @var bool
      */
-    public $tight      = false;
+    public bool $tight      = false;
     /**
      * indent of the current dd block (-1 if there isn't any)
      * @var int
      */
-    public $ddIndent   = -1;
+    public int $ddIndent   = -1;
 
     /**
      * indent of the current list block (-1 if there isn't any)
      * @var int
      */
-    public $listIndent   = -1;
+    public int $listIndent   = -1;
 
     /**
      * can be 'blockquote', 'list', 'root', 'paragraph' or 'reference'
      * used in lists to determine if they interrupt a paragraph
      * @var string
      */
-    public $parentType = 'root';
+    public string $parentType = 'root';
 
-    public $level = 0;
+    public int $level = 0;
 
     // renderer
-    public $result = '';
+    public string $result = '';
 
 
     /**
      * StateBlock constructor.
      * @param string $src
-     * @param \Kaoken\MarkdownIt\MarkdownIt $this->md
-     * @param object  $env
+     * @param MarkdownIt $md
+     * @param null|object $env
      * @param Token[] $tokens
      */
-    public function __construct($src, $md, $env, &$tokens)
+    public function __construct(string $src, MarkdownIt $md, ?object $env, array &$tokens)
     {
         
         $this->src = $src;
-        $this->md     = $md;
+        $this->md  = $md;
         $this->env = $env;
         $this->tokens = &$tokens;
 
@@ -163,23 +164,23 @@ class StateBlock
     }
 
     /**
-     * @param string  $type
-     * @param string  $tag
+     * @param string $type
+     * @param string $tag
      * @param integer $nesting
      * @return Token
      */
-    public function createToken($type, $tag, $nesting)
+    public function createToken(string $type, string $tag, int $nesting): Token
     {
         return new Token($type, $tag, $nesting);
     }
 
     /**
-     * @param $type
-     * @param $tag
-     * @param $nesting
-     * @return \Kaoken\MarkdownIt\Token
+     * @param string $type
+     * @param string $tag
+     * @param integer $nesting
+     * @return Token
      */
-    public function push($type, $tag, $nesting)
+    public function push(string $type, string $tag, int $nesting): Token
     {
         $token = $this->createToken($type, $tag, $nesting);
         $token->block = true;
@@ -196,7 +197,7 @@ class StateBlock
      * @param integer $line
      * @return bool
      */
-    public function isEmpty($line)
+    public function isEmpty(int $line): bool
     {
         return $this->bMarks[$line] + $this->tShift[$line] >= $this->eMarks[$line];
     }
@@ -205,7 +206,7 @@ class StateBlock
      * @param integer $from
      * @return integer
      */
-    public function skipEmptyLines($from)
+    public function skipEmptyLines(int $from): int
     {
         for ( $max = $this->lineMax; $from < $max; $from++) {
             if ($this->bMarks[$from] + $this->tShift[$from] < $this->eMarks[$from]) {
@@ -220,7 +221,7 @@ class StateBlock
      * @param integer $pos
      * @return integer
      */
-    public function skipSpaces($pos)
+    public function skipSpaces(int $pos): int
     {
         
         for ( $max = strlen ($this->src); $pos < $max; $pos++) {
@@ -235,7 +236,7 @@ class StateBlock
      * @param integer $min
      * @return integer
      */
-    public function skipSpacesBack($pos, $min)
+    public function skipSpacesBack(int $pos, int $min): int
     {
         
         if ($pos <= $min) { return $pos; }
@@ -252,7 +253,7 @@ class StateBlock
      * @param string $code
      * @return integer
      */
-    public function skipChars($pos, $code)
+    public function skipChars(int $pos, string $code): int
     {
         for ($max = strlen ($this->src); $pos < $max; $pos++) {
             if ($this->src[$pos] !== $code) { break; }
@@ -267,7 +268,7 @@ class StateBlock
      * @param integer $min
      * @return integer
      */
-    public function skipCharsBack($pos, $code, $min)
+    public function skipCharsBack(int $pos, string $code, int $min): int
     {
         if ($pos <= $min) { return $pos; }
 
@@ -285,7 +286,7 @@ class StateBlock
      * @param boolean $keepLastLF
      * @return string
      */
-    public function getLines($begin, $end, $indent, $keepLastLF)
+    public function getLines(int $begin, int $end, int $indent, bool $keepLastLF): string
     {
         
         $line = $begin;

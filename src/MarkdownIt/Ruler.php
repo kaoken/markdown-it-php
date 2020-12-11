@@ -33,7 +33,7 @@ class Ruler
      *   fn: Function(),
      *   alt: [ name2, name3 ]
      */
-    protected $__rules__ = [];
+    protected array $__rules__ = [];
 
     // Cached rule chains.
     //
@@ -50,7 +50,7 @@ class Ruler
      * @param string $name
      * @return int
      */
-    protected function __find__($name)
+    protected function __find__(string $name)
     {
         for ($i = 0; $i < count($this->__rules__); $i++) {
             if ($this->__rules__[$i]->name === $name) {
@@ -120,10 +120,10 @@ class Ruler
      * ```
      * @param string $name rule name to replace.
      * @param callable|array $entity new rule function or instance.
-     * @param object $options new rule options (not mandatory).
+     * @param null $options new rule options (not mandatory).
      * @throws Exception
      */
-    public function at($name, $entity, $options=null)
+    public function at(string $name, $entity, $options=null)
     {
         $index = $this->__find__($name);
         if( is_object($options) ) $opt = $options;
@@ -159,13 +159,13 @@ class Ruler
      *   //...
      * });
      * ```
-     * @param string          $beforeName new rule will be added before this one.
-     * @param string          $ruleName   name of added rule.
-     * @param callable|array  $entity     new rule function or instance.
-     * @param object          $options    rule options (not mandatory).
+     * @param string $beforeName new rule will be added before this one.
+     * @param string $ruleName name of added rule.
+     * @param callable|array $entity new rule function or instance.
+     * @param null $options rule options (not mandatory).
      * @throws Exception
      */
-    public function before($beforeName, $ruleName, $entity, $options=null)
+    public function before(string $beforeName, string $ruleName, $entity, $options=null)
     {
         $index = $this->__find__($beforeName);
         if( is_object($options) ) $opt = $options;
@@ -208,13 +208,13 @@ class Ruler
      *   //...
      * });
      * ```
-     * @param string        $afterName new rule will be added after this one.
-     * @param string        $ruleName  name of added rule.
-     * @param callable|array  $entity    new rule function or instance.
-     * @param object        $options   rule options (not mandatory).
+     * @param string $afterName new rule will be added after this one.
+     * @param string $ruleName name of added rule.
+     * @param callable|array $entity new rule function or instance.
+     * @param null $options rule options (not mandatory).
      * @throws Exception
      */
-    public function after($afterName, $ruleName, $entity, $options=null)
+    public function after(string $afterName, string $ruleName, $entity, $options=null)
     {
         $index = $this->__find__($afterName);
         if( is_object($options) ) $opt = $options;
@@ -261,7 +261,7 @@ class Ruler
      * @param array|null $options rule options (not mandatory).
      * @throws Exception
      */
-    public function push($ruleName, $entity, $options=null)
+    public function push(string $ruleName, $entity, $options=null)
     {
         if( is_object($options) ) $opt = $options;
         else $opt = is_array($options) ? (object)$options : new \stdClass();
@@ -291,7 +291,7 @@ class Ruler
      * @return array
      * @throws Exception
      */
-	 public function enable($list, $ignoreInvalid=false)
+	 public function enable($list, $ignoreInvalid=false): array
      {
         if (!is_array($list)) { $list = [ $list ]; }
 
@@ -347,7 +347,7 @@ class Ruler
      * @return array
      * @throws Exception
      */
-    public function disable($list, $ignoreInvalid=false)
+    public function disable($list, $ignoreInvalid=false): array
     {
         if (!is_array($list)) { $list = [ $list ]; }
 
@@ -377,7 +377,7 @@ class Ruler
      * @param string $chainName
      * @return array
      */
-    public function getRules($chainName)
+    public function getRules(string $chainName): array
     {
         if ($this->__cache__ === null) {
             $this->__compile__();

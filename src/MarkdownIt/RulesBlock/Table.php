@@ -12,7 +12,7 @@ class Table
      * @param integer $line
      * @return string
      */
-    protected function getLine(StateBlock &$state, int $line)
+    protected function getLine(StateBlock &$state, int $line): string
     {
         $pos = $state->bMarks[$line] + $state->tShift[$line];
         $max = $state->eMarks[$line];
@@ -24,7 +24,7 @@ class Table
      * @param string $str
      * @return array
      */
-    protected function escapedSplit(string $str)
+    protected function escapedSplit(string $str): array
     {
         $result = [];
         $pos = 0;
@@ -68,7 +68,7 @@ class Table
      * @param boolean $silent
      * @return bool
      */
-    public function set(StateBlock &$state, int $startLine, int $endLine, $silent=false)
+    public function set(StateBlock &$state, int $startLine, int $endLine, $silent=false): bool
     {
         // should have at least two lines
         if ($startLine + 2 > $endLine) { return false; }

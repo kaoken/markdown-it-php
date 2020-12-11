@@ -6,7 +6,8 @@
 //
 namespace Kaoken\MarkdownIt\Plugins\Emoji;
 
-use Kaoken\MarkdownIt\Common\Utils;
+use Kaoken\MarkdownIt\MarkdownIt;
+use Kaoken\MarkdownIt\RulesCore\StateCore;
 
 class Replace
 {
@@ -17,13 +18,13 @@ class Replace
 
     /**
      * Replace constructor.
-     * @param $md
-     * @param array  $emojies
-     * @param array  $shortcuts
+     * @param MarkdownIt $md
+     * @param array $emojies
+     * @param array $shortcuts
      * @param string $scanRE
      * @param string $replaceRE
      */
-    public function __construct($md, &$emojies, &$shortcuts, &$scanRE, &$replaceRE)
+    public function __construct(MarkdownIt $md, array &$emojies, array &$shortcuts, string &$scanRE, string &$replaceRE)
     {
         $this->emojies = $emojies;
         $this->shortcuts = $shortcuts;
@@ -33,12 +34,12 @@ class Replace
 
 
     /**
-     * @param \Kaoken\MarkdownIt\RulesInline\StateInline $state
-     * @param $text
-     * @param $level
+     * @param StateCore $state
+     * @param string $text
+     * @param int $level
      * @return array
      */
-    protected function splitTextToken(&$state, $text, $level)
+    protected function splitTextToken(StateCore &$state, string $text, int $level): array
     {
         $last_pos = 0;
         $nodes = [];
@@ -92,9 +93,9 @@ class Replace
     }
 
     /**
-     * @param \Kaoken\MarkdownIt\RulesInline\StateInline $state
+     * @param StateCore $state
      */
-    public function replace(&$state)
+    public function replace(StateCore &$state)
     {
         $blockTokens = &$state->tokens;
         $autolinkLevel = 0;

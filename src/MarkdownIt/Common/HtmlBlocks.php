@@ -47,7 +47,6 @@ class HtmlBlocks
         'main',
         'menu',
         'menuitem',
-        'meta',
         'nav',
         'noframes',
         'ol',

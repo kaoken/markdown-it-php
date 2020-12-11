@@ -14,7 +14,7 @@ class BlockQuote
      * @param boolean $silent
      * @return bool
      */
-    public function set(&$state, $startLine, $endLine, $silent=false)
+    public function set(StateBlock &$state, int $startLine, int $endLine, $silent=false): bool
     {
         $oldLineMax = $state->lineMax;
         $pos = $state->bMarks[$startLine] + $state->tShift[$startLine];

@@ -16,9 +16,9 @@ class TextCollapse
 {
     /**
      * @param StateInline $state
-     * @param boolean     $silent
+     * @param boolean $silent
      */
-    public function textCollapse(&$state, $silent=false)
+    public function textCollapse(StateInline &$state, $silent=false)
     {
         $level = 0;
         $tokens = &$state->tokens;

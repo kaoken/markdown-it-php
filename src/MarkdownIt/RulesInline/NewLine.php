@@ -6,7 +6,7 @@ use Kaoken\MarkdownIt\Common\Utils;
 
 class NewLine
 {
-    public $utils = null;
+    public ?Utils $utils = null;
 
     public function __construct()
     {
@@ -15,10 +15,10 @@ class NewLine
 
     /**
      * @param StateInline $state
-     * @param bool        $silent
+     * @param bool $silent
      * @return bool
      */
-    public function newline(&$state, $silent=false)
+    public function newline(StateInline &$state, $silent=false): bool
     {
         $pos = $state->pos;
 

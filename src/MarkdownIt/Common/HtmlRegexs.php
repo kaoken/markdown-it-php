@@ -18,7 +18,7 @@ class HtmlRegexs
 
 	 const CLOSE_TAG   = "<\/[A-Za-z][A-Za-z0-9\-]*\s*>";
 	 const COMMENT     = '<!---->|<!--(?:-?[^>-])(?:-?[^-])*-->';
-	 const PROCESSING  = '<[?].*?[?]>';
+	 const PROCESSING  = '<[?][\\s\\S]*?[?]>';
 	 const DECLARATION = "<![A-Z]+\s+[^>]*>";
 	 const CDATA       = "<!\[CDATA\[[\s\S]*?\]\]>";
 

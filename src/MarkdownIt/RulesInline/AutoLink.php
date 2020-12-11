@@ -7,26 +7,34 @@ use Kaoken\MarkdownIt\Common\Utils;
 
 class AutoLink
 {
-    const EMAIL_RE    = "/^<([a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*)>/u";
-    const AUTOLINK_RE = "/^<([a-zA-Z][a-zA-Z0-9+.\-]{1,31}):([^<>\x{00}-\x{20}]*)>/u";
+    const EMAIL_RE    = "/^([a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*)$/u";
+    const AUTOLINK_RE = "/^([a-zA-Z][a-zA-Z0-9+.\-]{1,31}):([^<>\x{00}-\x{20}]*)$/u";
 
     /**
      * @param StateInline $state
-     * @param boolean     $silent
+     * @param boolean $silent
      * @return bool
      */
-    public function autoLink(&$state, $silent=false)
+    public function autoLink(StateInline &$state, bool $silent=false): bool
     {
         $pos = $state->pos;
 
         if ($state->src[$pos] !== '<') { return false; }
 
-        $tail = substr($state->src, $pos);
+        $start = $state->pos;
+        $max = $state->posMax;
+        while (true) {
+            if (++$pos >= $max) return false;
 
-        if ( strpos($tail, '>') < 0) { return false; }
+            $ch = $state->src[$pos];
 
-        if (preg_match(self::AUTOLINK_RE, $tail, $linkMatch)) {
-            $url = substr($linkMatch[0], 1, -1);
+            if ($ch === '<') return false;
+            if ($ch === '>') break;
+        }
+
+        $url = substr($state->src,$start + 1, $pos-($start + 1));
+
+        if (preg_match(self::AUTOLINK_RE, $url)) {
             $fullUrl = $state->md->normalizeLink($url);
             if (!$state->md->validateLink($fullUrl)) { return false; }
 
@@ -44,12 +52,11 @@ class AutoLink
                 $token->info    = 'auto';
             }
 
-            $state->pos += strlen($linkMatch[0]);
+            $state->pos += strlen($url) + 2;
             return true;
         }
 
-        if (preg_match(self::EMAIL_RE, $tail, $emailMatch)) {
-            $url = substr($emailMatch[0], 1, -1);
+        if (preg_match(self::EMAIL_RE, $url)) {
             $fullUrl = $state->md->normalizeLink('mailto:' . $url);
             if (!$state->md->validateLink($fullUrl)) { return false; }
 
@@ -67,7 +74,7 @@ class AutoLink
                 $token->info    = 'auto';
             }
 
-            $state->pos += strlen($emailMatch[0]);
+            $state->pos += strlen($url) + 2;
             return true;
         }
 

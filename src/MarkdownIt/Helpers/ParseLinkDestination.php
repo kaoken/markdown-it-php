@@ -9,12 +9,12 @@ trait ParseLinkDestination
 {
     /**
      * ParseLinkDestination constructor.
-     * @param string   $str
-     * @param integer  $pos
-     * @param integer  $max
+     * @param string $str
+     * @param int $pos
+     * @param int $max
      * @return object
      */
-    public function parseLinkDestination($str, $pos, $max)
+    public function parseLinkDestination(string $str, int $pos, int $max)
     {
         $lines = 0;
         $start = $pos;
@@ -31,6 +31,8 @@ trait ParseLinkDestination
             while ($pos < $max) {
                 $ch= $str[$pos];
                 if ($str[$pos] === "\n") { return $result; }
+
+                if ($ch === '<') { return $result; }
                 if ($ch === '>') {
                     $result->pos = $pos + 1;
                     $result->str = $this->utils->unescapeAll(substr($str, $start + 1, $pos-($start+1)));
@@ -62,12 +64,14 @@ trait ParseLinkDestination
             if ($code < 0x20 || $code === 0x7F) { break; }
 
             if ($ch === '\\' && $pos + 1 < $max) {
+                if (ord($str[$pos + 1]) === 0x20) { break; }
                 $pos += 2;
                 continue;
             }
 
             if ($ch === '(' ) {
                 $level++;
+                if ($level > 32) { return $result; }
             }
 
             if ($ch === ')' ) {

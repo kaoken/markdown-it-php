@@ -30,7 +30,7 @@ class MarkdownItSup
      * @param MarkdownIt $md
      * @throws Exception
      */
-    public function plugin($md)
+    public function plugin(MarkdownIt $md)
     {
         $md->inline->ruler->after('emphasis', 'sup', [$this, 'supscript']);
     }
@@ -40,7 +40,7 @@ class MarkdownItSup
      * @param boolean $silent
      * @return bool
      */
-    function supscript($state, $silent=false)
+    function supscript(StateInline $state, $silent=false)
     {
         $max = $state->posMax;
         $start = $state->pos;

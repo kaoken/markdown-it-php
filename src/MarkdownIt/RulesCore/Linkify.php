@@ -16,7 +16,7 @@ class Linkify
     /**
      * @param StateCore $state
      */
-    public function set(&$state)
+    public function set(StateCore &$state)
     {
         if (!$state->md->options->linkify) { return; }
 

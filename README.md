@@ -1,12 +1,12 @@
 # markdown-it-php
 
 [![Build Status](https://img.shields.io/travis/markdown-it/markdown-it/master.svg?style=flat)](https://github.com/kaoken/markdown-it-php)
-[![composer version](https://img.shields.io/badge/version-12.0.2.0-blue.svg)](https://github.com/kaoken/markdown-it-php)
+[![composer version](https://img.shields.io/badge/version-12.0.3.0-blue.svg)](https://github.com/kaoken/markdown-it-php)
 [![licence](https://img.shields.io/badge/licence-MIT-blue.svg)](https://github.com/kaoken/markdown-it-php)
 [![php version](https://img.shields.io/badge/php%20version-≧7.4.0-red.svg)](https://github.com/kaoken/markdown-it-php)
 
 
-This gem is a port of the [markdown-it Javascript package](https://github.com/markdown-it/markdown-it) by Vitaly Puzrin and Alex Kocharin. Currently synced with markdown-it 12.0.2
+This gem is a port of the [markdown-it Javascript package](https://github.com/markdown-it/markdown-it) by Vitaly Puzrin and Alex Kocharin. Currently synced with markdown-it 12.0.3
 
 __[Javascript Live demo](https://markdown-it.github.io)__
 
@@ -76,6 +76,7 @@ $md = new MarkdownIt([
   "linkify"=>      false,        // Autoconvert URL-like text to links
 
   // Enable some language-neutral replacement + quotes beautification
+  // For the full list of replacements, see https://github.com/markdown-it/markdown-it/blob/master/lib/rules_core/replacements.js
   "typographer"=>  false,
 
   // Double + single quotes replacement pairs, when typographer enabled,
@@ -147,9 +148,8 @@ $md = new MarkdownIt([
 configure linkify-it, access the linkify instance through `$md->linkify`:
 
 ```php
-$md->linkify->tlds('.py', false);  // disables .py as top level domain
+$md->linkify->set(['fuzzyEmail'=>false]);  // disables .py as top level domain
 ```
-
 
 
 ## Syntax extensions

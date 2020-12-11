@@ -13,7 +13,7 @@ class Code
      * @param boolean $silent
      * @return bool
      */
-    public function set(&$state, $startLine, $endLine, $silent=false)
+    public function set(StateBlock &$state, int $startLine, int $endLine, $silent=false): bool
     {
         if ($state->sCount[$startLine] - $state->blkIndent < 4) { return false; }
 

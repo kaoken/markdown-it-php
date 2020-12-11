@@ -9,10 +9,10 @@ class Image
 {
     /**
      * @param StateInline $state
-     * @param boolean     $silent
+     * @param boolean $silent
      * @return bool
      */
-    public function image(&$state, $silent=false)
+    public function image(StateInline &$state, $silent=false): bool
     {
         $href = '';
         $oldPos = $state->pos;

@@ -13,6 +13,8 @@
 namespace Kaoken\MarkdownIt\RulesCore;
 
 
+use Kaoken\MarkdownIt\Token;
+
 class ReplaceMents
 {
     // - fractionals 1/2, 1/4, 3/4 -> ½, ¼, ¾
@@ -38,7 +40,7 @@ class ReplaceMents
     ];
 
     /**
-     * @param \Kaoken\MarkdownIt\Token[] $inlineTokens
+     * @param Token[] $inlineTokens
      */
     protected function replace_scoped(array &$inlineTokens)
     {
@@ -61,7 +63,7 @@ class ReplaceMents
     }
 
     /**
-     * @param \Kaoken\MarkdownIt\Token[] $inlineTokens
+     * @param Token[] $inlineTokens
      */
     protected function replace_rare(array &$inlineTokens)
     {
@@ -100,7 +102,7 @@ class ReplaceMents
     /**
      * @param StateCore $state
      */
-    public function set(&$state)
+    public function set(StateCore &$state)
     {
         if (!$state->md->options->typographer) { return; }
 

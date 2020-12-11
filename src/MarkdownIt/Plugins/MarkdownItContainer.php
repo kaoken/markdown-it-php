@@ -21,6 +21,7 @@
 namespace Kaoken\MarkdownIt\Plugins;
 
 
+use Exception;
 use Kaoken\MarkdownIt\MarkdownIt;
 use Kaoken\MarkdownIt\RulesBlock\StateBlock;
 use Kaoken\MarkdownIt\Token;
@@ -42,9 +43,11 @@ class MarkdownItContainer
 
     /**
      * @param MarkdownIt $md
-     * @throws \Exception
+     * @param string $name
+     * @param null $options
+     * @throws Exception
      */
-    public function plugin($md, $name, $options=null)
+    public function plugin(MarkdownIt $md, string $name, $options=null)
     {
         $this->name = $name;
 
@@ -79,12 +82,13 @@ class MarkdownItContainer
     /**
      * @param Token[] $tokens
      * @param integer $idx
-     * @param object  $options
-     * @param object  $env
-     * @param $self
+     * @param object $options
+     * @param null|object $env
+     * @param $slf
      * @return string
      */
-    function renderDefault(&$tokens, $idx, $options, $env, $slf) {
+    function renderDefault(array &$tokens, int $idx, object $options, ?object $env, $slf): string
+    {
 
         // add a class to the opening tag
         if ($tokens[$idx]->nesting === 1) {
@@ -96,12 +100,12 @@ class MarkdownItContainer
 
     /**
      * @param StateBlock $state
-     * @param integer    $startLine
-     * @param integer    $endLine
-     * @param bool       $silent
+     * @param integer $startLine
+     * @param integer $endLine
+     * @param bool $silent
      * @return bool
      */
-    function container($state, $startLine, $endLine, $silent=false)
+    function container(StateBlock $state, int $startLine, int $endLine, $silent=false): bool
     {
 //    var $pos, $nextLine, $marker_count, $markup, $params, $token,
 //    $old_parent, $old_line_max,

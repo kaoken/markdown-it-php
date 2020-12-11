@@ -19,6 +19,8 @@
 namespace Kaoken\Punycode;
 
 
+use Exception;
+
 class Punycode
 {
     /**
@@ -61,21 +63,22 @@ class Punycode
      * A generic error utility function.
      * @private
      * @param string $type The error type.
-     * @throws \Exception
+     * @throws Exception
      */
     protected function error($type) {
-        throw new \Exception(self::ERRORS[$type]);
+        throw new Exception(self::ERRORS[$type]);
     }
 
     /**
      * A generic `Array#map` utility function.
      * @private
-     * @param array  $array The array to iterate over.
-     * @param callable $fn     The function that gets called for every array
+     * @param array $array The array to iterate over.
+     * @param callable $fn The function that gets called for every array
      * item.
      * @return array A new array of values returned by the callback function.
      */
-    protected function map(array &$array, $fn) {
+    protected function map(array &$array, callable $fn): array
+    {
         $result = [];
         $length = count($array);
         while ($length--) {
@@ -90,12 +93,12 @@ class Punycode
      * addresses.
      * @private
      * @param string $string The domain name or email address.
-     * @param callable $fn     The function that gets called for every
+     * @param callable $fn The function that gets called for every
      * character.
      * @return string A new string of characters returned by the callback
      * function.
      */
-    protected function mapDomain($string, $fn)
+    protected function mapDomain(string $string, callable $fn): string
     {
         $parts = explode('@', $string);
         $result = '';
@@ -115,11 +118,11 @@ class Punycode
 
     /**
      * Creates a string based on an array of numeric code points.
-     * @see `punycode->ucs2Decode`
      * @param array $codePoints The array of numeric code points.
      * @return string The new Unicode string (UCS-2).
+     * @see `punycode->ucs2Decode`
      */
-    public function ucs2Encode($codePoints)
+    public function ucs2Encode(array $codePoints): string
     {
         $outStr = '';
         foreach ($codePoints as $v) {
@@ -142,12 +145,12 @@ class Punycode
      * this function will convert a pair of surrogate halves (each of which
      * UCS-2 exposes as separate characters) into a single code point,
      * matching UTF-16.
-     * @see `punycode->ucs2encode`
-     * @see <https://mathiasbynens.be/notes/javascript-encoding>
      * @param string $string The Unicode input string (UCS-2).
      * @return array The new array of code points.
+     * @see `punycode->ucs2encode`
+     * @see <https://mathiasbynens.be/notes/javascript-encoding>
      */
-    public function ucs2Decode($string)
+    public function ucs2Decode(string $string): array
     {
         $input = [];
         for($i=0,$l=strlen($string);$i<$l;$i+=2){
@@ -187,7 +190,7 @@ class Punycode
      * representing integers) in the range `0` to `base - 1`, or `base` if
      * the code point does not represent a value.
      */
-    public function basicToDigit($codePoint)
+    public function basicToDigit($codePoint): int
     {
         if ($codePoint - 0x30 < 0x0A) {
             return $codePoint - 0x16;
@@ -203,16 +206,17 @@ class Punycode
 
     /**
      * Converts a digit/integer into a basic code point.
-     * @see `basicToDigit()`
-     * @private
-     * @param int digit The numeric value of a basic code point.
+     * @param $digit
+     * @param $flag
      * @return int The basic code point whose value (when used for
      * representing integers) is `digit`, which needs to be in the range
      * `0` to `base - 1`. If `flag` is non-zero, the uppercase form is
      * used; else, the lowercase form is used. The behavior is undefined
      * if `flag` is non-zero and `digit` has no uppercase form.
+     * @see `basicToDigit()`
+     * @private
      */
-    public function digitToBasic($digit, $flag)
+    public function digitToBasic($digit, $flag) : int
     {
         //  0..25 map to ASCII a..z or A..Z
         // 26..35 map to ASCII 0..9
@@ -223,6 +227,10 @@ class Punycode
      * Bias adaptation function as per section 3.4 of RFC 3492.
      * https://tools.ietf.org/html/rfc3492#section-3.4
      * @private
+     * @param $delta
+     * @param $numPoints
+     * @param $firstTime
+     * @return false|float
      */
     public function adapt($delta, $numPoints, $firstTime)
     {
@@ -240,9 +248,9 @@ class Punycode
      * symbols.
      * @param string $input The Punycode string of ASCII-only symbols.
      * @return string The resulting string of Unicode symbols.
-     * @throws \Exception
+     * @throws Exception
      */
-    public function decode($input)
+    public function decode(string $input): string
     {
         // Don't use UCS-2.
         $output = [];
@@ -329,11 +337,11 @@ class Punycode
     /**
      * Converts a string of Unicode symbols (e.g. a domain name label) to a
      * Punycode string of ASCII-only symbols.
-     * @param string input The string of Unicode symbols.
+     * @param string $input The string of Unicode symbols.
      * @return string The resulting Punycode string of ASCII-only symbols.
-     * @throws \Exception
+     * @throws Exception
      */
-    public function encode($input)
+    public function encode(string $input): string
     {
         $output = [];
 
@@ -428,12 +436,12 @@ class Punycode
      * to Unicode. Only the Punycoded $parts of the input will be converted, i.e.
      * it doesn't matter if you call it on a string that has already been
      * converted to Unicode.
-     * @param string input The Punycoded domain name or email address to
+     * @param string $input The Punycoded domain name or email address to
      * convert to Unicode.
      * @return string The Unicode representation of the given Punycode
      * string.
      */
-    public  function toUnicode($input)
+    public  function toUnicode(string $input): string
     {
         return $this->mapDomain($input, function($string) {
             return preg_match(self::PUNYCODE_RE, $string)
@@ -447,12 +455,12 @@ class Punycode
      * Punycode. Only the non-ASCII $parts of the domain name will be converted,
      * i.e. it doesn't matter if you call it with a domain that's already in
      * ASCII.
-     * @param string input The domain name or email address to convert, as a
+     * @param string $input The domain name or email address to convert, as a
      * Unicode string.
      * @return string The Punycode representation of the given domain name or
      * email address.
      */
-    public function toASCII($input)
+    public function toASCII(string $input): string
     {
         return $this->mapDomain($input, function($string) {
             return preg_match(self::NON_ASCII_RE, $string)

@@ -44,7 +44,7 @@ class MarkdownItIns
      * @return bool
      * @throws Exception
      */
-    function tokenize($state, $silent=false)
+    function tokenize(StateInline $state, $silent=false): bool
     {
         $start = $state->pos;
         $marker = $state->src[$start];
@@ -93,7 +93,7 @@ class MarkdownItIns
      * @param StateInline $state
      * @param ArrayObj $delimiters
      */
-    private function ins(&$state, &$delimiters)
+    private function ins(StateInline &$state, ArrayObj &$delimiters)
     {
         $loneMarkers = [];
         $max = $delimiters->length();
@@ -160,7 +160,7 @@ class MarkdownItIns
      *
      * @param StateInline $state
      */
-    public function postProcess(&$state)
+    public function postProcess(StateInline &$state)
     {
         $tokens_meta    = &$state->tokens_meta;
         $max            = $state->tokens_meta->length();

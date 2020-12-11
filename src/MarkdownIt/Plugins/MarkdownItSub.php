@@ -32,7 +32,7 @@ class MarkdownItSub
      * @param MarkdownIt $md
      * @throws Exception
      */
-    public function plugin($md)
+    public function plugin(MarkdownIt $md)
     {
         $md->inline->ruler->after('emphasis', 'sub', [$this, 'subscript']);
     }
@@ -43,7 +43,7 @@ class MarkdownItSub
      * @param boolean $silent
      * @return bool
      */
-    public function subscript(&$state, $silent=false)
+    public function subscript(StateInline &$state, $silent=false): bool
     {
         $max = $state->posMax;
         $start = $state->pos;

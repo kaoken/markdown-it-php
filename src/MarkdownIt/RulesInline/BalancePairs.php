@@ -12,7 +12,7 @@ class BalancePairs
      * @param StateInline $state
      * @param ArrayObj $delimiters
      */
-    private function processDelimiters(&$state, &$delimiters)
+    private function processDelimiters(StateInline &$state, ArrayObj &$delimiters)
     {
         $openersBottom = [];
         $max = $delimiters->length();
@@ -35,16 +35,14 @@ class BalancePairs
             }
 
             $minOpenerIdx = $openersBottom[$closer->marker][$closer->length % 3];
-            $newMinOpenerIdx = -1;
 
             $openerIdx = $closerIdx - $closer->jump - 1;
+            $newMinOpenerIdx = $openerIdx;
 
             for (; $openerIdx > $minOpenerIdx; $openerIdx -= $opener->jump + 1) {
                 $opener = $delimiters[$openerIdx];
 
                 if ($opener->marker !== $closer->marker) continue;
-
-                if ($newMinOpenerIdx === -1) $newMinOpenerIdx = $openerIdx;
 
                 if ($opener->open && $opener->end < 0){
 
@@ -101,7 +99,7 @@ class BalancePairs
     /**
      * @param StateInline $state
      */
-    public function linkPairs(&$state) {
+    public function linkPairs(StateInline &$state) {
         $tokens_meta = &$state->tokens_meta;
         $max = $state->tokens_meta->length();
 

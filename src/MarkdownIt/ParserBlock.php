@@ -11,7 +11,7 @@ use Kaoken\MarkdownIt\RulesBlock\StateBlock;
 
 class ParserBlock
 {
-    protected $_rules = [
+    protected array $_rules = [
         // First 2 params - rule name & source. Secondary array - list of rules,
         // which can be terminated by this one.
         [ 'table',      \Kaoken\MarkdownIt\RulesBlock\Table::class,      [ 'paragraph', 'reference' ] ],
@@ -29,7 +29,7 @@ class ParserBlock
     /**
      * @var Ruler
      */
-    public $ruler;
+    public Ruler $ruler;
 
 
     public function __construct()
@@ -53,11 +53,11 @@ class ParserBlock
 //
     /**
      *  Generate tokens for input range
-     * @param \Kaoken\MarkdownIt\RulesBlock\StateBlock $state
+     * @param StateBlock $state
      * @param integer $startLine
      * @param integer $endLine
      */
-    public function tokenize($state, $startLine, $endLine)
+    public function tokenize(StateBlock $state, int $startLine, int $endLine)
     {
         $rules = $this->ruler->getRules('');
         $len = count($rules);
@@ -118,12 +118,12 @@ class ParserBlock
     /**
      * Process input string and push block tokens into `outTokens`
      *
-     * @param string     $src
+     * @param string $src
      * @param MarkdownIt $md
-     * @param object     $env
-     * @param $outTokens
+     * @param null|object $env
+     * @param Token[] $outTokens
      */
-    public function parse($src, $md, $env, &$outTokens)
+    public function parse(string $src, MarkdownIt $md, ?object $env, array &$outTokens)
     {
         if (!$src) { return; }
 

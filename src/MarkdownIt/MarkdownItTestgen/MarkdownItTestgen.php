@@ -13,7 +13,9 @@
 
 namespace Kaoken\Test\MarkdownItTestgen;
 
+use Exception;
 use Kaoken\MarkdownIt\Common\Utils;
+use Kaoken\MarkdownIt\MarkdownIt;
 use Symfony\Component\Yaml\Yaml;
 
 class MarkdownItTestgen
@@ -44,7 +46,7 @@ class MarkdownItTestgen
      * @param object $options
      * @return null|\stdClass
      */
-    function parse($input, $options)
+    function parse(string $input, object $options): ?\stdClass
     {
         $lines = preg_split("/\r?\n/",$input); // /g
         $max = count($lines);
@@ -158,9 +160,9 @@ class MarkdownItTestgen
      * @param $options
      * @param null $iterator
      * @return array|null|\stdClass
-     * @throws \Exception
+     * @throws Exception
      */
-    function load($path, $options, $iterator=null)
+    function load(string $path, $options, $iterator=null)
     {
         if (is_callable($options)) {
             $iterator = $options;
@@ -176,7 +178,7 @@ class MarkdownItTestgen
 
         if (is_file($path)) {
             if( !file_exists($path))
-                throw new \Exception('No exists file "'.$path.'"!');
+                throw new Exception('No exists file "'.$path.'"!');
             $input = file_get_contents($path);
 
             $parsed = $this->parse($input, $options);
@@ -189,7 +191,7 @@ class MarkdownItTestgen
                     $parsed->meta = Yaml::parse($parsed->meta,Yaml::PARSE_OBJECT_FOR_MAP);
                 else
                     $parsed->meta = Yaml::parse('');
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $parsed->meta = null;
             }
 
@@ -201,7 +203,7 @@ class MarkdownItTestgen
 
         if (is_dir($path)) {
             if( !file_exists($path))
-                throw new \Exception('No exists dir "'.$path.'"!');
+                throw new Exception('No exists dir "'.$path.'"!');
             $result = [];
 
             foreach(glob($path.'/*') as $file){
@@ -225,9 +227,9 @@ class MarkdownItTestgen
 
     /**
      * @param string $path
-     * @param object|\Kaoken\MarkdownIt\MarkdownIt $options
-     * @param \Kaoken\MarkdownIt\MarkdownIt|null $md
-     * @throws \Exception
+     * @param object|MarkdownIt $options
+     * @param MarkdownIt|null $md
+     * @throws Exception
      */
     function generate(string $path, $options, $md=null)
     {
@@ -241,7 +243,7 @@ class MarkdownItTestgen
 
         $options = $this->utils->assign(new \stdClass(), $options);
         if( !is_object($options->assert) )
-            throw new \Exception("Property 'assert' does not exist in object \$options.");
+            throw new Exception("Property 'assert' does not exist in object \$options.");
 
         $this->load($path, $options, function ($data) use($md, $options) {
             if(!isset($data->meta)) $data->meta = new \stdClass();

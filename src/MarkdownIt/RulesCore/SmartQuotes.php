@@ -2,6 +2,7 @@
 namespace Kaoken\MarkdownIt\RulesCore;
 
 use Kaoken\MarkdownIt\Common\Utils;
+use Kaoken\MarkdownIt\Token;
 
 class SmartQuotes
 {
@@ -9,7 +10,7 @@ class SmartQuotes
     const QUOTE_RE = "/['\"]/"; // /g
 
     const APOSTROPHE = "’"; /* \u2019 */
-    protected $apostropheLen = 1;
+    protected int $apostropheLen = 1;
 
     /**
      * @var Utils|null
@@ -23,21 +24,21 @@ class SmartQuotes
     }
 
     /**
-     * @param string  $str
+     * @param string $str
      * @param integer $index
-     * @param string  $ch
+     * @param string $ch
      * @return string
      */
-    protected function replaceAt($str, $index, $ch)
+    protected function replaceAt(string $str, int $index, string $ch): string
     {
         return substr($str, 0, $index) . $ch . substr($str,$index + 1);
     }
 
     /**
-     * @param \Kaoken\MarkdownIt\Token[] $tokens
-     * @param \Kaoken\MarkdownIt\RulesCore\StateCore $state
+     * @param Token[] $tokens
+     * @param StateCore $state
      */
-    protected function process_inlines(array &$tokens, &$state)
+    protected function process_inlines(array &$tokens, StateCore &$state)
     {
         $stack = [];
 
@@ -221,7 +222,7 @@ class SmartQuotes
     /**
      * @param StateCore $state
      */
-    public function set(&$state)
+    public function set(StateCore &$state)
     {
         /*eslint $max-depth:0*/
 

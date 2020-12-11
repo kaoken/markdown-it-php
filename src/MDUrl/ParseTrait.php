@@ -124,7 +124,7 @@ Trait ParseTrait
      * @param bool $slashesDenoteHost
      * @return \stdClass
      */
-    public function parse(string $url, $slashesDenoteHost=false)
+    public function parse(string $url, $slashesDenoteHost=false): \stdClass
     {
 
         $rest = $url;
