@@ -37,6 +37,8 @@ class BalancePairs
             $minOpenerIdx = $openersBottom[$closer->marker][$closer->length % 3];
 
             $openerIdx = $closerIdx - $closer->jump - 1;
+            // avoid crash if `closer.jump` is pointing outside of the array, see #742
+            if ($openerIdx < -1) $openerIdx = -1;
             $newMinOpenerIdx = $openerIdx;
 
             for (; $openerIdx > $minOpenerIdx; $openerIdx -= $opener->jump + 1) {

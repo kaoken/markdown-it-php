@@ -84,15 +84,16 @@ class DefaultRules
         }
 
         // If language exists, inject class gently, without modifying original token.
-        // May be, one day we will add .clone() for $token and simplify this part, but
+        // May be, one day we will add .deepClone() for token and simplify this part, but
         // now we prefer to keep things local.
         if ($info) {
             $i        = $token->attrIndex('class');
-            $tmpAttrs = $token->attrs ? $token->attrs.slice() : [];
+            $tmpAttrs = $token->attrs ? clone $token->attrs : [];
 
             if ($i < 0) {
                 $tmpAttrs[] = [ 'class', $options->langPrefix . $langName ];
             } else {
+                $tmpAttrs[$i] = clone $tmpAttrs[$i];
                 $tmpAttrs[$i][1] .= ' ' . $options->langPrefix . $langName;
             }
 
