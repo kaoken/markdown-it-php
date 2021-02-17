@@ -12,8 +12,8 @@
  * http://opensource.org/licenses/mit-license.php
  *
  *
- * use javascript version 3.0.0
- * @see https://github.com/markdown-it/markdown-it-mark/tree/3.0.0
+ * use javascript version 3.0.1
+ * @see https://github.com/markdown-it/markdown-it-mark/tree/3.0.1
  */
 
 namespace Kaoken\MarkdownIt\Plugins;
@@ -75,7 +75,7 @@ class MarkdownItMark
             $obj = new stdClass();
             $obj->marker    = $marker;
             $obj->length    = 0; // disable "rule of 3" length checks meant for emphasis
-            $obj->jump      = $i;
+            $obj->jump      = $i / 2; // 1 delimiter = 2 characters
             $obj->token     = count($state->tokens) - 1;
             $obj->level     =  $state->level;
             $obj->end       =  -1;

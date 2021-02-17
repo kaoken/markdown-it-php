@@ -12,8 +12,8 @@
  * http://opensource.org/licenses/mit-license.php
  *
  *
- * use javascript version 3.0.0
- * @see https://github.com/markdown-it/markdown-it-ins/tree/3.0.0
+ * use javascript version 3.0.1
+ * @see https://github.com/markdown-it/markdown-it-ins/tree/3.0.1
  */
 namespace Kaoken\MarkdownIt\Plugins;
 
@@ -31,7 +31,7 @@ class MarkdownItIns
      * @param MarkdownIt $md
      * @throws Exception
      */
-    public function plugin($md)
+    public function plugin(MarkdownIt $md)
     {
         $md->inline->ruler->before('emphasis', 'ins', [$this, 'tokenize']);
         $md->inline->ruler2->before('emphasis', 'ins', [$this, 'postProcess']);
@@ -74,7 +74,7 @@ class MarkdownItIns
             $obj            = new stdClass();
             $obj->marker    = $marker;
             $obj->length    = 0; // disable "rule of 3" length checks meant for emphasis
-            $obj->jump      = $i;
+            $obj->jump      = $i / 2;// 1 delimiter = 2 characters
             $obj->token     = count($state->tokens) - 1;
             $obj->end       =  -1;
             $obj->open      = $scanned->can_open;

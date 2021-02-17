@@ -1,6 +1,11 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [12.0.4.1] - 2021-02-17
+### Updated
+- Plugin MarkdownItIns, MarkdownMark update.
+- fix #6.
+
 ## [12.0.4.0] - 2020-12-21
 ### Updated
 - This gem is a port of the [markdown-it Javascript package](https://github.com/markdown-it/markdown-it/tree/12.0.4) by Vitaly Puzrin and Alex Kocharin. Currently synced with markdown-it 12.0.4
