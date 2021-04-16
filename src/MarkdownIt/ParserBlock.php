@@ -21,9 +21,9 @@ class ParserBlock
         [ 'hr',         \Kaoken\MarkdownIt\RulesBlock\Hr::class,         [ 'paragraph', 'reference', 'blockquote', 'list' ] ],
         [ 'list',       \Kaoken\MarkdownIt\RulesBlock\CList::class,       [ 'paragraph', 'reference', 'blockquote' ] ],
         [ 'reference',  \Kaoken\MarkdownIt\RulesBlock\Reference::class ],
+        [ 'html_block', \Kaoken\MarkdownIt\RulesBlock\HtmlBlock::class, [ 'paragraph', 'reference', 'blockquote' ] ],
         [ 'heading',    \Kaoken\MarkdownIt\RulesBlock\Heading::class,    [ 'paragraph', 'reference', 'blockquote' ] ],
         [ 'lheading',   \Kaoken\MarkdownIt\RulesBlock\LHeading::class],
-        [ 'html_block', \Kaoken\MarkdownIt\RulesBlock\HtmlBlock::class, [ 'paragraph', 'reference', 'blockquote' ] ],
         [ 'paragraph',  \Kaoken\MarkdownIt\RulesBlock\Paragraph::class ]
     ];
     /**

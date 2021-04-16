@@ -68,7 +68,10 @@ class Token
     public string $markup   = '';
 
     /**
-     * fence infostring
+     * Additional information:
+     *
+     * - Info string for "fence" tokens
+     * - The value "auto" for autolink "link_open" and "link_close" tokens
      * @var string
      **/
     public string $info     = '';

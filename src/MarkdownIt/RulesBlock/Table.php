@@ -87,8 +87,19 @@ class Table
         $pos = $state->bMarks[$nextLine] + $state->tShift[$nextLine];
         if ($pos >= $state->eMarks[$nextLine]) { return false; }
 
-        $ch = $state->src[$pos++];
-        if ($ch !== '|' && $ch !== '-' && $ch !== ':') { return false; }
+        $firstCh = $state->src[$pos++];
+        if ($firstCh !== '|' && $firstCh !== '-' && $firstCh !== ':') { return false; }
+        if ($pos >= $state->eMarks[$nextLine]) { return false; }
+
+        $secondCh = $state->src[$pos++];
+        if ($secondCh !== '|' && $secondCh !== '-' && $secondCh !== ':' && !$state->md->utils->isSpace($secondCh)) {
+            return false;
+        }
+
+        // if first character is '-', then second character must not be a space
+        // (due to parsing ambiguity with list)
+        if ($firstCh === '-' && $state->md->utils->isSpace($secondCh)) { return false; }
+
 
         while ($pos < $state->eMarks[$nextLine]) {
             $ch = $state->src[$pos];
