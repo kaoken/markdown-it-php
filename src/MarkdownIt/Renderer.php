@@ -206,6 +206,8 @@ class Renderer
                 $result .= $token->content;
             } else if ($token->type === 'image') {
                 $result .= $this->renderInlineAsText($token->children, $options, $env);
+            } else if ($token->type === 'softbreak') {
+                $result .= "\n";
             }
         }
 
