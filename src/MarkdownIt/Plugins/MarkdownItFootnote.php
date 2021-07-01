@@ -12,7 +12,7 @@
  * http://opensource.org/licenses/mit-license.php
  *
  *
- * use javascript version 3.0.2
+ * use javascript version 3.0.3
  * @see https://github.com/markdown-it/markdown-it-footnote
  */
 // Process footnotes
@@ -415,7 +415,8 @@ class MarkdownItFootnote
                     $tokens = $refTokens[':' . $list[$i]->label];
                 }
 
-                $state->tokens = array_merge($state->tokens, $tokens);
+                if(isset($tokens))
+                    $state->tokens = array_merge($state->tokens, $tokens);
                 if ($state->tokens[count($state->tokens) - 1]->type === 'paragraph_close') {
                     $lastParagraph = array_pop($state->tokens);
                 } else {

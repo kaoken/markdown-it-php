@@ -29,12 +29,14 @@ class BalancePairs
             if (!$closer->close) continue;
 
             // Previously calculated lower bounds (previous fails)
-            // for each marker and each delimiter length modulo 3.
+            // for each marker, each delimiter length modulo 3,
+            // and for whether this closer can be an opener;
+            // https://github.com/commonmark/cmark/commit/34250e12ccebdc6372b8b49c44fab57c72443460
             if (!array_key_exists($closer->marker, $openersBottom)) {
-                $openersBottom[$closer->marker] = [ -1, -1, -1 ];
+                $openersBottom[$closer->marker] = [ -1, -1, -1, -1, -1, -1 ];
             }
 
-            $minOpenerIdx = $openersBottom[$closer->marker][$closer->length % 3];
+            $minOpenerIdx = $openersBottom[$closer->marker][($closer->open ? 3 : 0) + ($closer->length % 3)];
 
             $openerIdx = $closerIdx - $closer->jump - 1;
             // avoid crash if `closer.jump` is pointing outside of the array, see #742
@@ -93,7 +95,7 @@ class BalancePairs
                 // See details here:
                 // https://github.com/commonmark/cmark/issues/178#issuecomment-270417442
                 //
-                $openersBottom[$closer->marker][($closer->length ?? 0) % 3] = $newMinOpenerIdx;
+                $openersBottom[$closer->marker][($closer->open ? 3 : 0) + (($closer->length ?? 0) % 3)] = $newMinOpenerIdx;
             }
         }
     }

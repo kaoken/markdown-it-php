@@ -1,9 +1,13 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [12.1.0.0] - 2021-07-02
+### Updated
+- This gem is a port of the [markdown-it Javascript package](https://github.com/markdown-it/markdown-it/tree/12.1.0) by Vitaly Puzrin and Alex Kocharin. Currently synced with markdown-it 12.1.0
+
 ## [12.0.6.0] - 2021-04-16
 ### Updated
-- This gem is a port of the [markdown-it Javascript package](https://github.com/markdown-it/markdown-it/tree/12.0.5) by Vitaly Puzrin and Alex Kocharin. Currently synced with markdown-it 12.0.6
+- This gem is a port of the [markdown-it Javascript package](https://github.com/markdown-it/markdown-it/tree/12.0.6) by Vitaly Puzrin and Alex Kocharin. Currently synced with markdown-it 12.0.6
 
 ## [12.0.5.0] - 2021-04-16
 ### Updated
