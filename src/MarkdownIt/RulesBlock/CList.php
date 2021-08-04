@@ -157,6 +157,7 @@ class CList
         }
 
         // Detect list type and position after marker
+        $start = 0;
         if (($posAfterMarker = self::skipOrderedListMarker($state, $startLine)) >= 0) {
             $isOrdered = true;
             $start = $state->bMarks[$startLine] + $state->tShift[$startLine];
@@ -253,6 +254,9 @@ class CList
             $token          = $state->push('list_item_open', 'li', 1);
             $token->markup  = $markerCharCode;
             $token->map     = $itemLines = [ $startLine, 0 ];
+            if ($isOrdered) {
+                $token->info = substr($state->src, $start, $posAfterMarker - $start - 1);
+            }
 
             // change current state, then restore it after parser subcall
             $oldTight = $state->tight;
@@ -336,6 +340,7 @@ class CList
             if ($isOrdered) {
                 $posAfterMarker = self::skipOrderedListMarker($state, $nextLine);
                 if ($posAfterMarker < 0) { break; }
+                $start = $state->bMarks[$nextLine] + $state->tShift[$nextLine];
             } else {
                 $posAfterMarker = self::skipBulletListMarker($state, $nextLine);
                 if ($posAfterMarker < 0) { break; }

@@ -17,7 +17,8 @@ trait MiscTrait
             $g->group("Url normalization", function ($gg) { $this->miscUrlNormalization($gg); });
             $g->group("Links validation", function ($gg) { $this->miscLinksValidation($gg); });
             $g->group("maxNesting", function ($gg) { $this->miscMaxNesting($gg); });
-            $g->group("smartquotes", function ($gg) { $this->miscSmartquotes($gg); });
+            $g->group("smartquotes", function ($gg) { $this->miscSmartquotes($gg); });;
+            $g->group("Ordered list info", function ($gg) { $this->miscOrderedListInfo($gg); });
             $g->group("Token attributes", function ($gg) { $this->miscTokenAttributes($gg); });
         });
     }
@@ -39,7 +40,10 @@ trait MiscTrait
             // conditions coverage
             $md->configure([]);
             $gg->strictEqual($md->render("123"), "<p>123</p>\n");
+            $gg->strictEqual($md->render("123\n"), "<p>123</p>\n");
 
+            $gg->strictEqual($md->render("    codeblock"), "<pre><code>codeblock\n</code></pre>\n");
+            $gg->strictEqual($md->render("    codeblock\n"), "<pre><code>codeblock\n</code></pre>\n");
             $gg->throws(function () use($md) {
                 $md->configure();
             });
@@ -349,6 +353,41 @@ trait MiscTrait
             "<p>[[[a <em>b (((((c <em>d</em> e)))) f</em> g]]</p>\n",
             "Should support multi-character quotes in different tags"
         );
+    }
+    private function miscOrderedListInfo($g)
+    {
+        $g->group("Should mark ordered list item tokens with info", function ($gg) {
+            $md = new MarkdownIt();
+
+            $type_filter = function($tokens, $type) {
+                return array_values(array_filter($tokens, function ($t) use($type) { return $t->type === $type; }));
+            };
+
+            $tokens = $md->parse("1. Foo\n2. Bar\n20. Fuzz");
+            $gg->strictEqual(count($type_filter($tokens, "ordered_list_open")), 1);
+            $tokens = $type_filter($tokens, "list_item_open");
+            $gg->strictEqual(count($tokens), 3);
+            $gg->strictEqual($tokens[0]->info, "1");
+            $gg->strictEqual($tokens[0]->markup, ".");
+            $gg->strictEqual($tokens[1]->info, "2");
+            $gg->strictEqual($tokens[1]->markup, ".");
+            $gg->strictEqual($tokens[2]->info, "20");
+            $gg->strictEqual($tokens[2]->markup, ".");
+
+            $tokens = $md->parse(" 1. Foo\n2. Bar\n  20. Fuzz\n 199. Flp");
+            $gg->strictEqual(count($type_filter($tokens, "ordered_list_open")), 1);
+            $tokens = $type_filter($tokens, "list_item_open");
+            $gg->strictEqual(count($tokens), 4);
+            $gg->strictEqual($tokens[0]->info, "1");
+            $gg->strictEqual($tokens[0]->markup, ".");
+            $gg->strictEqual($tokens[1]->info, "2");
+            $gg->strictEqual($tokens[1]->markup, ".");
+            $gg->strictEqual($tokens[2]->info, "20");
+            $gg->strictEqual($tokens[2]->markup, ".");
+            $gg->strictEqual($tokens[3]->info, "199");
+            $gg->strictEqual($tokens[3]->markup, ".");
+        });
+
     }
     private function miscTokenAttributes($g)
     {

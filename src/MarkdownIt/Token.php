@@ -72,6 +72,7 @@ class Token
      *
      * - Info string for "fence" tokens
      * - The value "auto" for autolink "link_open" and "link_close" tokens
+     * - The string value of the item marker for ordered-list "list_item_open" tokens
      * @var string
      **/
     public string $info     = '';
