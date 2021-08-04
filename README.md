@@ -1,7 +1,7 @@
 # markdown-it-php
 
 [![Build Status](https://img.shields.io/travis/markdown-it/markdown-it/master.svg?style=flat)](https://github.com/kaoken/markdown-it-php)
-[![composer version](https://img.shields.io/badge/version-12.1.0.0-blue.svg)](https://github.com/kaoken/markdown-it-php)
+[![composer version](https://img.shields.io/badge/version-12.2.0.0-blue.svg)](https://github.com/kaoken/markdown-it-php)
 [![licence](https://img.shields.io/badge/licence-MIT-blue.svg)](https://github.com/kaoken/markdown-it-php)
 [![php version](https://img.shields.io/badge/php%20version-≧7.4.0-red.svg)](https://github.com/kaoken/markdown-it-php)
 
