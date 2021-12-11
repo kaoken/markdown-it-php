@@ -44,7 +44,6 @@ class Strikethrough
             $obj = new \stdClass();
             $obj->marker= $marker;
             $obj->length=  0; // disable "rule of 3" length checks meant for emphasis
-            $obj->jump  =  $i;
             $obj->token =  count($state->tokens) - 1;
             $obj->end   =  -1;
             $obj->open  =  $scanned->can_open;

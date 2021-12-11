@@ -50,7 +50,7 @@ class Re extends \stdClass
             "(?:" .
             "[\/?#]" .
             "(?:" .
-            "(?!" . $this->src_ZCc . "|" . $this->text_separators . "|[()[\]{}.,\"'?!\-]).|" .
+            "(?!" . $this->src_ZCc . "|" . $this->text_separators . "|[()[\]{}.,\"'?!\-;]).|" .
             "\[(?:(?!" . $this->src_ZCc . "|\]).)*\]|" .
             "\((?:(?!" . $this->src_ZCc . "|[)]).)*\)|" .
             "\{(?:(?!" . $this->src_ZCc . "|[}]).)*\}|" .
@@ -72,7 +72,8 @@ class Re extends \stdClass
                 :
                 "\-+|"
             ) .
-            "\,(?!" . $this->src_ZCc . ").|" .      // allow `,,,` in paths
+            ",(?!" . $this->src_ZCc . ").|" .       // allow `,,,` in paths
+            ';(?!' . $this->src_ZCc . ').|' .       // allow `;` if not followed by space-like char
             "\!+(?!" . $this->src_ZCc . "|[!]).|" . // allow `!!!` in paths, but not at the end
             "\?(?!" . $this->src_ZCc . "|[?])." .
             ")+" .

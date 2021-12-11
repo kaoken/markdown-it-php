@@ -161,7 +161,7 @@ class Renderer
 
     /**
      * The same as [[Renderer.render]], but for single token of `inline` type.
-     * @param Token[] $tokens list on block tokens to renter
+     * @param Token[] $tokens list on block tokens to render
      * @param object $options params of parser instance
      * @param object $env additional data from parsed input (references, for example)
      * @return string
@@ -192,7 +192,7 @@ class Renderer
      * Special kludge for image `alt` attributes to conform CommonMark spec.
      * Don't try to use it! Spec requires to show `alt` content with stripped markup,
      * instead of simple escaping.
-     * @param Token[] $tokens list on block tokens to renter
+     * @param Token[] $tokens list on block tokens to render
      * @param object $options params of parser instance
      * @param object $env additional data from parsed input (references, for example)
      * @return string
@@ -218,7 +218,7 @@ class Renderer
     /**
      * Takes token stream and generates HTML. Probably, you will never need to call
      * this method directly.
-     * @param Token[] $tokens list on block tokens to renter
+     * @param Token[] $tokens list on block tokens to render
      * @param object $options params of parser instance
      * @param object|null $env additional data from parsed input (references, for example)
      * @return string

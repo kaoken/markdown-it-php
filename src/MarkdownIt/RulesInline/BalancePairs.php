@@ -17,8 +17,29 @@ class BalancePairs
         $openersBottom = [];
         $max = $delimiters->length();
 
+        if (!$max) return;
+
+        // headerIdx is the first delimiter of the current (where closer is) delimiter run
+        $headerIdx = 0;
+        $lastTokenIdx = -2; // needs any value lower than -1
+        $jumps = [];
+
+
         for ($closerIdx = 0; $closerIdx < $max; $closerIdx++) {
             $closer = $delimiters[$closerIdx];
+
+            $jumps[] = 0;
+
+            // markers belong to same delimiter run if:
+            //  - they have adjacent tokens
+            //  - AND markers are the same
+            //
+            if ($delimiters[$headerIdx]->marker !== $closer->marker || $lastTokenIdx !== $closer->token - 1) {
+                $headerIdx = $closerIdx;
+            }
+
+            $lastTokenIdx = $closer->token;
+
 
             // Length is only used for emphasis-specific "rule of 3",
             // if it's not defined (in strikethrough or 3rd party plugins),
@@ -38,12 +59,11 @@ class BalancePairs
 
             $minOpenerIdx = $openersBottom[$closer->marker][($closer->open ? 3 : 0) + ($closer->length % 3)];
 
-            $openerIdx = $closerIdx - $closer->jump - 1;
-            // avoid crash if `closer.jump` is pointing outside of the array, see #742
-            if ($openerIdx < -1) $openerIdx = -1;
+            $openerIdx = $headerIdx - $jumps[$headerIdx] - 1;
+
             $newMinOpenerIdx = $openerIdx;
 
-            for (; $openerIdx > $minOpenerIdx; $openerIdx -= $opener->jump + 1) {
+            for (; $openerIdx > $minOpenerIdx; $openerIdx -= $jumps[$openerIdx] + 1) {
                 $opener = $delimiters[$openerIdx];
 
                 if ($opener->marker !== $closer->marker) continue;
@@ -68,20 +88,24 @@ class BalancePairs
                     }
 
                     if (!$isOddMatch) {
-                        // If previous delimiter cannot be an $opener, we can safely skip
+                        // If previous delimiter cannot be an opener, we can safely skip
                         // the entire sequence in future checks. This is required to make
                         // sure algorithm has linear complexity (see *_*_*_*_*_... case).
                         //
                         $lastJump = $openerIdx > 0 && !$delimiters[$openerIdx - 1]->open ?
-                            $delimiters[$openerIdx - 1]->jump + 1 :
+                            $jumps[$openerIdx - 1] + 1 :
                             0;
 
-                        $closer->jump  = $closerIdx - $openerIdx + $lastJump;
+                        $jumps[$closerIdx] = $closerIdx - $openerIdx + $lastJump;
+                        $jumps[$openerIdx] = $lastJump;
+
                         $closer->open  = false;
                         $opener->end   = $closerIdx;
-                        $opener->jump  = $lastJump;
                         $opener->close = false;
                         $newMinOpenerIdx = -1;
+                        // treat next token as start of run,
+                        // it optimizes skips in **<...>**a**<...>** pathological case
+                        $lastTokenIdx = -2;
                         break;
                     }
                 }
