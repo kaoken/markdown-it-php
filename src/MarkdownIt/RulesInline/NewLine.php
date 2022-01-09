@@ -34,7 +34,11 @@ class NewLine
         if (!$silent) {
             if ($pmax >= 0 && $state->pending[$pmax] === ' ') {
                 if ($pmax >= 1 && $state->pending[$pmax - 1] === ' ') {
-                    $state->pending = preg_replace('/ +$/', '', $state->pending);
+                    // Find whitespaces tail of pending chars.
+                    $ws = $pmax - 1;
+                    while ($ws >= 1 && $state->pending[$ws - 1] === ' ') $ws--;
+
+                    $state->pending = substr($state->pending, 0, $ws);
                     $state->push('hardbreak', 'br', 0);
                 } else {
                     $state->pending = substr($state->pending, 0, -1);
