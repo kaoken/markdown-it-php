@@ -18,7 +18,8 @@
         }
     ],
     "require-dev": {
-        "symfony/yaml":"5.0.*"
+        "symfony/yaml":"5.0.*",
+        "ext-pthreads": "*"
     },
     "replace": {
     },
