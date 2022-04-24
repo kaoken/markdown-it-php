@@ -265,6 +265,14 @@ trait MiscTrait
                 $md->render("# test\n\n - hello\n - world\n")
             );
         });
+        //-------------------------------------------------------------------
+        $g->group("Should escape surrogate pairs (coverage)", function ($gg) {
+            $md = new MarkdownIt();
+
+            $gg->strictEqual($md->render("\\".json_decode('"\uD835\uDC9C"')), "<p>\\".json_decode('"\uD835\uDC9C"')."</p>\n");
+            $gg->strictEqual($md->render("\\".json_decode('"\uD835x"')), "<p>\\".json_decode('"\uD835x"')."</p>\n");
+            $gg->strictEqual($md->render("\\".json_decode('"\uD835"')), "<p>\\".json_decode('"\uD835"')."</p>\n");
+        });
     }
     private function miscUrlNormalization($g)
     {

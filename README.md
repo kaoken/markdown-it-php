@@ -1,12 +1,12 @@
 # markdown-it-php
 
 [![Build Status](https://img.shields.io/travis/markdown-it/markdown-it/master.svg?style=flat)](https://github.com/kaoken/markdown-it-php)
-[![composer version](https://img.shields.io/badge/version-12.3.2.0-blue.svg)](https://github.com/kaoken/markdown-it-php)
+[![composer version](https://img.shields.io/badge/version-13.0.0.0-blue.svg)](https://github.com/kaoken/markdown-it-php)
 [![licence](https://img.shields.io/badge/licence-MIT-blue.svg)](https://github.com/kaoken/markdown-it-php)
 [![php version](https://img.shields.io/badge/php%20version-≧7.4.0-red.svg)](https://github.com/kaoken/markdown-it-php)
 
 
-This gem is a port of the [markdown-it Javascript package](https://github.com/markdown-it/markdown-it) by Vitaly Puzrin and Alex Kocharin. Currently synced with markdown-it 12.3.2
+This gem is a port of the [markdown-it Javascript package](https://github.com/markdown-it/markdown-it) by Vitaly Puzrin and Alex Kocharin. Currently synced with markdown-it 13.0.0
 
 __[Javascript Live demo](https://markdown-it.github.io)__
 
@@ -165,7 +165,7 @@ The following plugins are in the **kaoken\markdown-it-php\MarkdownIt\Plugins** d
 - [superscript](https://github.com/markdown-it/markdown-it-sup) ``\MarkdownItSup``
 - [footnote](https://github.com/markdown-it/markdown-it-footnote) ``\MarkdownItFootnote``
 - [definition list](https://github.com/markdown-it/markdown-it-deflist) ``\MarkdownItDeflist``
-- [abbreviation](https://github.com/markdown-it/markdown-it-abbr) ``\MarkdownItAbbr``
+- [abbreviation](https://github.com/markdown-it/markdown-it-abbr) ``\MarkdownItAbbr``（Deprecated）
 - [emoji](https://github.com/markdown-it/markdown-it-emoji) ``\MarkdownItEmoji``
 - [custom container](https://github.com/markdown-it/markdown-it-container) ``\MarkdownItContainer``
 - [insert](https://github.com/markdown-it/markdown-it-ins) ``\MarkdownItIns``
@@ -179,7 +179,7 @@ By default all rules are enabled, but can be restricted by options. On plugin
 load all its rules are enabled automatically.
 
 ```php
-// Activate/deactivate rules, with curring
+// Activate/deactivate rules, with currying
 $md = (new MarkdownIt())
             ->disable([ 'link', 'image' ])
             ->enable([ 'link' ])

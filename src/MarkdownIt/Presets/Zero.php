@@ -47,7 +47,8 @@ class Zero
                     "rules" => [
                         'normalize',
                         'block',
-                        'inline'
+                        'inline',
+                        'text_join'
                     ]
                 ],
 
@@ -63,7 +64,7 @@ class Zero
                     ],
                     "rules2" => [
                         'balance_pairs',
-                        'text_collapse'
+                        'fragments_join'
                     ]
                 ]
             ]

@@ -45,7 +45,8 @@ class CommonMark
                     "rules" => [
                         'normalize',
                         'block',
-                        'inline'
+                        'inline',
+                        'text_join'
                     ]
                 ],
 
@@ -80,7 +81,7 @@ class CommonMark
                     "rules2" => [
                         'balance_pairs',
                         'emphasis',
-                        'text_collapse'
+                        'fragments_join'
                     ]
                 ]
             ]

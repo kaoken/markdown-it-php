@@ -78,6 +78,13 @@ class StateInline
      */
     public bool $backticksScanned = false;
 
+    // Counter used to disable inline linkify-it execution
+    // inside <a> and markdown links
+    /**
+     * @var int
+     */
+    public int $linkLevel = 0;
+
     /**
      * @param string $src
      * @param MarkdownIt $md

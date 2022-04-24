@@ -17,7 +17,7 @@
  *
  *
  * use javascript version 3.0.3
- * @see https://github.com/markdown-it/linkify-it/tree/3.0.3
+ * @see https://github.com/markdown-it/linkify-it/tree/4.0.0
  */
 
 namespace Kaoken\LinkifyIt;
@@ -159,7 +159,7 @@ class LinkifyIt
 
         // try to scan for link with schema - that's the most simple rule
         if (preg_match_all($this->re->schema_test, $text, $m, PREG_SET_ORDER|PREG_OFFSET_CAPTURE )) {
-            $re = $this->re->schema_search;
+//            $re = $this->re->schema_search;
             for ($i=0, $l=count($m); $i < $l; $i++) {
                 $a = &$m[$i];
                 $index = $a[2][1];
@@ -269,9 +269,9 @@ class LinkifyIt
      * - __url__ - link, generated from matched text
      *
      * @param string $text
-     * @return array|null
+     * @return Match[]|null
      */
-    public function match($text)
+    public function match(string $text): ?array
     {
         $shift = 0;
         $result = [];
@@ -300,7 +300,36 @@ class LinkifyIt
         return null;
     }
 
+    /**
+     * LinkifyIt#matchAtStart(text) -> Match|null
+     *
+     * Returns fully-formed (not fuzzy) link if it starts at the beginning
+     * of the string, and null otherwise.
+     *
+     * @param string $text
+     * @return Match|null
+     */
+    public function matchAtStart(string $text): ?Match
+    {
+        // Reset scan cache
+        $this->__text_cache__ = $text;
+        $this->__index__      = -1;
 
+        if (!strlen($text)) return null;
+
+        preg_match_all($this->re->schema_at_start, $text, $m, PREG_SET_ORDER|PREG_OFFSET_CAPTURE );
+        if (!$m) return null;
+
+        $m = $m[0];
+        $len = $this->testSchemaAt($text, $m[2][0], strlen($m[0][0]));
+        if ($len) {
+            $this->__schema__     = $m[2][0];
+            $this->__index__      = $m[2][1] + strlen($m[1][0]);
+            $this->__last_index__ = $m[2][1] + strlen($m[0][0]) + $len;
+        }
+
+        return new Match($this, 0);
+    }
     /**
      * Load (or merge) new tlds list. Those are user for fuzzy links (without prefix)
      * to avoid false positives. By default this algorythm used:
@@ -589,8 +618,10 @@ class LinkifyIt
 //            .join('|');
 
         // (?!_) cause 1.5x slowdown
-        $this->re->schema_test   = "/(^|(?!_)(?:[><{$ff5c}]|" . $this->re->src_ZPCc . '))(' . $slist . ')/ui';
-        $this->re->schema_search = "/(^|(?!_)(?:[><{$ff5c}]|" . $this->re->src_ZPCc . '))(' . $slist . ')/ui';
+        $this->re->schema_test   = "/(^|(?!_)(?:[><{$ff5c}]|" . $this->re->src_ZPCc . "))(" . $slist . ")/ui";
+        $this->re->schema_search = "/(^|(?!_)(?:[><{$ff5c}]|" . $this->re->src_ZPCc . "))(" . $slist . ")/ui";
+//        self.re.schema_at_start = RegExp('^' + self.re.schema_search.source, 'i');
+        $this->re->schema_at_start = "/^(^|(?!_)(?:[><{$ff5c}]|" . $this->re->src_ZPCc . "))(" . $slist . ")/i";
 
 
         $this->re->pretest       =

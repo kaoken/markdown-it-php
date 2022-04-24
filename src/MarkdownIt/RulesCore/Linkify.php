@@ -60,10 +60,20 @@ class Linkify
                     $text = $currentToken->content;
                     $links = $state->md->linkify->match($text);
 
-                    // Now split string to $nodes
+                    // Now split string to nodes
                     $nodes = [];
                     $level = $currentToken->level;
                     $lastPos = 0;
+
+                    // forbid escape sequence at the start of the string,
+                    // this avoids http\://example.com/ from being linkified as
+                    // http:<a href="//example.com/">//example.com/</a>
+                    if (count($links) > 0 &&
+                        $links[0]->index === 0 &&
+                        $i > 0 &&
+                        $tokens[$i - 1]->type === 'text_special') {
+                        $links = array_slice($links, 1);
+                    }
 
                     foreach( $links as &$link ) {
 

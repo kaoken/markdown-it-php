@@ -184,7 +184,7 @@ class Utils
      * @param integer $c
      * @return string
      */
-    public function fromCodePoint($c): string
+    public function fromCodePoint(int $c): string
     {
         if ($c < 0x7F) // U+0000-U+007F - 1 byte
             return chr($c);
@@ -196,6 +196,32 @@ class Utils
         return chr(0xF0 | ($c >> 18)) . chr(0x80 | ($c >> 12) & 0x3F) .chr(0x80 | (($c >> 6) & 0x3F)) . chr(0x80 | ($c & 0x3F));
     }
 
+    /**
+     * @param int $n
+     * @return int
+     */
+    public function getByteCountUtf8(int $n): int
+    {
+        if (0 <= $n && $n <= 0x7F) {
+            return 1;
+        }
+        else if (0xC2 <= $n && $n <= 0xDF) {
+            return 2;
+        }
+        else if (0xE0 <= $n && $n <= 0xEF) {
+            return 3;
+        }
+        else if (0xF0 <= $n && $n <= 0xF7) {
+            return 4;
+        }
+        else if(0xF8 <= $n && $n <= 0xFB ){
+            return 5;
+        }
+        else if(0xFC <= $n && $n <= 0xFD ){
+            return 6;
+        }
+        return 0;
+    }
     /**
      * Acquire the character one last the $pos position.
      * simple and easy utf8 check.
@@ -285,10 +311,10 @@ class Utils
 
     /**
      * Zs (unicode class) || [\t\f\v\r\n]
-     * @param $code
+     * @param string $code
      * @return bool
      */
-    public function isWhiteSpace($code): bool
+    public function isWhiteSpace(string $code): bool
     {
         return preg_match("/\p{Zs}|[\t\f\v\r\n]/u", $code) === 1;
     }

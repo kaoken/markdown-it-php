@@ -6,6 +6,8 @@ class Re extends \stdClass
 {
     public function __construct($opts)
     {
+        $opts = empty($opts) ? [] : $opts;
+
         $ff5c = "\x{ff5c}";
         if( PHP_VERSION_ID >= 70000){
             $ff5c = "\u{ff5c}";
@@ -44,7 +46,8 @@ class Re extends \stdClass
         // Prohibit any of "@/[]()" in user/pass to avoid wrong domain fetch.
 
         $this->src_auth    = "(?:(?:(?!" . $this->src_ZCc . "|[@\/\[\]()]).)+@)?";
-        $this->src_host_terminator =  "(?=$|" . $this->text_separators . "|" . $this->src_ZPCc . ")(?!-|_|:\d|\.-|\.(?!$|" . $this->src_ZPCc . "))";
+        $this->src_host_terminator =  "(?=$|" . $this->text_separators . "|" . $this->src_ZPCc . ")" .
+                                      "(?!" . (isset($opts['---']) ? '-(?!--)|' : '-|') . "_|:\d|\.-|\.(?!$|" . $this->src_ZPCc . "))";
 
         $this->src_path =
             "(?:" .
@@ -55,8 +58,8 @@ class Re extends \stdClass
             "\((?:(?!" . $this->src_ZCc . "|[)]).)*\)|" .
             "\{(?:(?!" . $this->src_ZCc . "|[}]).)*\}|" .
             "\\\"(?:(?!" . $this->src_ZCc . "|[\"]).)+\\\"|" .
-             "\\'(?:(?!" . $this->src_ZCc . "|[']).)+\\'|" .
-             "\\'(?=" . $this->src_pseudo_letter . "|[-]).|" .  // allow `I"m_king` if no pair found
+            "\\'(?:(?!" . $this->src_ZCc . "|[']).)+\\'|" .
+            "\\'(?=" . $this->src_pseudo_letter . '|[-])|' .   // allow `I'm_king` if no pair found
             "\.{2,}[a-zA-Z0-9%\/&]|" .   // google has many dots in "google search" links (#66, #81).
                                         // github has ... in commit range links,
                                         // Restrict to
@@ -65,17 +68,16 @@ class Re extends \stdClass
                                         // - parts of file path
                                         // - params separator
                                         // until more examples found.
-
-            "\.(?!" . $this->src_ZCc . "|[.]).|" .
+            "\.(?!" . $this->src_ZCc . "|[.]|$)|" .
             (isset($opts) && isset($opts["---"]) ?
                 "\-(?!--(?:[^-]|$))(?:-*)|" // `---` => long dash, terminate
                 :
                 "\-+|"
             ) .
-            ",(?!" . $this->src_ZCc . ").|" .       // allow `,,,` in paths
-            ';(?!' . $this->src_ZCc . ').|' .       // allow `;` if not followed by space-like char
-            "\!+(?!" . $this->src_ZCc . "|[!]).|" . // allow `!!!` in paths, but not at the end
-            "\?(?!" . $this->src_ZCc . "|[?])." .
+            ",(?!" . $this->src_ZCc . "|$)|" .       // allow `,,,` in paths
+            ';(?!' . $this->src_ZCc . '|$)|' .       // allow `;` if not followed by space-like char
+            "\!+(?!" . $this->src_ZCc . "|[!]|$)|" . // allow `!!!` in paths, but not at the end
+            "\?(?!" . $this->src_ZCc . "|[?]|$)" .
             ")+" .
             "|\/" .
             ")?";

@@ -412,7 +412,10 @@ class MarkdownItFootnote
                     $tokens[] = $token;
 
                 } else if ( isset($list[$i]->label) ) {
-                    $tokens = $refTokens[':' . $list[$i]->label];
+                    $tokens = null;
+                    if(array_key_exists(':' . $list[$i]->label, $refTokens)){
+                        $tokens = $refTokens[':' . $list[$i]->label];
+                    }
                 }
 
                 if(isset($tokens))

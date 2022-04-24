@@ -19,7 +19,10 @@ class ParserCore
         'inline' =>        \Kaoken\MarkdownIt\RulesCore\Inline::class,
         'linkify' =>       \Kaoken\MarkdownIt\RulesCore\Linkify::class,
         'replacements' =>  \Kaoken\MarkdownIt\RulesCore\ReplaceMents::class,
-        'smartquotes' =>   \Kaoken\MarkdownIt\RulesCore\SmartQuotes::class
+        'smartquotes' =>   \Kaoken\MarkdownIt\RulesCore\SmartQuotes::class,
+        // `text_join` finds `text_special` tokens (for escape sequences)
+        // and joins them with the rest of the text
+        'text_join' =>     \Kaoken\MarkdownIt\RulesCore\TextJoin::class
     ];
 
     /**
