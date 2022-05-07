@@ -293,6 +293,14 @@ class CTest extends EasyTest
                 $gg->ok(!$l->matchAtStart($str));
                 $gg->strictEqual(count($l->match($str)), 2);
             });
+            //-----------------------------------------------
+            $g->group("should not match incomplete links", function($gg) {
+                // regression test for https://github.com/markdown-it/markdown-it/issues/868
+                $l = (new LinkifyIt());
+
+                $gg->ok(!$l->matchAtStart('http://'));
+                $gg->ok(!$l->matchAtStart('https://'));
+            });
         });
     }
 }

@@ -18,7 +18,7 @@ ini_set( 'error_reporting', E_ALL );
 //$str = '\\'.json_decode('"\uD835\uDC9C"');
 //echo($md->render($str));
 
-$_GET['i'] = 4;
+
 switch(isset($_GET['i'])?$_GET['i']:'0'){
     case '1':
         new Kaoken\Test\MDUrl\CTest();break;

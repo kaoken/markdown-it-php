@@ -17,7 +17,7 @@
  *
  *
  * use javascript version 3.0.3
- * @see https://github.com/markdown-it/linkify-it/tree/4.0.0
+ * @see https://github.com/markdown-it/linkify-it/tree/4.0.1
  */
 
 namespace Kaoken\LinkifyIt;
@@ -238,12 +238,12 @@ class LinkifyIt
      * Similar to [[LinkifyIt#test]] but checks only specific protocol tail exactly
      * at given position. Returns length of found pattern (0 on fail).
      * 
-     * @param string  $text    text to scan
-     * @param string  $schema  rule (schema) name
-     * @param integer $pos     text offset to check from
+     * @param string  $text   text to scan
+     * @param string  $schema rule (schema) name
+     * @param integer $pos    text offset to check from
      * @return int
      */
-    public function testSchemaAt($text, $schema, $pos)
+    public function testSchemaAt(string $text, string $schema, int $pos): int
     {
         // If not supported schema check requested - terminate
         if (!isset($this->__compiled__[strtolower($schema)])) {
@@ -322,11 +322,10 @@ class LinkifyIt
 
         $m = $m[0];
         $len = $this->testSchemaAt($text, $m[2][0], strlen($m[0][0]));
-        if ($len) {
-            $this->__schema__     = $m[2][0];
-            $this->__index__      = $m[2][1] + strlen($m[1][0]);
-            $this->__last_index__ = $m[2][1] + strlen($m[0][0]) + $len;
-        }
+        if (!$len) return null;
+        $this->__schema__     = $m[2][0];
+        $this->__index__      = $m[2][1] + strlen($m[1][0]);
+        $this->__last_index__ = $m[2][1] + strlen($m[0][0]) + $len;
 
         return new Match($this, 0);
     }
