@@ -269,7 +269,7 @@ class LinkifyIt
      * - __url__ - link, generated from matched text
      *
      * @param string $text
-     * @return Match[]|null
+     * @return MatchResult[]|null
      */
     public function match(string $text): ?array
     {
@@ -278,7 +278,7 @@ class LinkifyIt
 
         // Try to take previous element from cache, if .test() called before
         if ($this->__index__ >= 0 && $this->__text_cache__ === $text) {
-            $result[] = new Match($this, $shift);
+            $result[] = new MatchResult($this, $shift);
             $shift = $this->__last_index__;
         }
 
@@ -287,7 +287,7 @@ class LinkifyIt
 
         // Scan string until end reached
         while ($this->test($tail)) {
-            $result[] = new Match($this, $shift);
+            $result[] = new MatchResult($this, $shift);
 
             $tail = substr($tail, $this->__last_index__);
             $shift += $this->__last_index__;
@@ -307,9 +307,9 @@ class LinkifyIt
      * of the string, and null otherwise.
      *
      * @param string $text
-     * @return Match|null
+     * @return MatchResult|null
      */
-    public function matchAtStart(string $text): ?Match
+    public function matchAtStart(string $text): ?MatchResult
     {
         // Reset scan cache
         $this->__text_cache__ = $text;
@@ -327,7 +327,7 @@ class LinkifyIt
         $this->__index__      = $m[2][1] + strlen($m[1][0]);
         $this->__last_index__ = $m[2][1] + strlen($m[0][0]) + $len;
 
-        return new Match($this, 0);
+        return new MatchResult($this, 0);
     }
     /**
      * Load (or merge) new tlds list. Those are user for fuzzy links (without prefix)
@@ -366,7 +366,7 @@ class LinkifyIt
     /**
      * Default normalizer (if schema does not define it's own).
      *
-     * @param Match $match
+     * @param MatchResult $match
      */
     public function normalize(&$match)
     {
@@ -406,7 +406,7 @@ class LinkifyIt
     public function getSchema() { return $this->__schema__; }
     /**
      * @param string $schema
-     * @param Match $match
+     * @param MatchResult $match
      * @return array
      */
     public function normalizeFromCompiled($schema, $match)
