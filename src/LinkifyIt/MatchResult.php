@@ -10,7 +10,7 @@ namespace Kaoken\LinkifyIt;
 use Kaoken\MarkdownIt\RulesCore\Linkify;
 
 /**
- * class Match
+ * class MatchResult
  *
  * Match result. Single element of array, returned by [[LinkifyIt#match]]
  **/
