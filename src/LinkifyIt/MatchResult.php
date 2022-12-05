@@ -14,7 +14,7 @@ use Kaoken\MarkdownIt\RulesCore\Linkify;
  *
  * Match result. Single element of array, returned by [[LinkifyIt#match]]
  **/
-class Match
+class MatchResult
 {
     /**
      * Prefix (protocol) for matched string.
