@@ -24,73 +24,16 @@ class BlockQuote
         if ($state->sCount[$startLine] - $state->blkIndent >= 4) { return false; }
 
         // check the block quote marker
-        if ($state->src[$pos++] !== '>') { return false; }
+        if ($state->src[$pos] !== '>') { return false; }
 
         // we know that it's going to be a valid blockquote,
         // so no point trying to find the end of it in $silent mode
         if ($silent) { return true; }
 
-        // set offset past spaces and ">"
-        $initial = $offset = $state->sCount[$startLine] + 1;
-
-        // skip one optional space after '>'
-        if ($state->src[$pos] === ' ') {
-            // ' >   test '
-            //     ^ -- position start of line here:
-            $pos++;
-            $initial++;
-            $offset++;
-            $adjustTab = false;
-            $spaceAfterMarker = true;
-        } else if ($state->src[$pos] === "\t") {
-            $spaceAfterMarker = true;
-
-            if (($state->bsCount[$startLine] + $offset) % 4 === 3) {
-                // '  >\t  test '
-                //       ^ -- position start of line here (tab has width===1)
-                $pos++;
-                $initial++;
-                $offset++;
-                $adjustTab = false;
-            } else {
-                // ' >\t  test '
-                //    ^ -- position start of line here + shift bsCount slightly
-                //         to make extra space appear
-                $adjustTab = true;
-            }
-        } else {
-            $spaceAfterMarker = false;
-        }
-
-        $oldBMarks = [ $state->bMarks[$startLine] ];
-        $state->bMarks[$startLine] = $pos;
-
-        while ($pos < $max) {
-            $ch = $state->src[$pos];
-
-            if ($state->md->utils->isSpace($ch)) {
-                if ($ch === "\t") {
-                    $offset += 4 - ($offset + $state->bsCount[$startLine] + ($adjustTab ? 1 : 0)) % 4;
-                } else {
-                    $offset++;
-                }
-            } else {
-                break;
-            }
-
-            $pos++;
-        }
-
-        $oldBSCount = [ $state->bsCount[$startLine] ];
-        $state->bsCount[$startLine] = $state->sCount[$startLine] + 1 + ($spaceAfterMarker ? 1 : 0);
-
-        $lastLineEmpty = $pos >= $max;
-
-        $oldSCount = [ $state->sCount[$startLine] ];
-        $state->sCount[$startLine] = $offset - $initial;
-
-        $oldTShift = [ $state->tShift[$startLine] ];
-        $state->tShift[$startLine] = $pos - $state->bMarks[$startLine];
+        $oldBMarks  = [];
+        $oldBSCount = [];
+        $oldSCount  = [];
+        $oldTShift  = [];
 
         $terminatorRules = $state->md->block->ruler->getRules('blockquote');
 
@@ -115,7 +58,7 @@ class BlockQuote
         //     > test
         //      - - -
         //     ```
-        for ($nextLine = $startLine + 1; $nextLine < $endLine; $nextLine++) {
+        for ($nextLine = $startLine; $nextLine < $endLine; $nextLine++) {
             // check if it's outdented, i.e. it's inside list item and indented
             // less than said list item:
             //
@@ -137,7 +80,7 @@ class BlockQuote
                 // This line is inside the blockquote.
 
                 // set offset past spaces and ">"
-                $initial = $offset = $state->sCount[$nextLine] + 1;
+                $initial = $state->sCount[$nextLine] + 1;
 
                 // skip one optional space after '>'
                 if ($state->src[$pos] === ' ') {
@@ -145,18 +88,16 @@ class BlockQuote
                     //     ^ -- position start of line here:
                     $pos++;
                     $initial++;
-                    $offset++;
                     $adjustTab = false;
                     $spaceAfterMarker = true;
                 } else if ($state->src[$pos] === "\t") {
                     $spaceAfterMarker = true;
 
-                    if (($state->bsCount[$nextLine] + $offset) % 4 === 3) {
+                    if (($state->bsCount[$nextLine] + $initial) % 4 === 3) {
                         // '  >\t  test '
                         //       ^ -- position start of line here (tab has width===1)
                         $pos++;
                         $initial++;
-                        $offset++;
                         $adjustTab = false;
                     } else {
                         // ' >\t  test '
@@ -168,6 +109,7 @@ class BlockQuote
                     $spaceAfterMarker = false;
                 }
 
+                $offset = $initial;
                 $oldBMarks[] = $state->bMarks[$nextLine];
                 $state->bMarks[$nextLine] = $pos;
 

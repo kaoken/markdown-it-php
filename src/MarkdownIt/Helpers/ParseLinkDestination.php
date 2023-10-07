@@ -10,14 +10,13 @@ trait ParseLinkDestination
     /**
      * ParseLinkDestination constructor.
      * @param string $str
-     * @param int $pos
+     * @param int $start
      * @param int $max
      * @return object
      */
-    public function parseLinkDestination(string $str, int $pos, int $max)
+    public function parseLinkDestination(string $str, int $start, int $max)
     {
-        $lines = 0;
-        $start = $pos;
+        $pos = $start;
         $result = new \stdClass();
         $result->ok = false;
         $result->pos = 0;
@@ -86,7 +85,6 @@ trait ParseLinkDestination
         if ($level !== 0) { return $result; }
 
         $result->str = $this->utils->unescapeAll(substr($str, $start, $pos-$start));
-        $result->lines = $lines;
         $result->pos = $pos;
         $result->ok = true;
         return $result;

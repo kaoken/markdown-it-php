@@ -11,14 +11,14 @@ trait ParseLinkTitle
 {
     /**
      * @param string $str
-     * @param int $pos
+     * @param int $start
      * @param int $max
      * @return stdClass
      */
-    public function parseLinkTitle(string $str, int $pos, int $max): stdClass
+    public function parseLinkTitle(string $str, int $start, int $max): stdClass
     {
         $lines = 0;
-        $start = $pos;
+        $pos = $start;
         $result = new stdClass();
         $result->ok = false;
         $result->pos = 0;

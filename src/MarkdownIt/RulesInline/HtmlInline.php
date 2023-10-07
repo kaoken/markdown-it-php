@@ -55,7 +55,7 @@ class HtmlInline
 
         if (!$silent) {
             $token         = $state->push('html_inline', '', 0);
-            $token->content = substr($state->src, $pos, ($pos + strlen($match[0]))-$pos);
+            $token->content = $match[0];
 
             if ($this->isLinkOpen($token->content))  $state->linkLevel++;
             if ($this->isLinkClose($token->content)) $state->linkLevel--;

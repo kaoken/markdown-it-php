@@ -8,7 +8,6 @@
  **/
 namespace Kaoken\MarkdownIt;
 
-use Kaoken\MarkdownIt\Common\Utils;
 use Kaoken\MarkdownIt\Rules\DefaultRules;
 
 /**

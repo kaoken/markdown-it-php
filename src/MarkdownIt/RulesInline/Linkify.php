@@ -36,6 +36,10 @@ class Linkify
         if (! $link) return false;
         
         $url =  $link->url;
+
+        // invalid link, but still detected by linkify somehow;
+        // need to check to prevent infinite loop below
+        if (strlen($url) <= strlen($proto)) return false;
         
         // disallow '*' at the end of the  $link (conflicts with emphasis)
         $url =  preg_replace("/\*+$/", '', $url);

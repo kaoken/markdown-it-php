@@ -37,7 +37,7 @@ class Backticks
             return true;
         }
 
-        $matchStart = $matchEnd = $pos;
+        $matchEnd = $pos;
 
         // Nothing found in the cache, scan until the end of the line (or until marker is found)
         while (($matchStart = strpos($state->src, '`', $matchEnd)) !== false) {

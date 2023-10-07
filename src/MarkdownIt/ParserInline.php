@@ -8,6 +8,7 @@ namespace Kaoken\MarkdownIt;
 
 use Kaoken\MarkdownIt\RulesInline;
 use Kaoken\MarkdownIt\RulesInline\StateInline;
+use Exception;
 
 /**
  * new ParserInline()
@@ -93,6 +94,7 @@ class ParserInline
     /**
      * returns `true` if any rule reported success
      * @param StateInline $state
+     * @throws Exception
      */
     public function skipToken(StateInline &$state)
     {
@@ -122,7 +124,10 @@ class ParserInline
 
                 $state->level--;
 
-                if ($ok) break;
+                if ($ok) {
+                    if ($pos >= $state->pos) { throw new Exception("inline rule didn't increment state.pos"); }
+                    break;
+                }
             }
         } else {
             // Too much nesting, just skip until the end of the paragraph.
@@ -147,16 +152,17 @@ class ParserInline
     /**
      * Generate tokens for input range
      * @param StateInline $state
+     * @throws Exception
      */
     public function tokenize(StateInline &$state)
     {
+        $ok = false;
+        $i = 0;
         $rules = $this->ruler->getRules('');
         $len = count($rules);
         $end = $state->posMax;
         $maxNesting = $state->md->options->maxNesting;
-        $ok = false;
 
-        $i = 0;
         while ($state->pos < $end) {
             // Try all possible rules.
             // On success, rule should:
@@ -164,6 +170,8 @@ class ParserInline
             // - update `state.pos`
             // - update `state.tokens`
             // - return true
+            $prevPos = $state->pos;
+
             if ($state->level < $maxNesting) {
                 $i = 0;
                 foreach ($rules as &$rule) {
@@ -172,7 +180,10 @@ class ParserInline
                         $ok = $rule[0]->{$rule[1]}($state, false);
                     else
                         $ok = $rule($state, false);
-                    if ($ok) { break; }
+                    if ($ok)  {
+                        if ($prevPos >= $state->pos) { throw new Exception("inline rule didn't increment state.pos"); }
+                        break;
+                    }
                 }
             }
 

@@ -29,7 +29,7 @@ use \stdClass;
  * $result = $md->renderInline('__markdown-it__ rulezz!');
  * ```
  **/
-class MarkdownIt
+class MarkdownIt extends stdClass
 {
     /**
      * @array

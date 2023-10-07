@@ -9,10 +9,9 @@ use Kaoken\MarkdownIt\Common\ArrayObj;
 class BalancePairs
 {
     /**
-     * @param StateInline $state
      * @param ArrayObj $delimiters
      */
-    private function processDelimiters(StateInline &$state, ArrayObj &$delimiters)
+    private function processDelimiters(ArrayObj &$delimiters)
     {
         $openersBottom = [];
         $max = $delimiters->length();
@@ -131,11 +130,11 @@ class BalancePairs
         $tokens_meta = &$state->tokens_meta;
         $max = $state->tokens_meta->length();
 
-        $this->processDelimiters($state, $state->delimiters);
+        $this->processDelimiters($state->delimiters);
 
         for ($curr = 0; $curr < $max; $curr++) {
             if (!is_null($tokens_meta[$curr]) && !is_null($tokens_meta[$curr]->delimiters)) {
-                $this->processDelimiters($state, $tokens_meta[$curr]->delimiters);
+                $this->processDelimiters($tokens_meta[$curr]->delimiters);
             }
         }
     }

@@ -14,7 +14,7 @@ class Utils
     const UNESCAPE_MD_RE  = "/".self::UNESCAPE_MD."/";  // /g
     const ENTITY_RE       = '/&([a-z#][a-z0-9]{1,31});/i';  // /g
     const UNESCAPE_ALL_RE = "/".self::UNESCAPE_MD."|&([a-z#][a-z0-9]{1,31});/i";  // /g
-    const DIGITAL_ENTITY_TEST_RE = "/^#((?:x[a-f0-9]{1,8}|[0-9]{1,8}))/i";
+    const DIGITAL_ENTITY_TEST_RE = "/^#((?:x[a-f0-9]{1,8}|[0-9]{1,8}))$/i";
 
     protected static ?Utils $instance=null;
 
@@ -45,8 +45,6 @@ class Utils
      */
     public function replaceEntityPattern(string $match, ?string $name): string
     {
-        $code = 0;
-
         if (isset($name)) {
             $e = html_entity_decode('&'.$name.';', ENT_HTML5|ENT_COMPAT);
             if( '&'.$name.';' != $e) return $e;

@@ -105,18 +105,18 @@ class MarkdownItAbbr
         if (!isset($state->env->abbreviations)) { return; }
 
         //------------------------------------
-        $a = array_map(function (&$x) {
+        $a = array_map(function ($x) {
                 return substr($x, 1);
              }, array_keys($state->env->abbreviations));
-        uasort($a, function (&$a, &$b) {
+            uasort($a, function ($a, $b) {
             return strlen($b) - strlen($a);
         });
-        $tmpReg = join('|', array_map(function(&$x) use(&$state) { return $state->md->utils->escapeRE($x); }, $a));
+        $tmpReg = join('|', array_map(function($x) use(&$state) { return $state->md->utils->escapeRE($x); }, $a));
         $regSimple = '/(?:' . $tmpReg . ')/';
         unset($a);
 
         //------------------------------------
-        $other = join('', array_map(function(&$x) use(&$state){return $state->md->utils->escapeRE($x);},str_split(self::OTHER_CHARS)));
+        $other = join('', array_map(function($x) use(&$state){return $state->md->utils->escapeRE($x);},str_split(self::OTHER_CHARS)));
 
         $reg =  '/(^|' . Utils::UNICODE_PUNCT . '|\p{Z}|[' . $other . '])';
         $reg .= '(' . $tmpReg . ')($|\p{P}|\p{Z}|[' . $other . '])/u';

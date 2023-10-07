@@ -1,6 +1,11 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+
+## [13.0.2.0] - 2023-10-07
+### Updated
+- This gem is a port of the [markdown-it Javascript package](https://github.com/markdown-it/markdown-it/tree/13.0.2) by Vitaly Puzrin and Alex Kocharin. Currently synced with markdown-it 13.0.2
+
 ## [13.0.1.1] - 2022-12-05
 ### Updated
 Changed because markdown-it-php used PHP 8 reserved keyword "Match" class name.   

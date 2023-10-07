@@ -8,6 +8,7 @@
 namespace Kaoken\MarkdownIt;
 
 use Kaoken\MarkdownIt\RulesBlock\StateBlock;
+use \Exception;
 
 class ParserBlock
 {
@@ -56,9 +57,11 @@ class ParserBlock
      * @param StateBlock $state
      * @param integer $startLine
      * @param integer $endLine
+     * @throws Exception
      */
     public function tokenize(StateBlock $state, int $startLine, int $endLine)
     {
+        $ok = false;
         $rules = $this->ruler->getRules('');
         $len = count($rules);
         $line = $startLine;
@@ -86,14 +89,23 @@ class ParserBlock
             // - update `state.line`
             // - update `state.tokens`
             // - return true
+            $prevLine = $state->line;
 
             foreach ($rules as &$rule) {
                 if( is_array($rule) )
                     $ok = $rule[0]->{$rule[1]}($state, $line, $endLine, false);
                 else
                     $ok = $rule($state, $line, $endLine, false);
-                if ($ok) { break; }
+                if ($ok) {
+                    if ($prevLine >= $state->line) {
+                        throw new Exception("block rule didn't increment state.line");
+                    }
+                    break;
+                }
             }
+
+            // this can only happen if user disables paragraph rule
+            if (!$ok) throw new Exception('none of the block rules matched');
 
             // set state.tight if we had an empty line before current tag
             // i.e. latest empty line should not count

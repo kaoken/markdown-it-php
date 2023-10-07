@@ -57,7 +57,7 @@ class NormalizeOpts
         } else {
             // Compile regexp
             $a = array_merge(
-                array_map(function (&$name) {
+                array_map(function ($name) {
                     return ':' . $name . ':';
                 }, $keys),
                 array_keys($shortcuts)

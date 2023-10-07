@@ -13,6 +13,7 @@ trait MiscTrait
     {
         $this->group("Misc", function($g){
             $g->group("API", function ($gg) { $this->miscAPI($gg); });
+            $g->group("Plugins", function ($gg) { $this->miscPlugins($gg); });
             $g->group("Misc", function ($gg) { $this->miscMisc($gg); });
             $g->group("Url normalization", function ($gg) { $this->miscUrlNormalization($gg); });
             $g->group("Links validation", function ($gg) { $this->miscLinksValidation($gg); });
@@ -182,9 +183,57 @@ trait MiscTrait
             },'Input data should be a String');
         });
     }
+
+    private function miscPlugins($g)
+    {
+        $g->group('should not loop infinitely if all rules are disabled', function ($gg) {
+
+            $md = new MarkdownIt();
+
+            $md->inline->ruler->enableOnly([]);
+            $md->inline->ruler2->enableOnly([]);
+            $md->block->ruler->enableOnly([]);
+
+            $gg->throws(function () use(&$md) {
+                $md->render(' - *foo*\n - `bar`');
+            },'none of the block rules matched');
+        });
+        //-------------------------------------------------------------------
+        $g->group("should not loop infinitely if inline rule doesn't increment pos", function ($gg) {
+            $md = new MarkdownIt();
+            $md->inline->ruler->after('text', 'custom', function (&$state/*, silent*/) {
+                if ($state->src[$state->pos] !== '@') return false;
+                return true;
+            });
+
+            $gg->throws(function () use(&$md) {
+                $md->render('foo@bar');
+            },"inline rule didn't increment state.pos");
+            $gg->throws(function () use(&$md) {
+                $md->render('[foo@bar]()');
+            },"inline rule didn't increment state.pos");
+        });
+        //-------------------------------------------------------------------
+        $g->group("should not loop infinitely if block rule doesn't increment pos", function ($gg) {
+            $md = new MarkdownIt();
+            $md->block->ruler->before('paragraph', 'custom', function (&$state, $startLine/*, $endLine, $silent*/) {
+                $pos = $state->bMarks[$startLine] + $state->tShift[$startLine];
+                if ($state->src[$pos] !== '@') return false;
+                return true;
+            }, [ 'alt' => [ 'paragraph' ] ]);
+
+            $gg->throws(function () use(&$md) {
+                $md->render("foo\n@bar\nbaz");
+            },"block rule didn't increment state.line");
+            $gg->throws(function () use(&$md) {
+                $md->render("foo\n\n@bar\n\nbaz");
+            },"block rule didn't increment state.line");
+        });
+    }
+
     private function miscMisc($g)
     {
-        $g->group('Should replace NULL characters', function ($gg) {
+        $g->group("Should replace NULL characters", function ($gg) {
 
             $md = new MarkdownIt();
 
