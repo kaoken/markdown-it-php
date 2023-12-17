@@ -61,7 +61,6 @@ class ParserBlock
      */
     public function tokenize(StateBlock $state, int $startLine, int $endLine)
     {
-        $ok = false;
         $rules = $this->ruler->getRules('');
         $len = count($rules);
         $line = $startLine;
@@ -90,6 +89,7 @@ class ParserBlock
             // - update `state.tokens`
             // - return true
             $prevLine = $state->line;
+            $ok = false;
 
             foreach ($rules as &$rule) {
                 if( is_array($rule) )

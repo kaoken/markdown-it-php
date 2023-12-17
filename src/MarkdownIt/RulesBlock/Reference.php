@@ -12,7 +12,7 @@ class Reference
      * @param boolean $silent
      * @return bool
      */
-    public function set(StateBlock &$state, int $startLine, int $endLine, $silent=false): bool
+    public function set(StateBlock &$state, int $startLine, int $endLine, bool $silent=false): bool
     {
         $pos = $state->bMarks[$startLine] + $state->tShift[$startLine];
         $max = $state->eMarks[$startLine];

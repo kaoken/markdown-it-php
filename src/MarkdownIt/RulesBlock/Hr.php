@@ -17,12 +17,11 @@ class Hr
      */
     public function set(StateBlock &$state, int $startLine, int $endLine, $silent=false): bool
     {
-        $pos = $state->bMarks[$startLine] + $state->tShift[$startLine];
         $max = $state->eMarks[$startLine];
-
         // if it's indented more than 3 spaces, it should be a code block
         if ($state->sCount[$startLine] - $state->blkIndent >= 4) { return false; }
 
+        $pos = $state->bMarks[$startLine] + $state->tShift[$startLine];
         $marker = $state->src[$pos++];
 
         // Check hr $marker

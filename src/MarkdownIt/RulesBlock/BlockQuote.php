@@ -3,6 +3,7 @@
 
 namespace Kaoken\MarkdownIt\RulesBlock;
 
+use Exception;
 use Kaoken\MarkdownIt\Common\Utils;
 
 class BlockQuote
@@ -13,6 +14,7 @@ class BlockQuote
      * @param integer $endLine
      * @param boolean $silent
      * @return bool
+     * @throws Exception
      */
     public function set(StateBlock &$state, int $startLine, int $endLine, $silent=false): bool
     {
@@ -39,6 +41,7 @@ class BlockQuote
 
         $oldParentType = $state->parentType;
         $state->parentType = 'blockquote';
+        $lastLineEmpty = false;
 
         // Search the end of the block
         //
@@ -192,14 +195,14 @@ class BlockQuote
         $oldIndent = $state->blkIndent;
         $state->blkIndent = 0;
 
-        $token        = $state->push('blockquote_open', 'blockquote', 1);
-        $token->markup = '>';
-        $token->map    = $lines = [ $startLine, 0 ];
+        $token_o        = $state->push('blockquote_open', 'blockquote', 1);
+        $token_o->markup = '>';
+        $token_o->map    = $lines = [ $startLine, 0 ];
 
         $state->md->block->tokenize($state, $startLine, $nextLine);
 
-        $token        = $state->push('blockquote_close', 'blockquote', -1);
-        $token->markup = '>';
+        $token_c        = $state->push('blockquote_close', 'blockquote', -1);
+        $token_c->markup = '>';
 
         $state->lineMax = $oldLineMax;
         $state->parentType = $oldParentType;

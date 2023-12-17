@@ -12,8 +12,8 @@
  * http://opensource.org/licenses/mit-license.php
  *
  *
- * use javascript version 1.0.0
- * @see https://github.com/markdown-it/markdown-it-sub
+ * use javascript version 2.0.0
+ * @see https://github.com/markdown-it/markdown-it-sub/tree/2.0.0
  */
 namespace Kaoken\MarkdownIt\Plugins;
 

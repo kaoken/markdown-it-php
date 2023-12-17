@@ -59,15 +59,17 @@ class Re extends \stdClass
             "\{(?:(?!" . $this->src_ZCc . "|[}]).)*\}|" .
             "\\\"(?:(?!" . $this->src_ZCc . "|[\"]).)+\\\"|" .
             "\\'(?:(?!" . $this->src_ZCc . "|[']).)+\\'|" .
-            "\\'(?=" . $this->src_pseudo_letter . '|[-])|' .   // allow `I'm_king` if no pair found
-            "\.{2,}[a-zA-Z0-9%\/&]|" .   // google has many dots in "google search" links (#66, #81).
-                                        // github has ... in commit range links,
-                                        // Restrict to
-                                        // - english
-                                        // - percent-encoded
-                                        // - parts of file path
-                                        // - params separator
-                                        // until more examples found.
+            // allow `I'm_king` if no pair found
+            "\\'(?=" . $this->src_pseudo_letter . '|[-])|' .
+            // google has many dots in "google search" links (#66, #81).
+            // github has ... in commit range links,
+            // Restrict to
+            // - english
+            // - percent-encoded
+            // - parts of file path
+            // - params separator
+            // until more examples found.
+            "\.{2,}[a-zA-Z0-9%\/&]|" .
             "\.(?!" . $this->src_ZCc . "|[.]|$)|" .
             (isset($opts) && isset($opts["---"]) ?
                 "\-(?!--(?:[^-]|$))(?:-*)|" // `---` => long dash, terminate
@@ -152,8 +154,9 @@ class Re extends \stdClass
             $this->tpl_host_no_ip_fuzzy . $this->src_port . $this->src_host_terminator;
 
 
-        ////////////////////////////////////////////////////////////////////////////////
+        //
         // Main rules
+        //
 
         // Rude test fuzzy links by host, for quick deny
         $this->tpl_host_fuzzy_test =

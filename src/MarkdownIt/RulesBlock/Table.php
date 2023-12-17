@@ -68,7 +68,7 @@ class Table
      * @param boolean $silent
      * @return bool
      */
-    public function set(StateBlock &$state, int $startLine, int $endLine, $silent=false): bool
+    public function set(StateBlock &$state, int $startLine, int $endLine, bool $silent=false): bool
     {
         // should have at least two lines
         if ($startLine + 2 > $endLine) { return false; }
@@ -157,31 +157,31 @@ class Table
         $terminatorRules = $state->md->block->ruler->getRules('blockquote');
 
 
-        $token     = $state->push('table_open', 'table', 1);
-        $token->map = $tableLines = [ $startLine, 0 ];
+        $token_to       = $state->push('table_open', 'table', 1);
+        $token_to->map  = $tableLines = [ $startLine, 0 ];
 
-        $token     = $state->push('thead_open', 'thead', 1);
-        $token->map = [ $startLine, $startLine + 1 ];
+        $token_tho      = $state->push('thead_open', 'thead', 1);
+        $token_tho->map = [ $startLine, $startLine + 1 ];
 
-        $token     = $state->push('tr_open', 'tr', 1);
-        $token->map = [ $startLine, $startLine + 1 ];
+        $token_htro     = $state->push('tr_open', 'tr', 1);
+        $token_htro->map= [ $startLine, $startLine + 1 ];
 
         $tbodyLines = [];
         for ($i = 0; $i < count($columns); $i++) {
-            $token = $state->push('th_open', 'th', 1);
+            $token_ho = $state->push('th_open', 'th', 1);
             if ( !empty($aligns[$i]) ) {
-                $token->attrs  = [ [ 'style', 'text-align:' . $aligns[$i] ] ];
+                $token_ho->attrs  = [ [ 'style', 'text-align:' . $aligns[$i] ] ];
             }
 
-            $token              = $state->push('inline', '', 0);
-            $token->content     = trim($columns[$i]);
-            $token->children    = [];
+            $token_il           = $state->push('inline', '', 0);
+            $token_il->content  = trim($columns[$i]);
+            $token_il->children = [];
 
-            $token          = $state->push('th_close', 'th', -1);
+            $state->push('th_close', 'th', -1);
         }
 
-        $token = $state->push('tr_close', 'tr', -1);
-        $token = $state->push('thead_close', 'thead', -1);
+        $state->push('tr_close', 'tr', -1);
+        $state->push('thead_close', 'thead', -1);
 
         for ($nextLine = $startLine + 2; $nextLine < $endLine; $nextLine++) {
             if ($state->sCount[$nextLine] < $state->blkIndent) { break; }
@@ -203,33 +203,33 @@ class Table
             if (count($columns) && $columns[count($columns) - 1] === '') array_pop($columns);
 
             if ($nextLine === $startLine + 2) {
-                $token      = $state->push('tbody_open', 'tbody', 1);
-                $token->map = $tbodyLines = [ $startLine + 2, 0 ];
+                $token_tbo      = $state->push('tbody_open', 'tbody', 1);
+                $token_tbo->map = $tbodyLines = [ $startLine + 2, 0 ];
             }
 
 
-            $token = $state->push('tr_open', 'tr', 1);
-            $token->map = [ $nextLine, $nextLine + 1 ];
+            $token_tro      = $state->push('tr_open', 'tr', 1);
+            $token_tro->map = [ $nextLine, $nextLine + 1 ];
 
             for ($i = 0; $i < $columnCount; $i++) {
-                $token          = $state->push('td_open', 'td', 1);
+                $token_tdo  = $state->push('td_open', 'td', 1);
                 if ( !empty($aligns[$i]) ) {
-                    $token->attrs  = [ [ 'style', 'text-align:' . $aligns[$i] ] ];
+                    $token_tdo->attrs = [ [ 'style', 'text-align:' . $aligns[$i] ] ];
                 }
 
-                $token          = $state->push('inline', '', 0);
-                $token->content  = isset($columns[$i]) ? trim($columns[$i]) : '';
-                $token->children = [];
+                $token_il           = $state->push('inline', '', 0);
+                $token_il->content  = isset($columns[$i]) ? trim($columns[$i]) : '';
+                $token_il->children = [];
 
-                $token          = $state->push('td_close', 'td', -1);
+                $state->push('td_close', 'td', -1);
             }
-            $token = $state->push('tr_close', 'tr', -1);
+            $state->push('tr_close', 'tr', -1);
         }
         if ($tbodyLines) {
-            $token = $state->push('tbody_close', 'tbody', -1);
+            $state->push('tbody_close', 'tbody', -1);
             $tbodyLines[1] = $nextLine;
         }
-        $token = $state->push('table_close', 'table', -1);
+        $state->push('table_close', 'table', -1);
         $tbodyLines[1] = $nextLine;
 
         $state->parentType = $oldParentType;

@@ -16,53 +16,53 @@ class Linkify
      * @return bool
      */
     public function linkify(StateInline &$state, bool $silent = false): bool
-    {        
+    {
         if (! $state->md->options->linkify) return false;
         if ( $state->linkLevel > 0) return false;
 
         $pos =  $state->pos;
         $max =  $state->posMax;
-        
+
         if ( $pos + 3 >  $max) return false;
         if ( $state->src[$pos] !== ':' /* 0x3A */) return false;
         if ( $state->src[$pos + 1] !== '/' /* 0x2F */) return false;
         if ( $state->src[$pos + 2] !== '/' /* 0x2F */) return false;
 
         if (! preg_match(self::SCHEME_RE, $state->pending,$match)) return false;
-        
+
         $proto = $match[1];
 
         $link = $state->md->linkify->matchAtStart( substr($state->src, $pos -  strlen($proto)));
         if (! $link) return false;
-        
+
         $url =  $link->url;
 
         // invalid link, but still detected by linkify somehow;
         // need to check to prevent infinite loop below
         if (strlen($url) <= strlen($proto)) return false;
-        
+
         // disallow '*' at the end of the  $link (conflicts with emphasis)
         $url =  preg_replace("/\*+$/", '', $url);
-        
+
         $fullUrl =  $state->md->normalizeLink( $url);
         if (! $state->md->validateLink( $fullUrl)) return false;
-        
+
         if (!$silent) {
-         $state->pending =  substr($state->pending,0, strlen($state->pending) - strlen($proto));
-        
-         $token          =  $state->push('link_open', 'a', 1);
-         $token->attrs   = [ [ 'href',  $fullUrl ] ];
-         $token->markup  = 'linkify';
-         $token->info    = 'auto';
-        
-         $token          =  $state->push('text', '', 0);
-         $token->content =  $state->md->normalizeLinkText( $url);
-        
-         $token          =  $state->push('link_close', 'a', -1);
-         $token->markup  = 'linkify';
-         $token->info    = 'auto';
+            $state->pending =  substr($state->pending,0, strlen($state->pending) - strlen($proto));
+
+            $token_o            =  $state->push('link_open', 'a', 1);
+            $token_o->attrs     = [ [ 'href',  $fullUrl ] ];
+            $token_o->markup    = 'linkify';
+            $token_o->info      = 'auto';
+
+            $token_t            =  $state->push('text', '', 0);
+            $token_t->content   =  $state->md->normalizeLinkText( $url);
+
+            $token_c            =  $state->push('link_close', 'a', -1);
+            $token_c->markup    = 'linkify';
+            $token_c->info      = 'auto';
         }
-        
+
         $state->pos +=  strlen($url) -  strlen($proto);
         return true;
     }

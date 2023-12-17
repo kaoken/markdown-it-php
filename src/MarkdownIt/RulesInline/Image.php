@@ -3,6 +3,7 @@
 
 namespace Kaoken\MarkdownIt\RulesInline;
 
+use Exception;
 use Kaoken\MarkdownIt\Common\Utils;
 
 class Image
@@ -11,8 +12,9 @@ class Image
      * @param StateInline $state
      * @param boolean $silent
      * @return bool
+     * @throws Exception
      */
-    public function image(StateInline &$state, $silent=false): bool
+    public function image(StateInline &$state, bool $silent=false): bool
     {
         $href = '';
         $oldPos = $state->pos;
@@ -139,8 +141,9 @@ class Image
                 $tokens
             );
 
-            $token          = $state->push('image', 'img', 0);
-            $token->attrs    =  [ [ 'src', $href ], [ 'alt', '' ] ];
+            $token           = $state->push('image', 'img', 0);
+            $attr            = [ [ 'src', $href ], [ 'alt', '' ] ];
+            $token->attrs    = $attr;
             $token->children = &$tokens;
             $token->content  = $content;
 

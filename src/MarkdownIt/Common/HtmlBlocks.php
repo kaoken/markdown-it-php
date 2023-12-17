@@ -1,7 +1,8 @@
 <?php
 namespace Kaoken\MarkdownIt\Common;
 
-
+// List of valid html blocks names, according to commonmark spec
+// https://spec.commonmark.org/0.30/#html-blocks
 class HtmlBlocks
 {
     const BLOCKS = [

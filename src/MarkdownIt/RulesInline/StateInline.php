@@ -11,7 +11,10 @@ use stdClass;
 
 class StateInline
 {
-	public $src = '';
+    /**
+     * @var string
+     */
+	public string $src = '';
     /**
      * @var null|object
      */
@@ -26,7 +29,7 @@ class StateInline
 	public array $tokens = [];
 
     /**
-     * @var array
+     * @var ArrayObj|array
      */
     public $tokens_meta = [];
 

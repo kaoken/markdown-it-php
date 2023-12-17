@@ -149,7 +149,7 @@ class Link
             $state->md->inline->tokenize($state);
             $state->linkLevel--;
 
-            $token        = $state->push('link_close', 'a', -1);
+            $state->push('link_close', 'a', -1);
         }
 
         $state->pos = $pos;

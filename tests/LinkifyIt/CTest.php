@@ -7,11 +7,12 @@ http://opensource.org/licenses/mit-license.php
  */
 namespace Kaoken\Test\LinkifyIt;
 
+use Kaoken\LinkifyIt\MatchResult;
 use Kaoken\Test\EasyTest;
 use Kaoken\LinkifyIt\LinkifyIt;
 
 class LinkifyItTest extends LinkifyIt{
-    public function normalize(&$match) { }
+    public function normalize(MatchResult &$match) { }
 }
 
 class CTest extends EasyTest

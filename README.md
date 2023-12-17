@@ -1,12 +1,12 @@
 # markdown-it-php
 
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](https://github.com/kaoken/markdown-it-php)
-[![composer version](https://img.shields.io/badge/version-13.0.2.0-blue.svg)](https://github.com/kaoken/markdown-it-php)
+[![composer version](https://img.shields.io/badge/version-14.0.0.0-blue.svg)](https://github.com/kaoken/markdown-it-php)
 [![licence](https://img.shields.io/badge/licence-MIT-blue.svg)](https://github.com/kaoken/markdown-it-php)
 [![php version](https://img.shields.io/badge/php%20version-≧7.4.0-red.svg)](https://github.com/kaoken/markdown-it-php)
 
 
-This gem is a port of the [markdown-it Javascript package](https://github.com/markdown-it/markdown-it) by Vitaly Puzrin and Alex Kocharin. Currently synced with markdown-it 13.0.2
+This gem is a port of the [markdown-it Javascript package](https://github.com/markdown-it/markdown-it) by Vitaly Puzrin and Alex Kocharin. Currently synced with markdown-it 14.0.0
 
 __[Javascript Live demo](https://markdown-it.github.io)__
 
@@ -131,13 +131,13 @@ $md = new MarkdownIt([
   "highlight"=> function ($str, $lang) {
     if ( $lang ) {
       try {
-        return '<pre class="hljs"><code>' .
+        return '<pre><code class="hljs">' .
                highlight_string($str) .
                '</code></pre>';
       } catch (Exception $e) {}
     }
 
-    return '<pre class="hljs"><code>' . $md->utils->escapeHtml($str) . '</code></pre>';
+    return '<pre><code class="hljs">' . $md->utils->escapeHtml($str) . '</code></pre>';
   }
 ]);
 ```
@@ -161,11 +161,11 @@ Embedded (enabled by default):
 
 The following plugins are in the **kaoken\markdown-it-php\MarkdownIt\Plugins** directory:
 
-- [subscript](https://github.com/markdown-it/markdown-it-sub) ``\MarkdownItSub``（Deprecated）
+- [subscript](https://github.com/markdown-it/markdown-it-sub) ``\MarkdownItSub``
 - [superscript](https://github.com/markdown-it/markdown-it-sup) ``\MarkdownItSup``
 - [footnote](https://github.com/markdown-it/markdown-it-footnote) ``\MarkdownItFootnote``
 - [definition list](https://github.com/markdown-it/markdown-it-deflist) ``\MarkdownItDeflist``
-- [abbreviation](https://github.com/markdown-it/markdown-it-abbr) ``\MarkdownItAbbr``（Deprecated）
+- [abbreviation](https://github.com/markdown-it/markdown-it-abbr) ``\MarkdownItAbbr``
 - [emoji](https://github.com/markdown-it/markdown-it-emoji) ``\MarkdownItEmoji``
 - [custom container](https://github.com/markdown-it/markdown-it-container) ``\MarkdownItContainer``
 - [insert](https://github.com/markdown-it/markdown-it-ins) ``\MarkdownItIns``

@@ -156,7 +156,6 @@ class ParserInline
      */
     public function tokenize(StateInline &$state)
     {
-        $ok = false;
         $i = 0;
         $rules = $this->ruler->getRules('');
         $len = count($rules);
@@ -171,6 +170,7 @@ class ParserInline
             // - update `state.tokens`
             // - return true
             $prevPos = $state->pos;
+            $ok = false;
 
             if ($state->level < $maxNesting) {
                 $i = 0;

@@ -7,7 +7,9 @@ use Kaoken\MarkdownIt\Common\Utils;
 
 class AutoLink
 {
+    /* eslint max-len:0 */
     const EMAIL_RE    = "/^([a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*)$/u";
+    /* eslint-disable-next-line no-control-regex */
     const AUTOLINK_RE = "/^([a-zA-Z][a-zA-Z0-9+.\-]{1,31}):([^<>\x{00}-\x{20}]*)$/u";
 
     /**

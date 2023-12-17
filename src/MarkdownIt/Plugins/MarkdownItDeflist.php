@@ -12,8 +12,8 @@
  * http://opensource.org/licenses/mit-license.php
  *
  *
- * use javascript version 2.1.0
- * @see https://github.com/markdown-it/markdown-it-deflist/tree/2.1.0
+ * use javascript version 3.0.0
+ * @see https://github.com/markdown-it/markdown-it-deflist/tree/3.0.0
  */
 // Process definition lists
 //
@@ -88,8 +88,9 @@ class MarkdownItDeflist
      * @param integer $endLine
      * @param bool $silent
      * @return bool
+     * @throws Exception
      */
-    public function deflist(StateBlock $state, int $startLine, $endLine=-1, $silent=false): bool
+    public function deflist(StateBlock $state, int $startLine, int $endLine=-1, bool $silent=false): bool
     {
         if ($silent) {
             // quirk: validation mode validates a dd block only, not a whole deflist
@@ -113,8 +114,8 @@ class MarkdownItDeflist
         $listTokIdx = count($state->tokens);
         $tight = true;
 
-        $token     = $state->push('dl_open', 'dl', 1);
-        $token->map = $listLines = [ $startLine, 0 ];
+        $token_dl_o     = $state->push('dl_open', 'dl', 1);
+        $token_dl_o->map= $listLines = [ $startLine, 0 ];
 
         //
         // Iterate list items
@@ -135,19 +136,19 @@ class MarkdownItDeflist
         while ($rootLoop) {
             $prevEmptyEnd = false;
 
-            $token          = $state->push('dt_open', 'dt', 1);
-            $token->map      = [ $dtLine, $dtLine ];
+            $token_dt_o         = $state->push('dt_open', 'dt', 1);
+            $token_dt_o->map    = [ $dtLine, $dtLine ];
 
-            $token          = $state->push('inline', '', 0);
-            $token->map      = [ $dtLine, $dtLine ];
-            $token->content  = trim($state->getLines($dtLine, $dtLine + 1, $state->blkIndent, false));
-            $token->children = [];
+            $token_i            = $state->push('inline', '', 0);
+            $token_i->map       = [ $dtLine, $dtLine ];
+            $token_i->content   = trim($state->getLines($dtLine, $dtLine + 1, $state->blkIndent, false));
+            $token_i->children  = [];
 
-            $token          = $state->push('dt_close', 'dt', -1);
+            $state->push('dt_close', 'dt', -1);
 
             while (true) {
-                $token     = $state->push('dd_open', 'dd', 1);
-                $token->map = $itemLines = [ $nextLine, 0 ];
+                $token_dd_o         = $state->push('dd_open', 'dd', 1);
+                $token_dd_o->map    = $itemLines = [ $nextLine, 0 ];
 
                 $pos = $contentStart;
                 $max = $state->eMarks[$ddLine];
@@ -243,7 +244,7 @@ class MarkdownItDeflist
         }
 
         // Finilize list
-        $token = $state->push('dl_close', 'dl', -1);
+        $state->push('dl_close', 'dl', -1);
 
         $listLines[1] = $nextLine;
 

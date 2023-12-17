@@ -11,11 +11,20 @@ class PresetDefault
     {
         $o = [
             "options"=> [
-                "html"=>         false,        // Enable HTML tags in source
-                "xhtmlOut"=>     false,        // Use '/' to close single tags (<br />)
-                "breaks"=>       false,        // Convert '\n' in paragraphs into <br>
-                "langPrefix"=>   'language-',  // CSS language prefix for fenced blocks
-                "linkify"=>      false,        // autoconvert URL-like texts to links
+                // Enable HTML tags in source
+                "html"=>         false,
+
+                // Use '/' to close single tags (<br />)
+                "xhtmlOut"=>     false,
+
+                // Convert '\n' in paragraphs into <br>
+                "breaks"=>       false,
+
+                // CSS language prefix for fenced blocks
+                "langPrefix"=>   'language-',
+
+                // autoconvert URL-like texts to links
+                "linkify"=>      false,
 
                 // Enable some language-neutral replacements + quotes beautification
                 "typographer"=>  false,
@@ -35,7 +44,8 @@ class PresetDefault
                 //
                 "highlight"=> null,
 
-                "maxNesting"=>   100            // Internal protection, recursion limit
+                // Internal protection, recursion limit
+                "maxNesting"=>   100
             ],
 
             "components"=> [

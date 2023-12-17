@@ -140,7 +140,8 @@ class DefaultRules extends stdClass
     /**
      * @param Token[] $tokens
      * @param integer $idx
-     * @param object  $options
+     * @param object $options
+     * @param null $env
      * @return string
      */
     public function hardbreak(array &$tokens, int $idx, object $options, $env=null): string
@@ -151,10 +152,11 @@ class DefaultRules extends stdClass
     /**
      * @param Token[] $tokens
      * @param integer $idx
-     * @param object  $options
+     * @param object $options
+     * @param null $env
      * @return string
      */
-    public function softbreak(array &$tokens, $idx, $options, $env=null)
+    public function softbreak(array &$tokens, int $idx, $options, $env=null): string
     {
         return $options->breaks ? ($options->xhtmlOut ? "<br />\n" : "<br>\n") : "\n";
     }
@@ -179,7 +181,7 @@ class DefaultRules extends stdClass
      * @param object|null $env
      * @return string
      */
-    public function html_block(array $tokens, int $idx, $options=null, $env=null)
+    public function html_block(array $tokens, int $idx, $options=null, $env=null): string
     {
         return $tokens[$idx]->content;
     }
@@ -191,7 +193,7 @@ class DefaultRules extends stdClass
      * @param object|null $env
      * @return string
      */
-    public function html_inline(array &$tokens, int $idx, $options=null, $env=null)
+    public function html_inline(array &$tokens, int $idx, $options=null, $env=null): string
     {
         return $tokens[$idx]->content;
     }

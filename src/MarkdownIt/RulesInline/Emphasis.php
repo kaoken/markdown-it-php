@@ -17,7 +17,7 @@ class Emphasis
      * @return bool
      * @throws Exception
      */
-    public function tokenize(StateInline &$state, $silent=false): bool
+    public function tokenize(StateInline &$state, bool $silent=false): bool
     {
         $start = $state->pos;
         $marker = $state->src[$start];
@@ -101,19 +101,19 @@ class Emphasis
 
             $ch = $startDelim->marker;
 
-            $token          = &$state->tokens[$startDelim->token];
-            $token->type    = $isStrong ? 'strong_open' : 'em_open';
-            $token->tag     = $isStrong ? 'strong' : 'em';
-            $token->nesting = 1;
-            $token->markup  = $isStrong ? $ch . $ch : $ch;
-            $token->content = '';
+            $token_o            = &$state->tokens[$startDelim->token];
+            $token_o->type      = $isStrong ? 'strong_open' : 'em_open';
+            $token_o->tag       = $isStrong ? 'strong' : 'em';
+            $token_o->nesting   = 1;
+            $token_o->markup    = $isStrong ? $ch . $ch : $ch;
+            $token_o->content   = '';
 
-            $token          = &$state->tokens[$endDelim->token];
-            $token->type    = $isStrong ? 'strong_close' : 'em_close';
-            $token->tag     = $isStrong ? 'strong' : 'em';
-            $token->nesting = -1;
-            $token->markup  = $isStrong ? $ch . $ch : $ch;
-            $token->content = '';
+            $token_c            = &$state->tokens[$endDelim->token];
+            $token_c->type      = $isStrong ? 'strong_close' : 'em_close';
+            $token_c->tag       = $isStrong ? 'strong' : 'em';
+            $token_c->nesting   = -1;
+            $token_c->markup    = $isStrong ? $ch . $ch : $ch;
+            $token_c->content   = '';
 
             if ($isStrong) {
                 $state->tokens[$delimiters[$i - 1]->token]->content = '';

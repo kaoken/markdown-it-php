@@ -14,10 +14,8 @@ class LHeading
      * @param boolean $silent
      * @return bool
      */
-    public function set(StateBlock &$state, int $startLine, int $endLine, $silent=false): bool
+    public function set(StateBlock &$state, int $startLine, int $endLine, bool $silent=false): bool
     {
-        $level = 0;
-        $nextLine = $startLine + 1;
         $terminatorRules = $state->md->block->ruler->getRules('paragraph');
 
         // if it's indented more than 3 spaces, it should be a code block
@@ -27,6 +25,8 @@ class LHeading
         $state->parentType = 'paragraph'; // use paragraph to match $terminatorRules
 
         // jump line-by-line until empty one or EOF
+        $level = 0;
+        $nextLine = $startLine + 1;
         for (; $nextLine < $endLine && !$state->isEmpty($nextLine); $nextLine++) {
             // this would be a code block normally, but after paragraph
             // it's considered a lazy continuation regardless of what's there
@@ -84,17 +84,17 @@ class LHeading
 
         $state->line = $nextLine + 1;
 
-        $token          = $state->push('heading_open', 'h' . $level, 1);
-        $token->markup   = $marker;
-        $token->map      = [ $startLine, $state->line ];
+        $token_o            = $state->push('heading_open', 'h' . $level, 1);
+        $token_o->markup    = $marker;
+        $token_o->map       = [ $startLine, $state->line ];
 
-        $token          = $state->push('inline', '', 0);
-        $token->content  = $content;
-        $token->map      = [ $startLine, $state->line - 1 ];
-        $token->children = [];
+        $token_i            = $state->push('inline', '', 0);
+        $token_i->content   = $content;
+        $token_i->map       = [ $startLine, $state->line - 1 ];
+        $token_i->children  = [];
 
-        $token          = $state->push('heading_close', 'h' . $level, -1);
-        $token->markup   = $marker;
+        $token_c            = $state->push('heading_close', 'h' . $level, -1);
+        $token_c->markup    = $marker;
 
         $state->parentType = $oldParentType;
 

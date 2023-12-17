@@ -33,7 +33,7 @@ class StateCore
      * @param MarkdownIt $md
      * @param object|null $env
      */
-    public function __construct(string $src, MarkdownIt $md, $env=null) {
+    public function __construct(string $src, MarkdownIt $md, object $env=null) {
         $this->src = $src;
         $this->env = $env;
         $this->tokens = [];

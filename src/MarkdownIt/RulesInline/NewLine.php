@@ -6,6 +6,9 @@ use Kaoken\MarkdownIt\Common\Utils;
 
 class NewLine
 {
+    /**
+     * @var Utils|null
+     */
     public ?Utils $utils = null;
 
     public function __construct()

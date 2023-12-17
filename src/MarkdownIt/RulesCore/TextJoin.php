@@ -15,11 +15,11 @@ class TextJoin
     /**
      * @param StateCore $state
      */
-    public function set(StateCore &$state)
+    public function set(StateCore &$state): void
     {
         $blockTokens = &$state->tokens;
-
-        for ($j = 0, $l = count($blockTokens); $j < $l; $j++) {
+        $l = count($blockTokens);
+        for ($j = 0; $j < $l; $j++) {
             if ($blockTokens[$j]->type !== 'inline') continue;
 
             $tokens = &$blockTokens[$j]->children;

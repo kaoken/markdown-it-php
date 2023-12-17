@@ -48,17 +48,17 @@ class Heading
 
         $state->line = $startLine + 1;
 
-        $token        = $state->push('heading_open', 'h' . (string)($level), 1);
-        $token->markup = substr('########', 0, $level);
-        $token->map    = [ $startLine, $state->line ];
+        $token_o            = $state->push('heading_open', 'h' . (string)($level), 1);
+        $token_o->markup    = substr('########', 0, $level);
+        $token_o->map       = [ $startLine, $state->line ];
 
-        $token          = $state->push('inline', '', 0);
-        $token->content  = trim(substr($state->src, $pos, $max-$pos));
-        $token->map      = [ $startLine, $state->line ];
-        $token->children = [];
+        $token_i            = $state->push('inline', '', 0);
+        $token_i->content   = trim(substr($state->src, $pos, $max-$pos));
+        $token_i->map       = [ $startLine, $state->line ];
+        $token_i->children  = [];
 
-        $token        = $state->push('heading_close', 'h' . (string)($level), -1);
-        $token->markup = substr('########', 0, $level);
+        $token_c            = $state->push('heading_close', 'h' . (string)($level), -1);
+        $token_c->markup    = substr('########', 0, $level);
 
         return true;
     }

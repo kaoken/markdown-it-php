@@ -12,8 +12,8 @@
  * http://opensource.org/licenses/mit-license.php
  *
  *
- * use javascript version 3.0.0
- * @see https://github.com/markdown-it/markdown-it-container/tree/3.0.0
+ * use javascript version 4.0.0
+ * @see https://github.com/markdown-it/markdown-it-container/tree/4.0.0
  */
 // Process block-level custom containers
 //
@@ -28,17 +28,41 @@ use Kaoken\MarkdownIt\Token;
 
 class MarkdownItContainer
 {
-    protected $md;
-    protected $name;
-    protected $options;
-    protected $min_markers;
-    protected $marker_str;
-    protected $marker_char;
-    protected $marker_len;
+    /**
+     * @var MarkdownIt
+     */
+    protected MarkdownIt $md;
+    /**
+     * @var string
+     */
+    protected string $name;
+    /**
+     * @var array
+     */
+    protected array $options;
+    /**
+     * @var int
+     */
+    protected int $min_markers;
+    /**
+     * @var string
+     */
+    protected string $marker_str;
+    /**
+     * @var string
+     */
+    protected string $marker_char;
+    /**
+     * @var int
+     */
+    protected int $marker_len;
     /**
      * @var callable|array
      */
     protected $validate;
+    /**
+     * @var object
+     */
     protected $render;
 
     /**
@@ -75,7 +99,8 @@ class MarkdownItContainer
      * @param $params
      * @return bool
      */
-    function validateDefault($params/*, markup*/) {
+    function validateDefault($params/*, markup*/): bool
+    {
         return explode(' ', trim($params), 2)[0] === $this->name;
     }
 
@@ -104,8 +129,9 @@ class MarkdownItContainer
      * @param integer $endLine
      * @param bool $silent
      * @return bool
+     * @throws Exception
      */
-    function container(StateBlock $state, int $startLine, int $endLine, $silent=false): bool
+    function container(StateBlock $state, int $startLine, int $endLine, bool $silent=false): bool
     {
 //    var $pos, $nextLine, $marker_count, $markup, $params, $token,
 //    $old_parent, $old_line_max,
@@ -200,17 +226,17 @@ class MarkdownItContainer
         // this will prevent lazy continuations from ever going past our end marker
         $state->lineMax = $nextLine;
 
-        $token        = $state->push('container_' . $this->name . '_open', 'div', 1);
-        $token->markup = $markup;
-        $token->block  = true;
-        $token->info   = $params;
-        $token->map    = [ $startLine, $nextLine ];
+        $token_o            = $state->push('container_' . $this->name . '_open', 'div', 1);
+        $token_o->markup    = $markup;
+        $token_o->block     = true;
+        $token_o->info      = $params;
+        $token_o->map       = [ $startLine, $nextLine ];
 
         $state->md->block->tokenize($state, $startLine + 1, $nextLine);
 
-        $token        = $state->push('container_' . $this->name . '_close', 'div', -1);
-        $token->markup = substr($state->src, $start, $pos-$start);
-        $token->block  = true;
+        $token_c            = $state->push('container_' . $this->name . '_close', 'div', -1);
+        $token_c->markup    = substr($state->src, $start, $pos-$start);
+        $token_c->block     = true;
 
         $state->parentType = $old_parent;
         $state->lineMax = $old_line_max;

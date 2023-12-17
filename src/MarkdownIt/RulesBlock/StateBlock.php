@@ -7,10 +7,13 @@ use Kaoken\MarkdownIt\Token;
 
 class StateBlock
 {
+    /**
+     * @var string
+     */
     public string $src = '';
 
     /**
-     * @var MarkdownIt
+     * @var null|MarkdownIt
      */
     public ?MarkdownIt $md     = null;
 
@@ -119,7 +122,6 @@ class StateBlock
         // Generate markers.
         $indent_found = false;
 
-        $nextLen = 1;
         for ($start = $pos = $indent = $offset = 0, $len = strlen ($this->src); $pos < $len; $pos++) {
             $ch = $this->src[$pos];
 

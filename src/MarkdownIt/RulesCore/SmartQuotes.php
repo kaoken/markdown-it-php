@@ -15,7 +15,7 @@ class SmartQuotes
     /**
      * @var Utils|null
      */
-    public $utils;
+    public ?Utils $utils;
     
     public function __construct()
     {
@@ -38,7 +38,7 @@ class SmartQuotes
      * @param Token[] $tokens
      * @param StateCore $state
      */
-    protected function process_inlines(array &$tokens, StateCore &$state)
+    protected function process_inlines(array &$tokens, StateCore &$state): void
     {
         $stack = [];
 
@@ -222,7 +222,7 @@ class SmartQuotes
     /**
      * @param StateCore $state
      */
-    public function set(StateCore &$state)
+    public function set(StateCore &$state): void
     {
         /*eslint $max-depth:0*/
 

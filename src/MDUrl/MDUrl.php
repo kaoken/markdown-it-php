@@ -11,8 +11,8 @@
  * This software is released under the MIT License.
  * http://opensource.org/licenses/mit-license.php
  *
- * use javascript version 1.0.1
- * @see https://github.com/markdown-it/mdurl/tree/1.0.1
+ * use javascript version 2.0.0
+ * @see https://github.com/markdown-it/mdurl/tree/2.0.0
  */
 namespace Kaoken\MDUrl;
 

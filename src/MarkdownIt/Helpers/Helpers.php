@@ -8,9 +8,9 @@ class Helpers extends \stdClass
 {
     use ParseLinkDestination, ParseLinkLabel, ParseLinkTitle;
     /**
-     * @var Utils
+     * @var Utils|null
      */
-    public $utils;
+    public ?Utils $utils;
 
     public function __construct()
     {

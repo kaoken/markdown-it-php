@@ -13,8 +13,11 @@ use Kaoken\MarkdownIt\RulesInline\StateInline;
 
 class FragmentsJoin
 {
-
-    public function fragmentsJoin(StateInline &$state)
+    /**
+     * @param \Kaoken\MarkdownIt\RulesInline\StateInline $state
+     * @return void
+     */
+    public function fragmentsJoin(StateInline &$state): void
     {
         $level = 0;
         $tokens = &$state->tokens;

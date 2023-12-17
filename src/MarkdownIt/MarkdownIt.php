@@ -85,7 +85,7 @@ class MarkdownIt extends stdClass
      * $md->renderer->rules['my_token'] = myToken
      * ```
      *
-     * See [[Renderer]] docs and [source code](https://github.com/markdown-it/markdown-it/blob/master/lib/renderer.js).
+     * See [[Renderer]] docs and [source code](https://github.com/markdown-it/markdown-it/blob/master/lib/renderer.mjs).
      * @var Renderer
      **/
     public Renderer $renderer;
@@ -94,7 +94,7 @@ class MarkdownIt extends stdClass
      * MarkdownIt#linkify -> LinkifyIt
      *
      * [linkify-it](https://github.com/markdown-it/linkify-it) instance.
-     * Used by [linkify](https://github.com/markdown-it/markdown-it/blob/master/lib/rules_core/linkify.js)
+     * Used by [linkify](https://github.com/markdown-it/markdown-it/blob/master/lib/rules_core/linkify.mjs)
      * rule.
      * @LinkifyIt
      **/
@@ -106,7 +106,7 @@ class MarkdownIt extends stdClass
      * MarkdownIt#utils -> utils
      *
      * Assorted utility functions, useful to write plugins. See details
-     * [here](https://github.com/markdown-it/markdown-it/blob/master/lib/common/utils.js).
+     * [here](https://github.com/markdown-it/markdown-it/blob/master/lib/common/utils.mjs).
      **/
     public ?Utils $utils = null;
 
@@ -252,12 +252,12 @@ class MarkdownIt extends stdClass
      * MarkdownIt provides named presets as a convenience to quickly
      * enable/disable active syntax rules and options for common use cases.
      *
-     * - ["commonmark"](https://github.com/markdown-it/markdown-it/blob/master/lib/presets/commonmark.js) -
+     * - ["commonmark"](https://github.com/markdown-it/markdown-it/blob/master/lib/presets/commonmark.mjs) -
      *   configures parser to strict [CommonMark](http://commonmark.org/) mode.
-     * - [default](https://github.com/markdown-it/markdown-it/blob/master/lib/presets/default.js) -
+     * - [default](https://github.com/markdown-it/markdown-it/blob/master/lib/presets/default.mjs) -
      *   similar to GFM, used when no preset name given. Enables all available rules,
      *   but still without html, typographer & autolinker.
-     * - ["zero"](https://github.com/markdown-it/markdown-it/blob/master/lib/presets/zero.js) -
+     * - ["zero"](https://github.com/markdown-it/markdown-it/blob/master/lib/presets/zero.mjs) -
      *   all rules disabled. Useful to quickly setup your config via `.enable()`.
      *   For example, when you need only `bold` and `italic` markup and nothing else.
      *
@@ -274,7 +274,7 @@ class MarkdownIt extends stdClass
      *   Can be useful for external highlighters.
      * - __linkify__ - `false`. Set `true` to autoconvert URL-like text to links.
      * - __typographer__  - `false`. Set `true` to enable [some language-neutral
-     *   replacement](https://github.com/markdown-it/markdown-it/blob/master/lib/rules_core/replacements.js) +
+     *   replacement](https://github.com/markdown-it/markdown-it/blob/master/lib/rules_core/replacements.mjs) +
      *   quotes beautification (smartquotes).
      * - __quotes__ - `“”‘’`, String or Array. Double + single quotes replacement
      *   pairs, when typographer enabled and smartquotes on. For example, you can
@@ -320,7 +320,7 @@ class MarkdownIt extends stdClass
      * });
      * ```
      *
-     * Or with full wrapper override (if you need assign class to `<pre>`):
+     *  Or with full wrapper override (if you need assign class to `<pre>` or `<code>`):
      *
      * ```PHP
      * hljs = require('highlight.js') // https://highlightjs.org/
@@ -330,13 +330,13 @@ class MarkdownIt extends stdClass
      *   highlight: function (str, lang) {
      *     if (lang && hljs.getLanguage(lang)) {
      *       try {
-     *         return '<pre class="hljs"><code>' +
+     *          return '<pre><code class="hljs">' +
      *                hljs.highlight(str, [ 'language' => 'lang', 'ignoreIllegals' => true ]).value +
      *                '</code></pre>';
      *       } catch (__) {}
      *     }
      *
-     *     return '<pre class="hljs"><code>' + md.utils.escapeHtml(str) + '</code></pre>';
+     *      return '<pre><code class="hljs">' + md.utils.escapeHtml(str) + '</code></pre>';
      *   }
      * });
      * ```

@@ -13,12 +13,12 @@ class Def
     /**
      * @var LinkifyIt
      */
-    private $linkifyIt;
+    private LinkifyIt $linkifyIt;
     /**
      * @var array
      */
-    protected $options=[];
-    protected $schemas = [
+    protected array $options=[];
+    protected array $schemas = [
         'http:'=>null,
         'https:'=>'http:',
         'ftp:'=>'http:',
@@ -29,12 +29,12 @@ class Def
 
     // DON'T try to make PRs with changes. Extend TLDs with LinkifyIt.tlds() instead
     // 'biz|com|edu|gov|net|org|pro|web|xxx|aero|asia|coop|info|museum|name|shop|рф'
-    protected $tlds_default = ['biz','com','edu','gov','net','org','pro','web','xxx','aero','asia','coop','info','museum','name','shop','рф'];
+    protected array $tlds_default = ['biz','com','edu','gov','net','org','pro','web','xxx','aero','asia','coop','info','museum','name','shop','рф'];
 
     /**
      * @return string
      */
-    public function getTlds2chSrcRe()
+    public function getTlds2chSrcRe(): string
     {
         return $this->tlds_2ch_src_re;
     }
@@ -65,7 +65,7 @@ class Def
      * CDefault constructor.
      * @param LinkifyIt $linkifyIt
      */
-    public function __construct($linkifyIt)
+    public function __construct(LinkifyIt $linkifyIt)
     {
         $this->linkifyIt = $linkifyIt;
         $this->options["fuzzyLink"] = true;

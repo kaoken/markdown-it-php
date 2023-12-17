@@ -12,8 +12,8 @@
  * http://opensource.org/licenses/mit-license.php
  *
  *
- * use javascript version 3.0.3
- * @see https://github.com/markdown-it/markdown-it-footnote
+ * use javascript version 4.0.0
+ * @see https://github.com/markdown-it/markdown-it-footnote/tree/4.0.0
  */
 // Process footnotes
 //
@@ -187,11 +187,11 @@ class MarkdownItFootnote
             $label = substr($state->src, $start + 2, $pos - 2 - ($start + 2));
             $state->env->footnotes->refs[':' . $label] = -1;
 
-            $token       = $state->createToken('footnote_reference_open', '', 1);
-            $token->meta = new \stdClass();
-            $token->meta->label  = $label;
-            $token->level = $state->level++;
-            $state->tokens[] = $token;
+            $token_fref_o               = $state->createToken('footnote_reference_open', '', 1);
+            $token_fref_o->meta         = new \stdClass();
+            $token_fref_o->meta->label  = $label;
+            $token_fref_o->level        = $state->level++;
+            $state->tokens[] = $token_fref_o;
 
             $oldBMark = $state->bMarks[$startLine];
             $oldTShift = $state->tShift[$startLine];
@@ -236,9 +236,9 @@ class MarkdownItFootnote
             $state->sCount[$startLine] = $oldSCount;
             $state->bMarks[$startLine] = $oldBMark;
 
-            $token       = $state->createToken('footnote_reference_close', '', -1);
-            $token->level = --$state->level;
-            $state->tokens[] = $token;
+            $token_fref_c           = $state->createToken('footnote_reference_close', '', -1);
+            $token_fref_c->level    = --$state->level;
+            $state->tokens[] = $token_fref_c;
 
             return true;
         };
@@ -248,6 +248,7 @@ class MarkdownItFootnote
          * @param StateInline $state
          * @param boolean $silent
          * @return bool
+         * @throws Exception
          */
         $footnote_inline = function(StateInline $state, bool $silent)
         {
@@ -385,31 +386,30 @@ class MarkdownItFootnote
             if (!isset($state->env->footnotes->list)) { return; }
             $list = &$state->env->footnotes->list;
 
-            $token = $state->createToken('footnote_block_open', '', 1);
-            $state->tokens[] = $token;
+            $state->tokens[] = $state->createToken('footnote_block_open', '', 1);
 
             for ($i = 0, $l = count($list); $i < $l; $i++) {
-                $token      = $state->createToken('footnote_open', '', 1);
-                $token->meta = new \stdClass();
-                $token->meta->id = $i;
-                $token->meta->label =  $list[$i]->label ??  '';
-                $state->tokens[] = $token;
+                $token_fo               = $state->createToken('footnote_open', '', 1);
+                $token_fo->meta         = new \stdClass();
+                $token_fo->meta->id     = $i;
+                $token_fo->meta->label  =  $list[$i]->label ??  '';
+                $state->tokens[] = $token_fo;
 
                 if ( isset($list[$i]->tokens) ) {
                     $tokens = [];
 
-                    $token          = $state->createToken('paragraph_open', 'p', 1);
-                    $token->block    = true;
-                    $tokens[] = $token;
+                    $token_po           = $state->createToken('paragraph_open', 'p', 1);
+                    $token_po->block    = true;
+                    $tokens[] = $token_po;
 
-                    $token          = $state->createToken('inline', '', 0);
-                    $token->children = $list[$i]->tokens;
-                    $token->content  = $list[$i]->content;
-                    $tokens[] = $token;
+                    $token_i            = $state->createToken('inline', '', 0);
+                    $token_i->children  = $list[$i]->tokens;
+                    $token_i->content   = $list[$i]->content;
+                    $tokens[] = $token_i;
 
-                    $token          = $state->createToken('paragraph_close', 'p', -1);
-                    $token->block   = true;
-                    $tokens[] = $token;
+                    $token_pc           = $state->createToken('paragraph_close', 'p', -1);
+                    $token_pc->block    = true;
+                    $tokens[] = $token_pc;
 
                 } else if ( isset($list[$i]->label) ) {
                     $tokens = null;
@@ -428,24 +428,22 @@ class MarkdownItFootnote
 
                 $t = isset($list[$i]->count) && $list[$i]->count > 0 ? $list[$i]->count : 1;
                 for ($j = 0; $j < $t; $j++) {
-                    $token      = $state->createToken('footnote_anchor', '', 0);
-                    $token->meta = new \stdClass();
-                    $token->meta->id = $i;
-                    $token->meta->subId = $j;
-                    $token->meta->label = $list[$i]->label ?? '';
-                    $state->tokens[] = $token;
+                    $token_a                = $state->createToken('footnote_anchor', '', 0);
+                    $token_a->meta          = new \stdClass();
+                    $token_a->meta->id      = $i;
+                    $token_a->meta->subId   = $j;
+                    $token_a->meta->label   = $list[$i]->label ?? '';
+                    $state->tokens[] = $token_a;
                 }
 
                 if ($lastParagraph) {
                     $state->tokens[] = $lastParagraph;
                 }
 
-                $token = $state->createToken('footnote_close', '', -1);
-                $state->tokens[] = $token;
+                $state->tokens[] = $state->createToken('footnote_close', '', -1);
             }
 
-            $token = $state->createToken('footnote_block_close', '', -1);
-            $state->tokens[] = $token;
+            $state->tokens[] = $state->createToken('footnote_block_close', '', -1);
         };
 
         $md->block->ruler->before('reference', 'footnote_def', $footnote_def, [ 'alt'=> [ 'paragraph', 'reference' ] ]);

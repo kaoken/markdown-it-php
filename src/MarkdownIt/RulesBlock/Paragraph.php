@@ -11,12 +11,12 @@ class Paragraph
      * @param boolean $silent I do not use it
      * @return bool
      */
-    public function set(StateBlock &$state, int $startLine, int $endLine, $silent=false): bool
+    public function set(StateBlock &$state, int $startLine, int $endLine, bool $silent=false): bool
     {
-        $nextLine = $startLine + 1;
         $terminatorRules = $state->md->block->ruler->getRules('paragraph');
 
         $oldParentType = $state->parentType;
+        $nextLine = $startLine + 1;
         $state->parentType = 'paragraph';
 
         // jump line-by-line until empty one or EOF
@@ -50,15 +50,15 @@ class Paragraph
 
         $state->line = $nextLine;
 
-        $token          = $state->push('paragraph_open', 'p', 1);
-        $token->map      = [ $startLine, $state->line ];
+        $token_o            = $state->push('paragraph_open', 'p', 1);
+        $token_o->map       = [ $startLine, $state->line ];
 
-        $token          = $state->push('inline', '', 0);
-        $token->content  = $content;
-        $token->map      = [ $startLine, $state->line ];
-        $token->children = [];
+        $token_i            = $state->push('inline', '', 0);
+        $token_i->content   = $content;
+        $token_i->map       = [ $startLine, $state->line ];
+        $token_i->children  = [];
 
-        $token          = $state->push('paragraph_close', 'p', -1);
+        $state->push('paragraph_close', 'p', -1);
 
         $state->parentType = $oldParentType;
 

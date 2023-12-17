@@ -217,8 +217,8 @@ class CList
             $pos = $posAfterMarker;
             $max = $state->eMarks[$nextLine];
 
-            $initial = $offset = $state->sCount[$nextLine] + $posAfterMarker - ($state->bMarks[$nextLine] + $state->tShift[$nextLine]);
-
+            $initial = $state->sCount[$nextLine] + $posAfterMarker - ($state->bMarks[$nextLine] + $state->tShift[$nextLine]);
+            $offset = $initial;
             while ($pos < $max) {
                 $ch = $state->src[$pos];
 
@@ -253,7 +253,8 @@ class CList
             // Run subparser & write tokens
             $token          = $state->push('list_item_open', 'li', 1);
             $token->markup  = $markerCharCode;
-            $token->map     = $itemLines = [ $nextLine, 0 ];
+            $itemLines      = [ $nextLine, 0 ];
+            $token->map     = $itemLines;
             if ($isOrdered) {
                 $token->info = substr($state->src, $start, $posAfterMarker - $start - 1);
             }

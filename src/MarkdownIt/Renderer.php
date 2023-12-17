@@ -201,12 +201,21 @@ class Renderer
         $result = '';
 
         foreach ( $tokens as &$token) {
-            if ($token->type === 'text') {
-                $result .= $token->content;
-            } else if ($token->type === 'image') {
-                $result .= $this->renderInlineAsText($token->children, $options, $env);
-            } else if ($token->type === 'softbreak') {
-                $result .= "\n";
+            switch ($token->type) {
+                case 'html_block':
+                case 'html_inline':
+                case 'text':
+                    $result .= $token->content;
+                    break;
+                case 'image':
+                    $result .= $this->renderInlineAsText($token->children, $options, $env);
+                    break;
+                case 'softbreak':
+                case 'hardbreak':
+                    $result .= "\n";
+                    break;
+                default:
+                    // all other tokens are skipped
             }
         }
 

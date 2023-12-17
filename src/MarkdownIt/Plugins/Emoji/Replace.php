@@ -11,10 +11,22 @@ use Kaoken\MarkdownIt\RulesCore\StateCore;
 
 class Replace
 {
-    protected $emojies;
-    protected $shortcuts;
-    protected $scanRE;
-    protected $replaceRE;
+    /**
+     * @var array
+     */
+    protected array $emojies;
+    /**
+     * @var array
+     */
+    protected array $shortcuts;
+    /**
+     * @var string
+     */
+    protected string $scanRE;
+    /**
+     * @var string
+     */
+    protected string $replaceRE;
 
     /**
      * Replace constructor.

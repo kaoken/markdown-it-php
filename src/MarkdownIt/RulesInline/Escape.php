@@ -23,7 +23,7 @@ class Escape
      * @param boolean $silent
      * @return bool
      */
-    public function escape(StateInline &$state, $silent=false): bool
+    public function escape(StateInline &$state, bool $silent=false): bool
     {
         $pos = $state->pos;
         $max = $state->posMax;

@@ -12,7 +12,7 @@ class Entity
      * @param boolean $silent
      * @return bool
      */
-    public function entity(StateInline &$state, $silent=false): bool
+    public function entity(StateInline &$state, bool $silent=false): bool
     {
         $pos = $state->pos;
         $max = $state->posMax;

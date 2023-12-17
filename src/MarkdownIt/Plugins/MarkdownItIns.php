@@ -12,8 +12,8 @@
  * http://opensource.org/licenses/mit-license.php
  *
  *
- * use javascript version 3.0.1
- * @see https://github.com/markdown-it/markdown-it-ins/tree/3.0.1
+ * use javascript version 4.0.0
+ * @see https://github.com/markdown-it/markdown-it-ins/tree/4.0.0
  */
 namespace Kaoken\MarkdownIt\Plugins;
 
@@ -44,7 +44,7 @@ class MarkdownItIns
      * @return bool
      * @throws Exception
      */
-    function tokenize(StateInline $state, $silent=false): bool
+    function tokenize(StateInline $state, bool $silent=false): bool
     {
         $start = $state->pos;
         $marker = $state->src[$start];

@@ -14,7 +14,7 @@ class Fence
      * @param boolean $silent
      * @return bool
      */
-    public function set(StateBlock &$state, int $startLine, int $endLine, $silent=false): bool
+    public function set(StateBlock &$state, int $startLine, int $endLine, bool $silent=false): bool
     {
         $haveEndMarker = false;
         $pos = $state->bMarks[$startLine] + $state->tShift[$startLine];

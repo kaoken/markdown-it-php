@@ -13,8 +13,8 @@
  *
  *
  *
- * use javascript version 2.1.1
- * @see https://github.com/bestiejs/punycode.js/tree/v2.1.1
+ * use javascript version 2.3.1
+ * @see https://github.com/bestiejs/punycode.js/tree/v2.3.1
  */
 namespace Kaoken\Punycode;
 
@@ -27,7 +27,7 @@ class Punycode
      * A string representing the current Punycode.js version number.
      * @type String
      */
-    const Version = '2.1.1';
+    const Version = '2.3.1';
 
     /** Highest positive signed 32-bit float value */
     const MAX_INT = 2147483647; // aka. 0x7FFFFFFF or 2^31-1
@@ -44,7 +44,7 @@ class Punycode
 
     /** Regular expressions */
     const PUNYCODE_RE = "/^xn--/";
-    const NON_ASCII_RE = "/[^\x{00}-\x{7E}]/"; // unprintable ASCII chars + non-ASCII chars
+    const NON_ASCII_RE = "/[^\x{00}-\x{7F}]/"; // Note: U+007F DEL is excluded too.
     const SEPARATORS_RE = "/[\.。．｡]/u"; // RFC 3490 separators '\x2E\u3002\uFF0E\uFF61'
 
     /** Error messages */
@@ -73,16 +73,16 @@ class Punycode
      * A generic `Array#map` utility function.
      * @private
      * @param array $array The array to iterate over.
-     * @param callable $fn The function that gets called for every array
+     * @param callable $callback The function that gets called for every array
      * item.
      * @return array A new array of values returned by the callback function.
      */
-    protected function map(array &$array, callable $fn): array
+    protected function map(array &$array, callable $callback): array
     {
         $result = [];
         $length = count($array);
         while ($length--) {
-            $result[$length] = $fn($array[$length]);
+            $result[$length] = $callback($array[$length]);
         }
         ksort($result);
         return $result;
@@ -92,26 +92,26 @@ class Punycode
      * A simple `Array#map`-like wrapper to work with domain name strings or email
      * addresses.
      * @private
-     * @param string $string The domain name or email address.
-     * @param callable $fn The function that gets called for every
+     * @param string $domain The domain name or email address.
+     * @param callable $callback The function that gets called for every
      * character.
      * @return string A new string of characters returned by the callback
      * function.
      */
-    protected function mapDomain(string $string, callable $fn): string
+    protected function mapDomain(string $domain, callable $callback): string
     {
-        $parts = explode('@', $string);
+        $parts = explode('@', $domain);
         $result = '';
         if ( count($parts) > 1) {
             // In email addresses, only the domain name should be punycoded. Leave
             // the local part (i.e. everything up to `@`) intact.
             $result = $parts[0] . '@';
-            $string = $parts[1];
+            $domain = $parts[1];
         }
         // Avoid `split(regex)` for IE8 compatibility. See #17.
-        $string = preg_replace(self::SEPARATORS_RE, ".", $string);
-        $labels = explode('.', $string);
-        $encoded = join('.', $this->map($labels, $fn));
+        $domain = preg_replace(self::SEPARATORS_RE, ".", $domain);
+        $labels = explode('.', $domain);
+        $encoded = join('.', $this->map($labels, $callback));
         return $result . $encoded;
     }
 
@@ -192,13 +192,13 @@ class Punycode
      */
     public function basicToDigit($codePoint): int
     {
-        if ($codePoint - 0x30 < 0x0A) {
-            return $codePoint - 0x16;
+        if ($codePoint >= 0x30 && $codePoint < 0x3A) {
+            return 26 + ($codePoint - 0x30);
         }
-        if ($codePoint - 0x41 < 0x1A) {
+        if ($codePoint >= 0x41 && $codePoint < 0x5B) {
             return $codePoint - 0x41;
         }
-        if ($codePoint - 0x61 < 0x1A) {
+        if ($codePoint >= 0x61 && $codePoint < 0x7B) {
             return $codePoint - 0x61;
         }
         return self::BASE;
@@ -295,7 +295,10 @@ class Punycode
 
                 $digit = $this->basicToDigit(ord($input[$index++]));
 
-                if ($digit >= self::BASE || $digit > floor((self::MAX_INT - $i) / $w)) {
+                if ($digit >= self::BASE) {
+                    $this->error('invalid-input');
+                }
+                if ($digit > floor((self::MAX_INT - $i) / $w)) {
                     $this->error('overflow');
                 }
 
@@ -403,7 +406,7 @@ class Punycode
                 if ($currentValue < $n && ++$delta > self::MAX_INT) {
                     $this->error('overflow');
                 }
-                if ($currentValue == $n) {
+                if ($currentValue === $n) {
                     // Represent delta as a generalized variable-$length integer.
                     $q = $delta;
                     for ($k = self::BASE; /* no condition */; $k += self::BASE) {
@@ -418,7 +421,7 @@ class Punycode
                     }
 
                     $output[] = chr($this->digitToBasic($q, 0));
-                    $bias = $this->adapt($delta, $handledCPCountPlusOne, $handledCPCount == $basicLength);
+                    $bias = $this->adapt($delta, $handledCPCountPlusOne, $handledCPCount === $basicLength);
                     $delta = 0;
                     ++$handledCPCount;
                 }

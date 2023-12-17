@@ -76,13 +76,13 @@ class CTest extends EasyTest
                 'encoded' => '989aomsvi5e83db1d2a355cv1e0vak1dwrv93d5xbh15a0dt30a5jpsd879ccm6fea98c'
             ],
             /**
-             * As there"s no way to do $g->group in JavaScript, Punycode.js doesn"t support
+             * As there's no way to do $g->group in JavaScript, Punycode.js doesn't support
              * mixed-case annotation (which is entirely optional as per the RFC).
-             * So, while the RFC sample string encodes to =>
+             * So, while the RFC sample string encodes to:
              * `b1abfaaepdrnnbgefbaDotcwatmq2g4l`
-             * Without mixed-case annotation $g->group has to encode to =>
+             * Without mixed-case annotation $g->group has to encode to:
              * `b1abfaaepdrnnbgefbadotcwatmq2g4l`
-             * https =>//github.com/bestiejs/$this->punycode->js/issues/3
+             * https://github.com/mathiasbynens/punycode.js/issues/3
              */
             [
                 "description" => "Russian (Cyrillic)",
@@ -216,7 +216,11 @@ class CTest extends EasyTest
                 "description" => "Email address",
                 'decoded' => 'джумла@джpумлатест.bрфa',
                 'encoded' => 'джумла@xn--p-8sbkgc5ag7bhce.xn--ba-lmcq'
-            ]
+            ],
+            [ // https://github.com/mathiasbynens/punycode.js/pull/115
+                'decoded'=> "foo\x7F.example",
+                'encoded'=> "foo\x7F.example"
+            ],
         ],
         "separators" => [
             [
@@ -312,6 +316,14 @@ class CTest extends EasyTest
         }
         $g->group('handles uppercase Z', function($gg) {
             $gg->strictEqual($this->punycode->decode('ZZZ'), '箥');
+        });
+        $g->group('throws RangeError: Invalid input', function($gg) {
+            $gg->throws(
+                function() {
+                    $this->punycode->decode("ls8h=");
+                },
+                \Exception::class
+            );
         });
     }
 

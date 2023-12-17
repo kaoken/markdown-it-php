@@ -11,7 +11,7 @@ class BalancePairs
     /**
      * @param ArrayObj $delimiters
      */
-    private function processDelimiters(ArrayObj &$delimiters)
+    private function processDelimiters(ArrayObj &$delimiters): void
     {
         $openersBottom = [];
         $max = $delimiters->length();
@@ -126,7 +126,8 @@ class BalancePairs
     /**
      * @param StateInline $state
      */
-    public function linkPairs(StateInline &$state) {
+    public function linkPairs(StateInline &$state): void
+    {
         $tokens_meta = &$state->tokens_meta;
         $max = $state->tokens_meta->length();
 

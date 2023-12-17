@@ -50,9 +50,9 @@ class MatchResult
     /**
      * Match constructor.
      * @param LinkifyIt $self
-     * @param $shift
+     * @param integer $shift
      */
-    public function __construct(LinkifyIt $self, $shift)
+    public function __construct(LinkifyIt $self, int $shift)
     {
         $start = $self->getIndex();
         $end   = $self->getLastIndex();
