@@ -3,7 +3,7 @@
 namespace Kaoken\MarkdownIt\RulesInline;
 use Kaoken\MarkdownIt\Common\Utils;
 
-use Kaoken\MarkdownIt\Common\HtmlRegexs;
+use Kaoken\MarkdownIt\Common\HtmlRegex;
 
 class HtmlInline
 {
@@ -63,7 +63,7 @@ class HtmlInline
             return false;
         }
 
-        if ( !preg_match(HtmlRegexs::HTML_TAG_RE, substr($state->src, $pos), $match )) { return false; }
+        if ( !preg_match(HtmlRegex::HTML_TAG_RE, substr($state->src, $pos), $match )) { return false; }
 
         if (!$silent) {
             $token         = $state->push('html_inline', '', 0);

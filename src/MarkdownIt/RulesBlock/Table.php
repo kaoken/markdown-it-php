@@ -7,6 +7,14 @@ use Kaoken\MarkdownIt\Common\Utils;
 
 class Table
 {
+    // Limit the amount of empty autocompleted cells in a table,
+    // see https://github.com/markdown-it/markdown-it/issues/1000,
+    //
+    // Both pulldown-cmark and commonmark-hs limit the number of cells this way to ~200k.
+    // We set it to 65k, which can expand user input by a factor of x370
+    // (256x256 square is 1.8kB expanded into 650kB).
+    const MAX_AUTOCOMPLETED_CELLS = 0x10000;
+
     /**
      * @param StateBlock $state
      * @param integer $line
@@ -158,15 +166,16 @@ class Table
 
 
         $token_to       = $state->push('table_open', 'table', 1);
-        $token_to->map  = $tableLines = [ $startLine, 0 ];
+        $tableLines     = [ $startLine, 0 ];
+        $token_to->map  = &$tableLines;
 
         $token_tho      = $state->push('thead_open', 'thead', 1);
-        $token_tho->map = [ $startLine, $startLine + 1 ];
+        $token_tho->map = [ &$startLine, $startLine + 1 ];
 
         $token_htro     = $state->push('tr_open', 'tr', 1);
-        $token_htro->map= [ $startLine, $startLine + 1 ];
+        $token_htro->map= [ &$startLine, $startLine + 1 ];
 
-        $tbodyLines = [];
+        $tbodyLines = false;
         for ($i = 0; $i < count($columns); $i++) {
             $token_ho = $state->push('th_open', 'th', 1);
             if ( !empty($aligns[$i]) ) {
@@ -182,6 +191,8 @@ class Table
 
         $state->push('tr_close', 'tr', -1);
         $state->push('thead_close', 'thead', -1);
+
+        $autocompletedCells = 0;
 
         for ($nextLine = $startLine + 2; $nextLine < $endLine; $nextLine++) {
             if ($state->sCount[$nextLine] < $state->blkIndent) { break; }
@@ -202,9 +213,15 @@ class Table
             if (count($columns) && $columns[0] === '') array_shift($columns);
             if (count($columns) && $columns[count($columns) - 1] === '') array_pop($columns);
 
+            // note: autocomplete count can be negative if user specifies more columns than header,
+            // but that does not affect intended use (which is limiting expansion)
+            $autocompletedCells += $columnCount - count($columns);
+            if ($autocompletedCells > self::MAX_AUTOCOMPLETED_CELLS) { break; }
+
             if ($nextLine === $startLine + 2) {
                 $token_tbo      = $state->push('tbody_open', 'tbody', 1);
-                $token_tbo->map = $tbodyLines = [ $startLine + 2, 0 ];
+                $tbodyLines     = [ $startLine + 2, 0 ];
+                $token_tbo->map = &$tbodyLines;
             }
 
 
@@ -230,7 +247,7 @@ class Table
             $tbodyLines[1] = $nextLine;
         }
         $state->push('table_close', 'table', -1);
-        $tbodyLines[1] = $nextLine;
+        $tableLines[1] = $nextLine;
 
         $state->parentType = $oldParentType;
         $state->line = $nextLine;

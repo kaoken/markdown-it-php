@@ -63,7 +63,7 @@ trait EncodeTrait
      * @param bool $keepEscaped Don't encode '%' in a correct escape sequence (default: true)
      * @return string
      */
-    public function encode(string $string, $exclude=null, $keepEscaped=true): string
+    public function encode(string $string, $exclude=null, bool $keepEscaped=true): string
     {
         $result = '';
 

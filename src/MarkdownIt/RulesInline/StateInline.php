@@ -181,14 +181,8 @@ class StateInline
      */
     public function scanDelims(int $start, bool $canSplitWord): stdClass
     {
-        $pos            = $start;
-        $left_flanking  = true;
-        $right_flanking = true;
-        $can_open       = false;
-        $can_close      = false;
         $max            = $this->posMax;
         $marker         = $this->md->utils->currentCharUTF8($this->src, $start, $outLen);
-
 
         // treat beginning of the line as a whitespace
 //        $lastChar = $start > 0 ? $this->src[$start-1] : ' ';
@@ -199,17 +193,19 @@ class StateInline
                 throw new Exception('scanDelims(), last char unexpected error...');
             }
         }
-        else
+        else {
             $lastChar = ' ';
+        }
 
         //while ($pos < $max && $this->src[$pos] === $marker) { $pos++; }
+        $pos            = $start;
         while ($pos < $max && ($nextChar=$this->md->utils->currentCharUTF8($this->src, $pos, $outLen)) === $marker) {
             $pos+=$outLen;
         }
         $count = $pos - $start;
 
         // treat end of the line as a whitespace
-        $nextChar = $pos < $max ? $nextChar : ' ';
+        $nextChar = $pos < $max ? $this->src[$pos] : ' ';
 
         $isLastPunctChar = $this->md->utils->isMdAsciiPunct($lastChar) || $this->md->utils->isPunctChar($lastChar);
         $isNextPunctChar = $this->md->utils->isMdAsciiPunct($nextChar) || $this->md->utils->isPunctChar($nextChar);
@@ -217,29 +213,12 @@ class StateInline
         $isLastWhiteSpace = $this->md->utils->isWhiteSpace($lastChar);
         $isNextWhiteSpace = $this->md->utils->isWhiteSpace($nextChar);
 
-        if ($isNextWhiteSpace) {
-            $left_flanking = false;
-        } else if ($isNextPunctChar) {
-            if (!($isLastWhiteSpace || $isLastPunctChar)) {
-                $left_flanking = false;
-            }
-        }
+        $left_flanking = !$isNextWhiteSpace && (!$isNextPunctChar || $isLastWhiteSpace || $isLastPunctChar);
+        $right_flanking = !$isLastWhiteSpace && (!$isLastPunctChar || $isNextWhiteSpace || $isNextPunctChar);
 
-        if ($isLastWhiteSpace) {
-            $right_flanking = false;
-        } else if ($isLastPunctChar) {
-            if (!($isNextWhiteSpace || $isNextPunctChar)) {
-                $right_flanking = false;
-            }
-        }
+        $can_open  = $left_flanking  && ($canSplitWord || !$right_flanking || $isLastPunctChar);
+        $can_close = $right_flanking && ($canSplitWord || !$left_flanking  || $isNextPunctChar);
 
-        if (!$canSplitWord) {
-            $can_open  = $left_flanking  && (!$right_flanking || $isLastPunctChar);
-            $can_close = $right_flanking && (!$left_flanking  || $isNextPunctChar);
-        } else {
-            $can_open  = $left_flanking;
-            $can_close = $right_flanking;
-        }
         $obj = new stdClass();
         $obj->can_open      = $can_open;
         $obj->can_close     = $can_close;

@@ -6,6 +6,9 @@ use Kaoken\MarkdownIt\MarkdownIt;
 
 trait MarkdownItTrait
 {
+    /**
+     * @throws \Exception
+     */
     public function markdownIt()
     {
         $md = new MarkdownIt([

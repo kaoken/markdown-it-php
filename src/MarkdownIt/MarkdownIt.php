@@ -46,7 +46,7 @@ class MarkdownIt extends stdClass
      * Instance of [[ParserInline]]. You may need it to add new rules when
      * writing plugins. For simple rules control use [[MarkdownIt.disable]] and
      * [[MarkdownIt.enable]].
-     * @var ParserInline
+     * @var ParserInline|null
      **/
     public ?ParserInline $inline = null;
 
@@ -55,7 +55,7 @@ class MarkdownIt extends stdClass
    * Instance of [[ParserBlock]]. You may need it to add new rules when
    * writing plugins. For simple rules control use [[MarkdownIt.disable]] and
    * [[MarkdownIt.enable]].
-   * @vare ParserBlock
+   * @var ParserBlock|null
    **/
     public ?ParserBlock $block = null;
 
@@ -64,7 +64,7 @@ class MarkdownIt extends stdClass
    * writing plugins. For simple rules control use [[MarkdownIt.disable]] and
    * [[MarkdownIt.enable]].
    *
-   * @var ParserCore
+   * @var ParserCore|null
    **/
     public ?ParserCore $core = null;
 
@@ -343,8 +343,8 @@ class MarkdownIt extends stdClass
      *
      *
      * MarkdownIt constructor.
-     * @param string $presetName optional, `commonmark` / `zero`
-     * @param null|array $options
+     * @param array|object|string $presetName optional, `commonmark` / `zero`
+     * @param array|object|null $options
      * @throws Exception
      */
     public function __construct($presetName='default', $options=null)
@@ -389,7 +389,7 @@ class MarkdownIt extends stdClass
      * `markdown-it` instance options on the fly. If you need multiple configurations
      * it's best to create multiple instances and initialize each with separate
      * config.
-     * @param stdClass $options
+     * @param stdClass|array $options
      * @return $this
      * @throws Exception
      */
@@ -460,7 +460,7 @@ class MarkdownIt extends stdClass
      * @return $this
      * @throws Exception
      */
-    public function enable($list, $ignoreInvalid=false): MarkdownIt
+    public function enable($list, bool $ignoreInvalid=false): MarkdownIt
     {
         $result = [];
 
@@ -492,7 +492,7 @@ class MarkdownIt extends stdClass
      * @return $this
      * @throws Exception
      */
-    public function disable($list, $ignoreInvalid=false): MarkdownIt
+    public function disable($list, bool $ignoreInvalid=false): MarkdownIt
     {
         $result = [];
 

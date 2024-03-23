@@ -3,7 +3,7 @@
 namespace Kaoken\MarkdownIt\RulesBlock;
 
 use Kaoken\MarkdownIt\Common\Utils;
-use Kaoken\MarkdownIt\Common\HtmlRegexs;
+use Kaoken\MarkdownIt\Common\HtmlRegex;
 use Kaoken\MarkdownIt\Common\HtmlBlocks;
 
 class HtmlBlock
@@ -24,7 +24,7 @@ class HtmlBlock
             [ "/^<![A-Z]/",         "/>/",   true ],
             [ "/^<!\[CDATA\[/", "/\]\]>/",   true ],
             [ "/^<\/?(" . join('|', HtmlBlocks::BLOCKS) . ")(?=(\s|\/?>|$))/i", "/^$/", true ],
-            [ "/" . HtmlRegexs::HTML_OPEN_CLOSE_TAG . "\s*$/",  "/^$/", false ]
+            [ "/" . HtmlRegex::HTML_OPEN_CLOSE_TAG . "\s*$/",  "/^$/", false ]
         ];
     }
 

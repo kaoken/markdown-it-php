@@ -12,7 +12,7 @@ class Text
      * @param boolean $silent
      * @return bool
      */
-    public function text(StateInline &$state, $silent=false): bool
+    public function text(StateInline &$state, bool $silent=false): bool
     {
         $pos = $state->pos;
 
@@ -37,7 +37,7 @@ class Text
      * @param string $ch
      * @return bool
      */
-    protected function isTerminatorChar($ch): bool
+    protected function isTerminatorChar(string $ch): bool
     {
         switch ($ch) {
             case "\n":

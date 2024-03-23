@@ -23,56 +23,58 @@ class Reference
 
         if ($state->src[$pos] !== '[') { return false; }
 
-        // Simple check to quickly interrupt scan on [link](url) at the $start of line.
-        // Can be useful on practice: https://github.com/markdown-it/markdown-it/issues/54
-        while (++$pos < $max) {
-            if ($state->src[$pos] === ']' &&
-                $state->src[$pos - 1] !== '\\') {
-                if ($pos + 1 === $max) { return false; }
-                if ($state->src[$pos + 1] !== ':') { return false; }
-                break;
+        $getNextLine = function($nextLine) use (&$state) {
+            $endLine = $state->lineMax;
+
+            if ($nextLine >= $endLine || $state->isEmpty($nextLine)) {
+                // empty line or end of input
+                return null;
             }
-        }
 
-        $endLine = $state->lineMax;
+            $isContinuation = false;
 
-        // jump line-by-line until empty one or EOF
-        $terminatorRules = $state->md->block->ruler->getRules('reference');
-
-        $oldParentType = $state->parentType;
-        $state->parentType = 'reference';
-
-        for (; $nextLine < $endLine && !$state->isEmpty($nextLine); $nextLine++) {
             // this would be a code block normally, but after paragraph
             // it's considered a lazy continuation regardless of what's there
-            if ($state->sCount[$nextLine] - $state->blkIndent > 3) { continue; }
+            if ($state->sCount[$nextLine] - $state->blkIndent > 3) {
+                $isContinuation = true;
+            }
 
             // quirk for blockquotes, this line should already be checked by that rule
-            if ($state->sCount[$nextLine] < 0) { continue; }
+            if ($state->sCount[$nextLine] < 0) {
+                $isContinuation = true;
+            }
 
-            // Some tags can $terminate paragraph without empty line.
-            $terminate = false;
-            foreach( $terminatorRules as &$rule ){
-                if( is_array($rule) ){
-                    if ($rule[0]->{$rule[1]}($state, $nextLine, $endLine, true)) {
-                        $terminate = true;
-                        break;
-                    }
-                }else if( is_callable($rule) ){
-                    if ($rule($state, $nextLine, $endLine, true)) {
+            if (!$isContinuation) {
+                $terminatorRules = $state->md->block->ruler->getRules('reference');
+                $oldParentType = $state->parentType;
+                $state->parentType = 'reference';
+
+                // Some tags can terminate paragraph without empty line.
+                $terminate = false;
+                for ($i = 0, $l = count($terminatorRules); $i < $l; $i++) {
+                    if ($terminatorRules[$i]($state, $nextLine, $endLine, true)) {
                         $terminate = true;
                         break;
                     }
                 }
+
+                $state->parentType = $oldParentType;
+                if ($terminate) {
+                    // terminated by another block
+                    return null;
+                }
             }
+            $pos = $state->bMarks[$nextLine] + $state->tShift[$nextLine];
+            $max = $state->eMarks[$nextLine];
 
-            if ($terminate) { break; }
-        }
+            // max + 1 explicitly includes the newline
+            return substr($state->src, $pos, ($max+1)-$pos);
+        };
+        $str = substr($state->src, $pos, ($max+1)-$pos);
 
-        $str = trim($state->getLines($startLine, $nextLine, $state->blkIndent, false));
         $max = strlen($str);
-        $lines = 0;
         $labelEnd = -1;
+
         for ($pos = 1; $pos < $max; $pos++) {
             $ch = $str[$pos];
             if ($ch === '[') {
@@ -81,11 +83,21 @@ class Reference
                 $labelEnd = $pos;
                 break;
             } else if ($ch === "\n") {
-                $lines++;
+                $lineContent = $getNextLine($nextLine);
+                if ($lineContent !== null) {
+                    $str .= $lineContent;
+                    $max = strlen($str);
+                    $nextLine++;
+                }
             } else if ($ch === '\\') {
                 $pos++;
                 if ($pos < $max && $str[$pos] === "\n") {
-                    $lines++;
+                    $lineContent = $getNextLine($nextLine);
+                    if ($lineContent !== null) {
+                        $str .= $lineContent;
+                        $max = strlen($str);
+                        $nextLine++;
+                    }
                 }
             }
         }
@@ -98,28 +110,31 @@ class Reference
         for ($pos = $labelEnd + 2; $pos < $max; $pos++) {
             $ch = $str[$pos];
             if ($ch === "\n") {
-                $lines++;
+                $lineContent = $getNextLine($nextLine);
+                if ($lineContent !== null) {
+                    $str .= $lineContent;
+                    $max = strlen($str);
+                    $nextLine++;
+                }
             } else if ($state->md->utils->isSpace($ch)) {
                 /*eslint no-empty:0*/
             } else {
                 break;
             }
         }
-
         // [$label]:   destination   'title'
         //            ^^^^^^^^^^^ parse this
-        $res = $state->md->helpers->parseLinkDestination($str, $pos, $max);
-        if (!$res->ok) { return false; }
+        $destRes = $state->md->helpers->parseLinkDestination($str, $pos, $max);
+        if (!$destRes->ok) { return false; }
 
-        $href = $state->md->normalizeLink($res->str);
+        $href = $state->md->normalizeLink($destRes->str);
         if (!$state->md->validateLink($href)) { return false; }
 
-        $pos = $res->pos;
-        $lines += $res->lines;
+        $pos = $destRes->pos;
 
         // save cursor $state, we could require to rollback later
         $destEndPos = $pos;
-        $destEndLineNo = $lines;
+        $destEndLineNo = $nextLine;
 
         // [$label]:   destination   'title'
         //                       ^^^ skipping those spaces
@@ -127,7 +142,12 @@ class Reference
         for (; $pos < $max; $pos++) {
             $ch = $str[$pos];
             if ($ch === "\n") {
-                $lines++;
+                $lineContent = $getNextLine($nextLine);
+                if ($lineContent !== null) {
+                    $str .= $lineContent;
+                    $max = strlen($str);
+                    $nextLine++;
+                }
             } else if ($state->md->utils->isSpace($ch)) {
                 /*eslint no-empty:0*/
             } else {
@@ -137,15 +157,25 @@ class Reference
 
         // [$label]:   destination   'title'
         //                          ^^^^^^^ parse this
-        $res = $state->md->helpers->parseLinkTitle($str, $pos, $max);
-        if ($pos < $max && $start !== $pos && $res->ok) {
-            $title = $res->str;
-            $pos = $res->pos;
-            $lines += $res->lines;
+        $titleRes = $state->md->helpers->parseLinkTitle($str, $pos, $max);
+        while ($titleRes->can_continue) {
+            $lineContent = $getNextLine($nextLine);
+            if ($lineContent === null) break;
+            $str .= $lineContent;
+            $pos = $max;
+            $max = strlen($str);
+            $nextLine++;
+            $titleRes = $state->md->helpers->parseLinkTitle($str, $pos, $max, $titleRes);
+        }
+
+        $title = false;
+        if ($pos < $max && $start !== $pos && $titleRes->ok) {
+            $title = $titleRes->str;
+            $pos = $titleRes->pos;
         } else {
             $title = '';
             $pos = $destEndPos;
-            $lines = $destEndLineNo;
+            $nextLine = $destEndLineNo;
         }
 
         // skip trailing spaces until the rest of the line
@@ -161,7 +191,7 @@ class Reference
                 // but it could still be a valid reference if we roll back
                 $title = '';
                 $pos = $destEndPos;
-                $lines = $destEndLineNo;
+                $nextLine = $destEndLineNo;
                 while ($pos < $max) {
                     $ch = $str[$pos];
                     if (!$state->md->utils->isSpace($ch)) { break; }
@@ -195,9 +225,7 @@ class Reference
             $obj['href'] = $href;
         }
 
-        $state->parentType = $oldParentType;
-
-        $state->line = $startLine + $lines + 1;
+        $state->line = $nextLine;
         return true;
     }
 }

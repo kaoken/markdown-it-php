@@ -3,8 +3,6 @@
 
 namespace Kaoken\MarkdownIt\Helpers;
 
-use Kaoken\MarkdownIt\Common\Utils;
-
 trait ParseLinkDestination
 {
     /**
@@ -20,7 +18,6 @@ trait ParseLinkDestination
         $result = new \stdClass();
         $result->ok = false;
         $result->pos = 0;
-        $result->lines = 0;
         $result->str = '';
 
         if( $pos === $max ) return $result;
