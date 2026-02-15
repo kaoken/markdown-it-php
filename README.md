@@ -1,12 +1,12 @@
 # markdown-it-php
 
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](https://github.com/kaoken/markdown-it-php)
-[![composer version](https://img.shields.io/badge/version-14.1.0.0-blue.svg)](https://github.com/kaoken/markdown-it-php)
+[![composer version](https://img.shields.io/badge/version-14.1.1.0-blue.svg)](https://github.com/kaoken/markdown-it-php)
 [![licence](https://img.shields.io/badge/licence-MIT-blue.svg)](https://github.com/kaoken/markdown-it-php)
 [![php version](https://img.shields.io/badge/php%20version-≧7.4.0-red.svg)](https://github.com/kaoken/markdown-it-php)
 
 
-This gem is a port of the [markdown-it Javascript package](https://github.com/markdown-it/markdown-it) by Vitaly Puzrin and Alex Kocharin. Currently synced with markdown-it 14.1.0
+This gem is a port of the [markdown-it Javascript package](https://github.com/markdown-it/markdown-it) by Vitaly Puzrin and Alex Kocharin. Currently synced with markdown-it 14.1.1
 
 __[Javascript Live demo](https://markdown-it.github.io)__
 

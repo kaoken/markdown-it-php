@@ -42,7 +42,14 @@ class Linkify
         if (strlen($url) <= strlen($proto)) return false;
 
         // disallow '*' at the end of the  $link (conflicts with emphasis)
-        $url =  preg_replace("/\*+$/", '', $url);
+        // do manual backsearch to avoid perf issues with regex /\*+$/ on "****...****a".
+        $urlEnd = strlen($url);
+        while ($urlEnd > 0 && $url[$urlEnd - 1] === '*'/* 0x2A */) {
+            $urlEnd--;
+        }
+        if ($urlEnd !== strlen($url)) {
+            $url = substr($url, 0, $urlEnd);
+        }
 
         $fullUrl =  $state->md->normalizeLink( $url);
         if (! $state->md->validateLink( $fullUrl)) return false;
